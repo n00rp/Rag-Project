@@ -46,3 +46,6 @@ Thumbs.db
 
 # Claude Code lokala inställningar
 .claude/settings.local.json
+
+# Uploaded files created by running the API from its project folder
+uploads/

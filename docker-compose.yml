@@ -35,6 +35,26 @@ services:
       db:
         condition: service_healthy
 
+  api:
+    build: ./backend
+    environment:
+      ConnectionStrings__Default: Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      AiService__BaseUrl: http://ai-service:8000/
+      AiService__InternalKey: ${INTERNAL_API_KEY:-}
+      Database__MigrateOnStartup: "true"
+      Storage__Path: /data/uploads
+      Cors__Origins__0: http://localhost:5173
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - uploads:/data/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      ai-service:
+        condition: service_started
+
 volumes:
   pgdata:
   hfcache:
+  uploads:
