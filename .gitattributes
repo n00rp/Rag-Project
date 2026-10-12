@@ -1,0 +1,13 @@
+# Normalisera radslut så att laptop (Windows) och stationär inte skapar onödiga diffar
+* text=auto eol=lf
+
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+*.pdf binary
+*.png binary
+*.jpg binary
+*.ico binary

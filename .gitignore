@@ -1,0 +1,48 @@
+# Hemligheter och lokal config
+.env
+.env.*
+!.env.example
+*.pfx
+secrets.json
+appsettings.Development.local.json
+
+# .NET
+bin/
+obj/
+*.user
+.vs/
+TestResults/
+coverage/
+
+# Node / frontend
+node_modules/
+dist/
+.vite/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Lokal data (stora filer, modeller, databaser)
+data/*
+!data/.gitkeep
+!data/README.md
+*.gguf
+pgdata/
+ollama/
+
+# Editor / OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+Thumbs.db
+.DS_Store
+
+# Claude Code lokala inställningar
+.claude/settings.local.json
