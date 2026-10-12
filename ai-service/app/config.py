@@ -21,11 +21,15 @@ class Settings(BaseSettings):
 
     # Drop running headers/footers before chunking. Switchable so phase 3 can measure its effect.
     strip_page_boilerplate: bool = True
+    # Prefix every chunk with the document's first lines (date, body). Measured in eval/README.md.
+    doc_header: bool = True
     chunk_size: int = 900
     chunk_overlap: int = 150
     top_k: int = 5
-    # Tuned against the eval set in phase 3; 0 disables the "no support" refusal.
-    min_score: float = 0.0
+    # Cosine floor for retrieved chunks, tuned for multilingual-e5-small on the eval set (eval/README.md):
+    # 0.83 refuses all unanswerable questions without costing correctness, 0.85 already loses answers.
+    # The scores are model-specific; re-tune when the embedding model changes. 0 disables the refusal.
+    min_score: float = 0.83
     max_upload_bytes: int = 25 * 1024 * 1024
 
 

@@ -106,3 +106,27 @@ def test_scanned_pdf_is_422_with_clear_message(client, owner):
     )
     assert r.status_code == 422
     assert "skannad" in r.json()["detail"]
+
+
+def test_every_chunk_carries_the_document_header_from_page_one(client, owner):
+    ingest(client, owner, ["Protokoll 2025-04-09 Kommunstyrelsen", SCHOOL])
+
+    top = client.post("/query", json={"owner_id": owner, "question": "skolskjuts Björkby"}).json()["sources"][0]
+
+    assert top["page"] == 2
+    assert top["snippet"].startswith("Protokoll 2025-04-09 Kommunstyrelsen. ")
+
+
+def test_min_score_refuses_when_nothing_is_similar_enough(client, owner):
+    from app.config import Settings, get_settings
+    from app.main import app
+
+    ingest(client, owner, [SCHOOL])
+    app.dependency_overrides[get_settings] = lambda: Settings(min_score=0.999)
+    try:
+        body = client.post("/query", json={"owner_id": owner, "question": "Hur mår kulturnämnden?"}).json()
+    finally:
+        app.dependency_overrides.pop(get_settings, None)
+
+    assert body["answer"] == NO_SUPPORT_ANSWER
+    assert body["grounded"] is False and body["sources"] == []

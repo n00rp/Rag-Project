@@ -34,6 +34,16 @@ def _split_units(text: str, size: int) -> list[str]:
     return units
 
 
+def document_header(pages: list[PageText], max_lines: int = 3, max_chars: int = 200) -> str:
+    """Document context taken from the first page, e.g. 'Protokoll nr 8 Sammanträdesdatum: 2025-04-09 Kommunstyrelsen'.
+
+    Repeated page headers are stripped before chunking, but the date and body they name are exactly what
+    questions refer to ("sammanträdet 2025-04-09"), so every chunk starts with this line again (see eval/README.md).
+    """
+    lines = [ln.strip() for ln in pages[0].text.splitlines() if ln.strip()] if pages else []
+    return " ".join(lines[:max_lines])[:max_chars]
+
+
 def chunk_pages(pages: list[PageText], size: int = 900, overlap: int = 150) -> list[Chunk]:
     """Chunk page by page so every chunk keeps an exact page number for citations."""
     if overlap >= size:

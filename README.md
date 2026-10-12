@@ -2,7 +2,7 @@
 
 Ladda upp kommunala protokoll och beslutsunderlag (PDF) och ställ frågor på svenska. Svaren bygger på dokumentens innehåll (RAG) och visar exakt **vilket dokument och vilken sida** de kommer från. Klicka på en källa så öppnas originalet på rätt sida.
 
-> **Status: fas 1 av 5 klar** – hela flödet fungerar lokalt end-to-end (uppladdning → bakgrundsindexering → fråga → svar med källa). Inloggning, utvärdering av svarskvalitet, live-demo och polering återstår. Se [projektplanen](docs/projektplan.md).
+> **Status: fas 1 av 5 klar, fas 3 (utvärdering) påbörjad** – hela flödet fungerar lokalt end-to-end (uppladdning → bakgrundsindexering → fråga → svar med källa). Inloggning, utvärdering av svarskvalitet, live-demo och polering återstår. Se [projektplanen](docs/projektplan.md).
 
 <!-- TODO (fas 5): live-demo-länk, skärmbild/GIF, CI-badge -->
 
@@ -85,7 +85,7 @@ Syntetiska testdokument hittade inte följande, riktiga protokoll gjorde det:
 - **Sidhuvuden upprepas på varje sida** ("Protokoll nr 8 / Sammanträdesdatum / Göteborgs Stad kommunstyrelsen protokoll 3 (56)"). I varje chunk späder de ut innehållet och ger falska träffar på ord som "Protokoll". De tas nu bort före chunkning (13–15 % av texten); sidnumret finns kvar som metadata. Första versionen ignorerade alla siffror och tog då även bort rader som `§ 289 Ärendenummer SLK-2025-00035`, vilket är exakt det folk söker på. Nu maskas bara sidans *eget* nummer, och alla §-rubriker och ärendenummer i de sex dokumenten är verifierat bevarade (se `ai-service/tests/test_boilerplate.py`).
 - Texten extraheras rent: åäö, inga ligaturer eller trasiga tecken i någon av de sex PDF:erna.
 - Stora dokument är inget problem: 397 sidor och 649 chunks indexerades på 15 sekunder (med falska embeddings).
-- Effekten av rensningen på svarskvaliteten mäts i fas 3 (`STRIP_PAGE_BOILERPLATE` av/på).
+- Effekten mättes i fas 3 och överraskade: rensningen **sänkte** träffsäkerheten (MRR 0,894 mot 0,951), eftersom sammanträdesdatum och organ bara står i sidhuvudet och frågor som "sammanträdet 2025-04-09" då inte hittar rätt dokument. Lösningen är att rensa men lägga dokumentets första rader (datum, organ) först i varje chunk (MRR 0,973). Se [eval/README.md](eval/README.md).
 
 ## Tester
 
@@ -115,7 +115,7 @@ Fel returneras som RFC 7807 ProblemDetails. `503` med `code: "ai_unavailable"` b
 ## Kända begränsningar (just nu)
 - En demoanvändare delar allt. Riktig inloggning (JWT) och användarisolering i API-lagret kommer i fas 2; isoleringen i vektorsökningen finns redan.
 - Skannade PDF:er (utan textlager) stöds inte; användaren får ett tydligt felmeddelande. OCR är en möjlig förbättring.
-- Svarskvaliteten är inte mätt än och tröskeln för "inget stöd" är avstängd. Det är fas 3 (utvärdering med frågeset, retrieval-mått och jämförelse av chunking/modeller).
+- Svarskvaliteten är mätt på ett eget frågeset (44 besvarbara + 16 obesvarbara frågor, [eval/README.md](eval/README.md)), men frågorna är skrivna av utvecklaren och domaren är en LLM. Siffrorna visar riktning, inte garanterad kvalitet.
 - Svaren strömmas inte än; gränssnittet visar en laddningsindikator.
 - Den riktiga embeddingmodellen och Ollama är ännu inte körda i full stack; fas 1 är verifierad med falska backends. De falska embeddingarna (ordräkning) hittar inte rätt avsnitt i de riktiga protokollen, vilket är väntat; sökkvaliteten kan bara bedömas med den riktiga modellen.
 - Tabeller och spaltlayout i PDF:er extraheras som löpande text och kan bli svårlästa.

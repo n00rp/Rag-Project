@@ -1,6 +1,6 @@
 import pytest
 
-from app.chunking import chunk_pages
+from app.chunking import chunk_pages, document_header
 from app.pdf import PageText
 
 
@@ -35,3 +35,13 @@ def test_no_text_lost():
 def test_overlap_must_be_smaller_than_size():
     with pytest.raises(ValueError):
         chunk_pages([PageText(1, "text")], size=100, overlap=100)
+
+
+def test_document_header_uses_first_lines_of_first_page_only():
+    pages = [
+        PageText(1, "Protokoll nr 8\n\nSammanträdesdatum: 2025-04-09\nKommunstyrelsen\nBrödtext"),
+        PageText(2, "Annan sida"),
+    ]
+    assert document_header(pages) == "Protokoll nr 8 Sammanträdesdatum: 2025-04-09 Kommunstyrelsen"
+    assert document_header([]) == ""
+    assert len(document_header([PageText(1, "x" * 500)])) == 200

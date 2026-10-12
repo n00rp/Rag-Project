@@ -4,6 +4,8 @@ import uuid
 os.environ.setdefault("EMBEDDING_BACKEND", "fake")
 os.environ.setdefault("LLM_BACKEND", "fake")
 os.environ.setdefault("INTERNAL_API_KEY", "")
+# The fake embedder has its own score scale; the real threshold is tuned on e5 in eval/README.md.
+os.environ.setdefault("MIN_SCORE", "0")
 
 import psycopg
 import pytest

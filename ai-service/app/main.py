@@ -1,5 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
+from dataclasses import replace
 from uuid import UUID
 
 from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, UploadFile
@@ -7,7 +8,7 @@ from pydantic import BaseModel, Field
 
 from app import db
 from app.boilerplate import strip_repeated_lines
-from app.chunking import chunk_pages
+from app.chunking import chunk_pages, document_header
 from app.config import Settings, get_settings
 from app.embeddings import build_embedder
 from app.llm import LlmUnavailableError, build_llm
@@ -91,9 +92,12 @@ def ingest(
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     page_count = len(pages)
+    header = document_header(pages) if settings.doc_header else ""
     if settings.strip_page_boilerplate:
         pages = strip_repeated_lines(pages)
     chunks = chunk_pages(pages, settings.chunk_size, settings.chunk_overlap)
+    if header:
+        chunks = [replace(c, text=f"{header}. {c.text}") for c in chunks]
     embeddings = app.state.embedder.embed_passages([c.text for c in chunks])
     db.replace_document_chunks(app.state.pool, owner_id, document_id, chunks, embeddings)
     return IngestResponse(document_id=document_id, pages=page_count, chunks=len(chunks))
