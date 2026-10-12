@@ -12,9 +12,44 @@
 - Repot är enda källan. Ingen kod förs över med USB eller molndrive.
 
 ## Första gången på en ny dator
-1. Installera: Git, Docker Desktop, .NET SDK (LTS), Node 22, Python 3.12.
+1. Installera: Git, Docker Engine i WSL2 (se nedan), .NET SDK (LTS), Node 22, Python 3.12.
 2. `git clone <repo-url>` och `cp .env.example .env`, fyll i lokala värden.
 3. Stationär: installera Ollama och hämta modellen som anges i `LLM_MODEL`.
+
+## Docker utan Docker Desktop (Docker Engine i WSL2)
+Gratis, utan licensvillkor, och `docker compose up` fungerar likadant. Gör detta på båda datorerna.
+
+1. **Kontrollera WSL2** (PowerShell):
+   ```powershell
+   wsl --status
+   wsl -l -v
+   ```
+   Du ska se en Ubuntu-distribution med VERSION 2. Saknas den: `wsl --install -d Ubuntu` och starta om datorn.
+2. **Aktivera systemd** så att Docker startar automatiskt. I Ubuntu-terminalen (`wsl`):
+   ```bash
+   cat /etc/wsl.conf
+   ```
+   Om `[boot]` med `systemd=true` saknas, lägg till det:
+   ```bash
+   printf '[boot]\nsystemd=true\n' | sudo tee -a /etc/wsl.conf
+   ```
+   Kör sedan `wsl --shutdown` i PowerShell och öppna Ubuntu igen.
+3. **Installera Docker Engine** enligt [officiella guiden för Ubuntu](https://docs.docker.com/engine/install/ubuntu/) (apt-repot, inte `docker.io` från Ubuntus egna paket). Installera `docker-ce`, `docker-ce-cli`, `containerd.io`, `docker-buildx-plugin` och `docker-compose-plugin`.
+4. **Kör utan sudo:**
+   ```bash
+   sudo usermod -aG docker $USER
+   ```
+   Stäng och öppna Ubuntu-terminalen igen.
+5. **Testa:**
+   ```bash
+   docker run --rm hello-world
+   docker compose version
+   ```
+6. **Portar:** containrar som publicerar en port (t.ex. `5432`) nås från Windows på `localhost:5432`.
+
+**Var ska repot ligga?** Det fungerar att köra från `/mnt/c/Programering/ProjectFolder`, men filåtkomst över `/mnt/c` är långsam. Om det blir segt (särskilt `node_modules` och byggen), klona en kopia i WSL:s eget filsystem (`~/projects/Rag-Project`) och arbeta därifrån.
+
+**GPU på stationären (valfritt, senare):** Ollama kan köras direkt i Windows (enklast). Vill du containerisera den behövs NVIDIA Container Toolkit i WSL2 och en aktuell Windows-drivrutin med WSL-stöd.
 
 ## Laptop → GPU på stationären
 Laptopen har ingen GPU. Låt den prata med Ollama på stationären:
