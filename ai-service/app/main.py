@@ -6,6 +6,7 @@ from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, UploadF
 from pydantic import BaseModel, Field
 
 from app import db
+from app.boilerplate import strip_repeated_lines
 from app.chunking import chunk_pages
 from app.config import Settings, get_settings
 from app.embeddings import build_embedder
@@ -89,10 +90,13 @@ def ingest(
     except PdfError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
+    page_count = len(pages)
+    if settings.strip_page_boilerplate:
+        pages = strip_repeated_lines(pages)
     chunks = chunk_pages(pages, settings.chunk_size, settings.chunk_overlap)
     embeddings = app.state.embedder.embed_passages([c.text for c in chunks])
     db.replace_document_chunks(app.state.pool, owner_id, document_id, chunks, embeddings)
-    return IngestResponse(document_id=document_id, pages=len(pages), chunks=len(chunks))
+    return IngestResponse(document_id=document_id, pages=page_count, chunks=len(chunks))
 
 
 @app.post("/query", response_model=QueryResponse, dependencies=[Depends(require_internal_key)])

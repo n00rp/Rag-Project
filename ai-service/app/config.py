@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     ollama_base_url: str = "http://localhost:11434"
     llm_timeout_seconds: float = 120.0
 
+    # Drop running headers/footers before chunking. Switchable so phase 3 can measure its effect.
+    strip_page_boilerplate: bool = True
     chunk_size: int = 900
     chunk_overlap: int = 150
     top_k: int = 5
