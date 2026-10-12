@@ -59,7 +59,8 @@ public static class DocumentEndpoints
         {
             var doc = await FindOwned(db, user, id, ct);
             if (doc is null) return TypedResults.NotFound();
-            return TypedResults.File(storage.OpenRead(doc.Id), "application/pdf", doc.FileName, enableRangeProcessing: true);
+            // No download name => served inline, so the frontend can show it in an embedded viewer.
+            return TypedResults.File(storage.OpenRead(doc.Id), "application/pdf", enableRangeProcessing: true);
         });
 
         group.MapDelete("/{id:guid}", async Task<Results<NoContent, NotFound>> (
