@@ -54,6 +54,13 @@ services:
       ai-service:
         condition: service_started
 
+  frontend:
+    build: ./frontend
+    ports:
+      - "127.0.0.1:3000:80"
+    depends_on:
+      - api
+
 volumes:
   pgdata:
   hfcache:

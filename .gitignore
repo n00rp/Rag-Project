@@ -49,3 +49,6 @@ Thumbs.db
 
 # Uploaded files created by running the API from its project folder
 uploads/
+
+# Lokal Claude-/preview-konfiguration
+.claude/
