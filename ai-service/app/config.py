@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     chunk_size: int = 900
     chunk_overlap: int = 150
     top_k: int = 5
-    # Cosine floor for retrieved chunks, tuned for multilingual-e5-small on the eval set (eval/README.md):
+    # Cosine floor for the best retrieved chunk (below it: refuse), tuned for multilingual-e5-small on the eval set (eval/README.md):
     # 0.83 refuses all unanswerable questions without costing correctness, 0.85 already loses answers.
     # The scores are model-specific; re-tune when the embedding model changes. 0 disables the refusal.
     min_score: float = 0.83

@@ -130,3 +130,18 @@ def test_min_score_refuses_when_nothing_is_similar_enough(client, owner):
 
     assert body["answer"] == NO_SUPPORT_ANSWER
     assert body["grounded"] is False and body["sources"] == []
+
+
+def test_min_score_looks_at_the_best_hit_only(monkeypatch):
+    from app import rag
+    from app.config import Settings
+    from app.db import Hit
+    from app.embeddings import FakeEmbedder
+    from app.llm import FakeLlm
+
+    hits = [Hit(uuid.uuid4(), 3, 0, "bäst", 0.90), Hit(uuid.uuid4(), 36, 1, "nästbäst", 0.70)]
+    monkeypatch.setattr(rag.db, "search", lambda *a, **k: hits)
+    answer = rag.answer_question(pool=None, embedder=FakeEmbedder(), llm=FakeLlm(), settings=Settings(min_score=0.8),
+                                 owner_id="o", question="fråga")
+
+    assert answer.grounded and [h.page for h in answer.sources] == [3, 36]

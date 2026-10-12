@@ -48,8 +48,9 @@ def answer_question(
     hits = db.search(
         pool, owner_id, embedder.embed_query(question), top_k or settings.top_k, document_ids
     )
-    hits = [h for h in hits if h.score >= settings.min_score]
-    if not hits:
+    # Refuse on the best hit only. Filtering every hit drops relevant context: the right chunk often
+    # scores just below the top one (e5 scores are compressed), see eval/README.md.
+    if not hits or hits[0].score < settings.min_score:
         return Answer(NO_SUPPORT_ANSWER, grounded=False, sources=[])
 
     text = llm.generate(SYSTEM_PROMPT, build_user_prompt(question, hits))

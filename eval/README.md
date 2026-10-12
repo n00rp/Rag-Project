@@ -48,10 +48,15 @@ Samma 44 + 16 frågor, top-5 chunks, `temperature 0,1`, rensning + dokumentrubri
 - **Domaren** är samma modell som qwen3:14b och gillar sina egna svar; "förankring" blev 100 % för alla tre, vilket är för snällt för att vara en slutsats. Jag har läst igenom de felaktiga och nekade svaren, men inte kontrollerat de godkända för hand.
 
 ### Tröskeln `min_score` (gemma3:12b)
-| min_score | Korrekt | Felaktigt nekade | Nekar obesvarbara |
-|---|---|---|---|
-| 0 (av) | 93% | 5% | 94% |
-| 0.83 | 93% | 7% | 100% |
-| 0.85 | 89% | 11% | 100% |
+Tröskeln avgör bara om vi alls svarar (bästa träffens poäng); alla top-5-träffar används sedan som sammanhang.
 
-0,83 behåller korrektheten och nekar alla obesvarbara frågor; 0,85 kostar redan svar. Poängen gäller e5-small med dokumentrubrik och måste ställas om om embeddingmodellen byts.
+| min_score | Korrekt | Felaktigt nekade | Citat rätt | Nekar obesvarbara |
+|---|---|---|---|---|
+| 0 | 93% | 5% | 95% | 94% |
+| 0.83 | 93% | 5% | 95% | 100% |
+| 0.84 | 93% | 7% | 93% | 100% |
+| 0.85 | 91% | 9% | 91% | 100% |
+
+0,83 behåller korrektheten och nekar alla obesvarbara frågor; 0,84 och 0,85 kostar redan svar. Poängen gäller e5-small med dokumentrubrik och måste ställas om om embeddingmodellen byts.
+
+**Lärdom:** första versionen filtrerade *varje* träff mot tröskeln. Då försvann rätt chunk för frågan om försvarsindustri (§ 317, sida 36 fick 0,8296 mot tröskeln 0,83 och föll bort, så LLM:en såg bara jävsanmälan på sida 3). e5-poängen är hoptryckta (top-10 ligger inom ca 0,03), så en tröskel får aldrig användas för att välja ut sammanhang, bara för att avgöra om svar ska ges. Rättat i `rag.py`, med test.
