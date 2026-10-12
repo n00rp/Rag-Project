@@ -57,6 +57,18 @@ Starta sedan databasen: `wsl -d Ubuntu -- bash -c "cd /mnt/c/<sökväg-till-repo
 
 **GPU på stationären (valfritt, senare):** Ollama kan köras direkt i Windows (enklast). Vill du containerisera den behövs NVIDIA Container Toolkit i WSL2 och en aktuell Windows-drivrutin med WSL-stöd.
 
+## Docker (WSL2) → Ollama på Windows (verifierat)
+`host.docker.internal` och `localhost` når inte Windows från en container i WSL2 (NAT-läge). Det som fungerar:
+1. Windows-värden syns från WSL på gatewayen: `wsl -d Ubuntu -- ip route show default` (här `172.18.208.1`, adaptern `vEthernet (WSL ...)`).
+2. Låt Ollama lyssna **bara** på den adressen, inte `0.0.0.0` (PowerShell, starta sedan om Ollama):
+   ```powershell
+   [Environment]::SetEnvironmentVariable('OLLAMA_HOST','172.18.208.1:11434','User')
+   ```
+3. `.env`: `OLLAMA_BASE_URL=http://172.18.208.1:11434`.
+Adressen kan ändras efter en omstart av WSL/Windows; kontrollera då steg 1 igen. Körs ai-service direkt på Windows (utan Docker) behöver `.env` i stället `http://172.18.208.1:11434` om `OLLAMA_HOST` är satt enligt ovan, annars `http://localhost:11434`.
+
+**Fallgropar på stationären:** en apt-installerad Postgres i Ubuntu (`postgresql@16`) upptar port 5432 och måste stoppas (`sudo systemctl disable --now postgresql`). Python kan få SSL-fel mot goteborg.se; verifieringen ska inte stängas av.
+
 ## Laptop → GPU på stationären
 Laptopen har ingen GPU. Låt den prata med Ollama på stationären:
 1. Installera [Tailscale](https://tailscale.com) (gratis) på båda datorerna och logga in med samma konto.
