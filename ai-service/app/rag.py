@@ -8,6 +8,7 @@ from app.config import Settings
 from app.db import Hit
 from app.embeddings import Embedder
 from app.llm import LlmClient
+from app.text import normalize_text
 
 NO_SUPPORT_ANSWER = "Jag hittar inget stöd för det i dokumenten."
 
@@ -43,6 +44,7 @@ def answer_question(
     document_ids: list[UUID] | None = None,
     top_k: int | None = None,
 ) -> Answer:
+    question = normalize_text(question)
     hits = db.search(
         pool, owner_id, embedder.embed_query(question), top_k or settings.top_k, document_ids
     )

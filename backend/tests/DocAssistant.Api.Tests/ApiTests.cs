@@ -182,6 +182,32 @@ public sealed class ApiTests : IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task Swedish_characters_survive_upload_chat_and_history()
+    {
+        const string fileName = "Östra Ängby – protokoll åk 1–6.pdf";
+        const string question = "Vad beslutades om skolskjuts i Östra Ängby för åk 1–6? ÅÄÖ åäö";
+        var uploaded = await UploadAsync(fileName);
+        uploaded.FileName.Should().Be(fileName);
+        await WaitForStatusAsync(uploaded.Id, DocumentStatus.Ready);
+        _factory.Ai.OnQuery = (_, _) => new QueryResult(
+            "Nämnden beslutade om skolskjuts [1].", Grounded: true,
+            [new AiSource(uploaded.Id, 1, 0, "Överenskommelsen gäller älvdalen.", 0.9)]);
+
+        var response = await _client.PostAsJsonAsync("/api/chat", new ChatRequest(question, null));
+        var answer = (await response.Content.ReadFromJsonAsync<ChatAnswerDto>(Json))!;
+
+        answer.Question.Should().Be(question);
+        answer.Answer.Should().Be("Nämnden beslutade om skolskjuts [1].");
+        answer.Sources.Single().FileName.Should().Be(fileName);
+        answer.Sources.Single().Snippet.Should().Be("Överenskommelsen gäller älvdalen.");
+
+        var history = await _client.GetFromJsonAsync<List<ChatAnswerDto>>("/api/chat/history", Json);
+        var stored = history!.Single(m => m.Id == answer.Id);
+        stored.Question.Should().Be(question);
+        stored.Sources.Single().Snippet.Should().Be("Överenskommelsen gäller älvdalen.");
+    }
+
+    [Fact]
     public async Task Chat_returns_503_problem_when_the_llm_is_offline()
     {
         _factory.Ai.Failure = new AiServiceUnavailableException("gpu offline");

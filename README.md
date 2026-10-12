@@ -13,6 +13,7 @@ Ladda upp kommunala protokoll och beslutsunderlag (PDF) och ställ frågor på s
 - Ljust/mörkt läge, responsivt ner till mobil, tillgänglighetsanpassat (tangentbord, aria, reducerad rörelse).
 - Tydligt offline-läge när AI-modellen inte är tillgänglig (dokumenten går fortfarande att bläddra bland).
 - Dataisolering per ägare i varje vektorfråga (bevisas av automatiskt test).
+- **Svenska tecken (Å, Ä, Ö) hanteras hela vägen.** All extraherad text och alla frågor normaliseras (Unicode NFKC): sönderdelade tecken (a + ¨, vanligt från macOS/Word) sätts ihop och typografiska ligaturer (ﬁ, ﬂ) skrivs ut, annars missar sökningen t.ex. "finansiering". NUL-tecken tas bort så att Postgres inte avvisar texten. Filnamn med åäö skickas RFC 5987-kodade mellan tjänsterna.
 
 ## Arkitektur
 
@@ -71,7 +72,7 @@ Frontend-dev-servern proxar `/api` till .NET-API:et, så allt är same-origin.
 
 | Del | Kommando | Vad som testas |
 |---|---|---|
-| `ai-service` | `pytest` | Chunking (sidnummer bevaras, ingen text tappas), PDF-parsning, hela API-flödet mot riktig Postgres, **dataisolering mellan ägare**, omindexering, radering |
+| `ai-service` | `pytest` | Chunking (sidnummer bevaras, ingen text tappas), PDF-parsning, hela API-flödet mot riktig Postgres, **dataisolering mellan ägare**, omindexering, radering, **svenska tecken** (PDF med inbäddat typsnitt, sönderdelade accenter, ligaturer, versaler/gemener, filnamn) |
 | `backend` | `dotnet test` | Hela API:et via `WebApplicationFactory` mot en egen engångsdatabas i Postgres: uppladdning och bakgrundsbearbetning, validering (innehåll, storlek), AI-fel → rätt statuskod, retry, radering, chatt och historik |
 | `frontend` | `npm test` | API-felhantering (ProblemDetails, nätverksfel), källhänvisningar i svar, uppladdningsvalidering, formatering |
 

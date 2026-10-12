@@ -4,6 +4,8 @@ from io import BytesIO
 from pypdf import PdfReader
 from pypdf.errors import PdfReadError
 
+from app.text import normalize_text
+
 MIN_CHARS_PER_DOCUMENT = 50
 
 
@@ -25,7 +27,7 @@ def extract_pages(data: bytes) -> list[PageText]:
     try:
         reader = PdfReader(BytesIO(data))
         pages = [
-            PageText(page=i, text=(p.extract_text() or "").strip())
+            PageText(page=i, text=normalize_text(p.extract_text() or "").strip())
             for i, p in enumerate(reader.pages, start=1)
         ]
     except (PdfReadError, ValueError, KeyError) as exc:
