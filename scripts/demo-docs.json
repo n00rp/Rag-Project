@@ -1,0 +1,36 @@
+{
+  "source": "Göteborgs Stad, dokumentportalen för nämndhandlingar (offentliga handlingar)",
+  "portal": "https://www4.goteborg.se/prod/intraservice/namndhandlingar/samrumportal.nsf",
+  "documents": [
+    {
+      "file": "KF_protokoll_20251127.pdf",
+      "title": "Kommunfullmäktige, protokoll 2025-11-27",
+      "url": "https://www4.goteborg.se/prod/Intraservice/Namndhandlingar/SamrumPortal.nsf/8C13522357DFF44AC1258D5D0040EB18/$File/KF_protokoll_20251127.pdf"
+    },
+    {
+      "file": "KF_protokoll_20240321.pdf",
+      "title": "Kommunfullmäktige, protokoll 2024-03-21",
+      "url": "https://www4.goteborg.se/prod/intraservice/namndhandlingar/samrumportal.nsf/AC215141C27B976FC1258AF50046C89B/$File/KF_protokoll_20240321.pdf"
+    },
+    {
+      "file": "KS_protokoll_20251126.pdf",
+      "title": "Kommunstyrelsen, protokoll 2025-11-26",
+      "url": "https://www4.goteborg.se/prod/intraservice/namndhandlingar/samrumportal.nsf/BE1DF8FDDAE31996C1258D5B004362E2/$File/Protokoll_20251126.pdf"
+    },
+    {
+      "file": "KS_protokoll_20250611.pdf",
+      "title": "Kommunstyrelsen, protokoll 2025-06-11",
+      "url": "https://www4.goteborg.se/prod/intraservice/namndhandlingar/samrumportal.nsf/ABFCDFBB283DEB5EC1258CAD0032317A/$File/Protokoll_20250611.pdf"
+    },
+    {
+      "file": "KS_protokoll_20250409.pdf",
+      "title": "Kommunstyrelsen, protokoll 2025-04-09",
+      "url": "https://www4.goteborg.se/prod/intraservice/namndhandlingar/samrumportal.nsf/33B2B3405BB5FFACC1258C7B00385C58/$File/Protokoll_20250409.pdf"
+    },
+    {
+      "file": "KS_protokoll_20241127.pdf",
+      "title": "Kommunstyrelsen, protokoll 2024-11-27",
+      "url": "https://www4.goteborg.se/prod/Intraservice/Namndhandlingar/SamrumPortal.nsf/2A85F3E751B6800AC1258BF600511016/$File/Protokoll_20241127.pdf"
+    }
+  ]
+}

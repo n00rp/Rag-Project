@@ -102,6 +102,7 @@ Det här är det som får projektet att sticka ut.
   - Retrieval: träffar rätt sida/chunk i top-k (recall@k, MRR).
   - Svarskvalitet: korrekthet och förankring i källorna (LLM-som-domare, stickprovskontrollerad manuellt).
   - Latens per fråga och GPU-/minnesåtgång (kostnad är 0 kr, men resursåtgången redovisas).
+- **Experiment redan förberett:** rensning av upprepade sidhuvuden (`STRIP_PAGE_BOILERPLATE` av/på) på Göteborgs-protokollen. Se README, "Vad riktiga protokoll lärde oss".
 - **Minst tre experiment** med tabell och slutsats i README, t.ex. chunkstorlek, överlapp, embeddingmodell, hybridsökning (nyckelord + vektor) och omrankning.
 - Svaret ska nekas när stödet är för svagt ("Jag hittar inget stöd i dokumenten"), och detta mäts i evalet med frågor som saknar svar.
 - Utvärderingen körs i CI på ett litet urval så regressioner syns.

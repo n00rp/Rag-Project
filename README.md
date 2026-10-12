@@ -68,6 +68,25 @@ cd frontend && npm install && npm run dev                 # http://localhost:517
 ```
 Frontend-dev-servern proxar `/api` till .NET-API:et, så allt är same-origin.
 
+## Demodokument (Göteborgs Stad)
+
+Demosamlingen är sex protokoll från Göteborgs Stad (kommunfullmäktige och kommunstyrelsen, 2024–2025, totalt ca 400 sidor), hämtade från stadens [dokumentportal för nämndhandlingar](https://www4.goteborg.se/prod/intraservice/namndhandlingar/samrumportal.nsf). Det är offentliga handlingar. PDF:erna checkas **inte** in i repot; de hämtas av ett skript så att alla datorer får samma samling.
+
+```bash
+python scripts/demo_docs.py fetch                  # laddar ner till data/goteborg/ (hoppar över det som finns)
+python scripts/demo_docs.py seed                   # laddar upp till det körande API:et (http://localhost:5174)
+python scripts/demo_docs.py seed --api http://localhost:8080   # när allt körs med docker compose
+```
+
+Listan med källor finns i [scripts/demo-docs.json](scripts/demo-docs.json). Innan en publik demo bör samlingen gås igenom för personuppgifter och villkor för återanvändning.
+
+### Vad riktiga protokoll lärde oss
+Syntetiska testdokument hittade inte följande, riktiga protokoll gjorde det:
+- **Sidhuvuden upprepas på varje sida** ("Protokoll nr 8 / Sammanträdesdatum / Göteborgs Stad kommunstyrelsen protokoll 3 (56)"). I varje chunk späder de ut innehållet och ger falska träffar på ord som "Protokoll". De tas nu bort före chunkning (13–15 % av texten); sidnumret finns kvar som metadata. Första versionen ignorerade alla siffror och tog då även bort rader som `§ 289 Ärendenummer SLK-2025-00035`, vilket är exakt det folk söker på. Nu maskas bara sidans *eget* nummer, och alla §-rubriker och ärendenummer i de sex dokumenten är verifierat bevarade (se `ai-service/tests/test_boilerplate.py`).
+- Texten extraheras rent: åäö, inga ligaturer eller trasiga tecken i någon av de sex PDF:erna.
+- Stora dokument är inget problem: 397 sidor och 649 chunks indexerades på 15 sekunder (med falska embeddings).
+- Effekten av rensningen på svarskvaliteten mäts i fas 3 (`STRIP_PAGE_BOILERPLATE` av/på).
+
 ## Tester
 
 | Del | Kommando | Vad som testas |
@@ -98,7 +117,8 @@ Fel returneras som RFC 7807 ProblemDetails. `503` med `code: "ai_unavailable"` b
 - Skannade PDF:er (utan textlager) stöds inte; användaren får ett tydligt felmeddelande. OCR är en möjlig förbättring.
 - Svarskvaliteten är inte mätt än och tröskeln för "inget stöd" är avstängd. Det är fas 3 (utvärdering med frågeset, retrieval-mått och jämförelse av chunking/modeller).
 - Svaren strömmas inte än; gränssnittet visar en laddningsindikator.
-- Den riktiga embeddingmodellen och Ollama är ännu inte körda i full stack; fas 1 är verifierad med falska backends.
+- Den riktiga embeddingmodellen och Ollama är ännu inte körda i full stack; fas 1 är verifierad med falska backends. De falska embeddingarna (ordräkning) hittar inte rätt avsnitt i de riktiga protokollen, vilket är väntat; sökkvaliteten kan bara bedömas med den riktiga modellen.
+- Tabeller och spaltlayout i PDF:er extraheras som löpande text och kan bli svårlästa.
 
 ## Projektstruktur
 ```
