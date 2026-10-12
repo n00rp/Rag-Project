@@ -47,6 +47,12 @@ Gratis, utan licensvillkor, och `docker compose up` fungerar likadant. Gör dett
    ```
 6. **Portar:** containrar som publicerar en port (t.ex. `5432`) nås från Windows på `localhost:5432`.
 
+**WSL stänger av sig själv när ingen terminal är öppen** och tar då med sig containrarna. Håll den vaken medan du utvecklar (PowerShell):
+```powershell
+Start-Process -WindowStyle Hidden wsl -ArgumentList '-d','Ubuntu','--','sleep','infinity'
+```
+Starta sedan databasen: `wsl -d Ubuntu -- bash -c "cd /mnt/c/<sökväg-till-repot> && docker compose up -d db"`. Du kan också bara ha en Ubuntu-terminal öppen.
+
 **Var ska repot ligga?** Det fungerar att köra från `/mnt/c/Programering/ProjectFolder`, men filåtkomst över `/mnt/c` är långsam. Om det blir segt (särskilt `node_modules` och byggen), klona en kopia i WSL:s eget filsystem (`~/projects/Rag-Project`) och arbeta därifrån.
 
 **GPU på stationären (valfritt, senare):** Ollama kan köras direkt i Windows (enklast). Vill du containerisera den behövs NVIDIA Container Toolkit i WSL2 och en aktuell Windows-drivrutin med WSL-stöd.

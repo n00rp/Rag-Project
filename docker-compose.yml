@@ -1,0 +1,40 @@
+name: rag-project
+
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  ai-service:
+    build: ./ai-service
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      EMBEDDING_BACKEND: ${EMBEDDING_BACKEND:-sentence-transformers}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-intfloat/multilingual-e5-small}
+      LLM_BACKEND: ${LLM_BACKEND:-fake}
+      LLM_MODEL: ${LLM_MODEL:-}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://localhost:11434}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:-}
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - hfcache:/root/.cache/huggingface
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  hfcache:
