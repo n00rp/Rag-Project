@@ -1,6 +1,5 @@
 import logging
 from contextlib import asynccontextmanager
-from dataclasses import replace
 from uuid import UUID
 
 from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, UploadFile
@@ -8,7 +7,7 @@ from pydantic import BaseModel, Field
 
 from app import db
 from app.boilerplate import strip_repeated_lines
-from app.chunking import chunk_pages, document_header
+from app.chunking import add_header, chunk_pages, document_header, strip_header
 from app.config import Settings, get_settings
 from app.embeddings import build_embedder
 from app.llm import LlmUnavailableError, build_llm
@@ -95,9 +94,7 @@ def ingest(
     header = document_header(pages) if settings.doc_header else ""
     if settings.strip_page_boilerplate:
         pages = strip_repeated_lines(pages)
-    chunks = chunk_pages(pages, settings.chunk_size, settings.chunk_overlap)
-    if header:
-        chunks = [replace(c, text=f"{header}. {c.text}") for c in chunks]
+    chunks = add_header(chunk_pages(pages, settings.chunk_size, settings.chunk_overlap), header)
     embeddings = app.state.embedder.embed_passages([c.text for c in chunks])
     db.replace_document_chunks(app.state.pool, owner_id, document_id, chunks, embeddings)
     return IngestResponse(document_id=document_id, pages=page_count, chunks=len(chunks))
@@ -128,7 +125,7 @@ def query(req: QueryRequest, settings: Settings = Depends(get_settings)) -> Quer
                 document_id=h.document_id,
                 page=h.page,
                 chunk_index=h.chunk_index,
-                snippet=h.content,
+                snippet=strip_header(h.content),
                 score=round(h.score, 4),
             )
             for h in result.sources

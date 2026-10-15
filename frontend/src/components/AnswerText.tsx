@@ -22,7 +22,7 @@ export function AnswerText({ text, sources, onOpen }: Props) {
           <button
             key={i}
             type="button"
-            onClick={() => onOpen({ documentId: source.documentId, fileName: source.fileName, page: source.page })}
+            onClick={() => onOpen({ documentId: source.documentId, fileName: source.fileName, page: source.page, snippet: source.snippet })}
             title={`${source.fileName}, sida ${source.page}`}
             aria-label={`Källa ${match[1]}: ${source.fileName}, sida ${source.page}`}
             className="mx-0.5 inline-flex size-5 -translate-y-px items-center justify-center rounded-md bg-accent-soft align-middle text-xs font-semibold text-accent hover:bg-accent hover:text-accent-fg"

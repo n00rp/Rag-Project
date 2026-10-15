@@ -11,7 +11,7 @@ export function SourceCard({ index, source, onOpen }: Props) {
   return (
     <button
       type="button"
-      onClick={() => onOpen({ documentId: source.documentId, fileName: source.fileName, page: source.page })}
+      onClick={() => onOpen({ documentId: source.documentId, fileName: source.fileName, page: source.page, snippet: source.snippet })}
       className="group flex w-full gap-3 rounded-xl border border-line bg-surface p-3 text-left transition-colors hover:border-accent/60"
     >
       <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-accent-soft text-xs font-semibold text-accent">

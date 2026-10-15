@@ -108,13 +108,15 @@ def test_scanned_pdf_is_422_with_clear_message(client, owner):
     assert "skannad" in r.json()["detail"]
 
 
-def test_every_chunk_carries_the_document_header_from_page_one(client, owner):
+def test_the_document_header_is_given_to_the_model_but_not_shown_as_the_excerpt(client, owner):
     ingest(client, owner, ["Protokoll 2025-04-09 Kommunstyrelsen", SCHOOL])
 
-    top = client.post("/query", json={"owner_id": owner, "question": "skolskjuts Björkby"}).json()["sources"][0]
+    body = client.post("/query", json={"owner_id": owner, "question": "skolskjuts Björkby"}).json()
 
+    top = body["sources"][0]
     assert top["page"] == 2
-    assert top["snippet"].startswith("Protokoll 2025-04-09 Kommunstyrelsen. ")
+    assert top["snippet"].startswith("Barn- och utbildningsnämnden")  # exactly what is on the page
+    assert "Protokoll 2025-04-09 Kommunstyrelsen" in body["answer"]  # the fake LLM echoes its context
 
 
 def test_min_score_refuses_when_nothing_is_similar_enough(client, owner):

@@ -38,4 +38,6 @@ export interface ViewerTarget {
   documentId: string
   fileName: string
   page: number
+  /** The cited excerpt; the viewer highlights it on the page when it can be located. */
+  snippet?: string
 }

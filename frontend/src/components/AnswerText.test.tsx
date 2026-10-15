@@ -16,7 +16,7 @@ describe('AnswerText', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /Källa 2: protokoll-b.pdf, sida 9/ }))
 
-    expect(onOpen).toHaveBeenCalledWith({ documentId: 'doc-b', fileName: 'protokoll-b.pdf', page: 9 })
+    expect(onOpen).toHaveBeenCalledWith({ documentId: 'doc-b', fileName: 'protokoll-b.pdf', page: 9, snippet: 'b' })
   })
 
   it('renders Swedish characters intact next to citations', () => {

@@ -1,5 +1,5 @@
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from app.pdf import PageText
 
@@ -42,6 +42,22 @@ def document_header(pages: list[PageText], max_lines: int = 3, max_chars: int = 
     """
     lines = [ln.strip() for ln in pages[0].text.splitlines() if ln.strip()] if pages else []
     return " ".join(lines[:max_lines])[:max_chars]
+
+
+# Chunk text never contains a line break (units are joined with spaces), so one separates the header.
+HEADER_SEP = "\n"
+
+
+def add_header(chunks: list[Chunk], header: str) -> list[Chunk]:
+    """Prefix every chunk with the document header; it is searched and shown to the model, not to the user."""
+    if not header:
+        return chunks
+    return [replace(c, text=f"{header}{HEADER_SEP}{c.text}") for c in chunks]
+
+
+def strip_header(content: str) -> str:
+    """The chunk text as it appears on the page, without the document header."""
+    return content.split(HEADER_SEP, 1)[1] if HEADER_SEP in content else content
 
 
 def chunk_pages(pages: list[PageText], size: int = 900, overlap: int = 150) -> list[Chunk]:

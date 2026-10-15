@@ -1,6 +1,6 @@
 import pytest
 
-from app.chunking import chunk_pages, document_header
+from app.chunking import add_header, chunk_pages, document_header, strip_header
 from app.pdf import PageText
 
 
@@ -45,3 +45,12 @@ def test_document_header_uses_first_lines_of_first_page_only():
     assert document_header(pages) == "Protokoll nr 8 Sammanträdesdatum: 2025-04-09 Kommunstyrelsen"
     assert document_header([]) == ""
     assert len(document_header([PageText(1, "x" * 500)])) == 200
+
+
+def test_header_is_added_to_every_chunk_and_can_be_stripped_again():
+    chunks = chunk_pages([PageText(1, "Första."), PageText(2, "Andra.")], size=500, overlap=50)
+    with_header = add_header(chunks, "Protokoll 2025-04-09")
+    assert [c.text for c in with_header] == ["Protokoll 2025-04-09\nFörsta.", "Protokoll 2025-04-09\nAndra."]
+    assert [strip_header(c.text) for c in with_header] == ["Första.", "Andra."]
+    assert add_header(chunks, "") == chunks
+    assert strip_header("text utan rubrik") == "text utan rubrik"

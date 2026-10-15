@@ -16,7 +16,6 @@ import json
 import re
 import sys
 import uuid
-from dataclasses import replace
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -24,7 +23,7 @@ sys.path.insert(0, str(ROOT / "ai-service"))
 
 from app import db  # noqa: E402
 from app.boilerplate import strip_repeated_lines  # noqa: E402
-from app.chunking import chunk_pages, document_header  # noqa: E402
+from app.chunking import add_header, chunk_pages, document_header  # noqa: E402
 from app.config import get_settings  # noqa: E402
 from app.embeddings import build_embedder  # noqa: E402
 from app.pdf import extract_pages  # noqa: E402
@@ -56,8 +55,7 @@ def index(pool, embedder, corpus, owner, strip, size, overlap, header=False) -> 
         used = strip_repeated_lines(pages) if strip else pages
         chunks = chunk_pages(used, size, overlap)
         if header:
-            prefix = document_header(pages)
-            chunks = [replace(c, text=f"{prefix}. {c.text}") for c in chunks]
+            chunks = add_header(chunks, document_header(pages))
         db.replace_document_chunks(pool, owner, ids[name], chunks, embedder.embed_passages([c.text for c in chunks]))
     return ids
 

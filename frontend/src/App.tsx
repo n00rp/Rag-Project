@@ -1,14 +1,16 @@
-import { useCallback, useState } from 'react'
+import { lazy, Suspense, useCallback, useState } from 'react'
 import { FolderOpen, Moon, Sun, WifiOff } from 'lucide-react'
 import { clsx } from 'clsx'
 import { ChatView } from './components/ChatView'
 import { DocumentPanel } from './components/DocumentPanel'
 import { APP_NAME, Logo } from './components/Logo'
-import { PdfViewer } from './components/PdfViewer'
 import { Sheet } from './components/ui/Sheet'
 import { useHealth } from './hooks/queries'
 import { useTheme } from './lib/theme'
 import type { ViewerTarget } from './lib/types'
+
+// pdf.js is large and only needed once a source is opened.
+const PdfViewer = lazy(() => import('./components/PdfViewer').then((m) => ({ default: m.PdfViewer })))
 
 function HealthPill() {
   const { data, isError } = useHealth()
@@ -93,7 +95,9 @@ export default function App() {
           }}
         />
       </Sheet>
-      <PdfViewer target={viewer} onClose={closeViewer} />
+      <Suspense fallback={null}>
+        <PdfViewer target={viewer} onClose={closeViewer} />
+      </Suspense>
     </div>
   )
 }
