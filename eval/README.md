@@ -60,3 +60,15 @@ Tröskeln avgör bara om vi alls svarar (bästa träffens poäng); alla top-5-tr
 0,83 behåller korrektheten och nekar alla obesvarbara frågor; 0,84 och 0,85 kostar redan svar. Poängen gäller e5-small med dokumentrubrik och måste ställas om om embeddingmodellen byts.
 
 **Lärdom:** första versionen filtrerade *varje* träff mot tröskeln. Då försvann rätt chunk för frågan om försvarsindustri (§ 317, sida 36 fick 0,8296 mot tröskeln 0,83 och föll bort, så LLM:en såg bara jävsanmälan på sida 3). e5-poängen är hoptryckta (top-10 ligger inom ca 0,03), så en tröskel får aldrig användas för att välja ut sammanhang, bara för att avgöra om svar ska ges. Rättat i `rag.py`, med test.
+
+### Försök: mjukare nekande när ämnet finns men det efterfrågade saknas (förkastat)
+Fråga q45 ("Hur stor var den kompletterande budgeten i maj 2025?") nekas, fast § 558 hittas som träff 1 (0,854, över tröskeln). Protokollet anger ingen totalsumma, bara delbelopp, så nekandet är sakligt försvarbart men "inget stöd" är missvisande. Jag testade att komplettera systemprompten med "om utdragen handlar om ämnet men inte innehåller det som efterfrågas, säg det och redovisa vad de i stället säger" (gemma3:12b, `min_score` 0,83, 45 + 16 frågor, rådata i `results/prompt-v1.json` och `prompt-v2.json`).
+
+| Prompt | Korrekt (besvarbara) | Nekar obesvarbara | Citat rätt |
+|---|---|---|---|
+| nuvarande | 91 % | 100 % | 93 % |
+| mjukare nekande | 87 % | 100 % | 91 % |
+
+- **Löste inte q45:** modellen svarade fortfarande "Jag hittar inget stöd för det i dokumenten" och la bara till en förklaring efter meningen ("anger inte storleken på ... budgeten"), utan delbeloppen. Eftersom svaret innehåller nekandemeningen räknas det som ett nekande och källorna tas bort.
+- **Två frågor försämrades** (q39, q40): svaren tappade `[1]`-hänvisningarna och domaren underkände dem. Med 45 frågor är två frågor inom bruset, men det finns ingen förbättring att vinna tillbaka dem med.
+- **Beslut:** prompten ändras inte. En riktig åtgärd kräver troligen att nekandet inte avgörs av en sträng i svaret (t.ex. ett separat steg eller strukturerat svar), vilket inte är byggt.
