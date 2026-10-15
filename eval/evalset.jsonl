@@ -43,6 +43,12 @@
 {"id": "q43", "type": "ämne", "question": "Vad beslutades om Göteborgs Stads delårsrapport per augusti 2025?", "answerable": true, "expected": [["KF_protokoll_20251127.pdf", 490]], "answer": null}
 {"id": "q44", "type": "ämne", "question": "Vad gäller modellen för miljödifferentierad båtplatsavgift i småbåtshamnarna?", "answerable": true, "expected": [["KF_protokoll_20251127.pdf", 506]], "answer": null}
 {"id": "q45", "type": "saknad-totalsumma", "question": "Hur stor var den kompletterande budgeten i maj 2025?", "answerable": true, "expected": [["KS_protokoll_20250611.pdf", 558]], "answer": "Protokollet anger ingen totalsumma. Det fördelar bland annat 36 mnkr i statliga schablonmedel på nämnderna och överför 24 och 28 mnkr mellan investeringsområden. Ett svar som säger att totalsumma saknas och redovisar delbeloppen är korrekt; ett svar som bara nekar utan att nämna delbeloppen är inte det."}
+{"id": "q46", "type": "identifierare", "question": "Vad gäller ärende SLK-2025-00392?", "answerable": true, "expected": [["KS_protokoll_20250409.pdf", 317]], "answer": null}
+{"id": "q47", "type": "identifierare", "question": "Vad beslutades i § 558 vid kommunstyrelsens sammanträde 2025-06-11?", "answerable": true, "expected": [["KS_protokoll_20250611.pdf", 558]], "answer": null}
+{"id": "q48", "type": "identifierare", "question": "Vad står i ärende SLK-2025-00309?", "answerable": true, "expected": [["KS_protokoll_20250611.pdf", 558]], "answer": null}
+{"id": "q49", "type": "identifierare", "question": "Vad behandlades under § 1003 i kommunstyrelsen 2024-11-27?", "answerable": true, "expected": [["KS_protokoll_20241127.pdf", 1003]], "answer": null}
+{"id": "q50", "type": "identifierare", "question": "Vad står i ärende SLK-2025-00479?", "answerable": true, "expected": [["KS_protokoll_20250409.pdf", 336], ["KS_protokoll_20250611.pdf", 532]], "answer": null}
+{"id": "q51", "type": "identifierare", "question": "Vad gäller ärendenummer SLK-2024-00026?", "answerable": true, "expected": [["KS_protokoll_20241127.pdf", 1017]], "answer": null}
 {"id": "n01", "type": "saknas", "question": "Vad kostar ett månadskort för pensionärer i Stockholm?", "answerable": false, "absent_terms": ["månadskort"]}
 {"id": "n02", "type": "saknas", "question": "Vem vann fotbolls-SM för herrar 2025?", "answerable": false, "absent_terms": ["fotbolls-SM", "allsvenskan"]}
 {"id": "n03", "type": "saknas", "question": "Vilket recept på köttbullar rekommenderar kommunen?", "answerable": false, "absent_terms": ["köttbullar"]}

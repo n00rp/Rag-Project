@@ -72,3 +72,30 @@ Fråga q45 ("Hur stor var den kompletterande budgeten i maj 2025?") nekas, fast 
 - **Löste inte q45:** modellen svarade fortfarande "Jag hittar inget stöd för det i dokumenten" och la bara till en förklaring efter meningen ("anger inte storleken på ... budgeten"), utan delbeloppen. Eftersom svaret innehåller nekandemeningen räknas det som ett nekande och källorna tas bort.
 - **Två frågor försämrades** (q39, q40): svaren tappade `[1]`-hänvisningarna och domaren underkände dem. Med 45 frågor är två frågor inom bruset, men det finns ingen förbättring att vinna tillbaka dem med.
 - **Beslut:** prompten ändras inte. En riktig åtgärd kräver troligen att nekandet inte avgörs av en sträng i svaret (t.ex. ett separat steg eller strukturerat svar), vilket inte är byggt.
+
+### Experiment 4: hybridsökning (nyckelord + vektor)
+```bash
+cd ai-service
+.venv/Scripts/python ../eval/retrieval.py --doc-header --hybrid --idf --max-df 0.01 --label hybrid-df1-51
+```
+Vektorsökningen kompletteras med Postgres fulltextsökning (`to_tsvector('swedish', …)`, frågans ord som OR-fråga) och de två rankningarna slås ihop med Reciprocal Rank Fusion (k = 60). `--idf --max-df X` använder bara ord som finns i högst X av chunkarna, så att vanliga ord inte dränker identifierare som ärendenummer. Chunkens poäng för `min_score` är fortfarande cosine.
+
+Evalsetet har utökats till 51 besvarbara frågor: 6 nya **identifierarfrågor** ("Vad gäller ärende SLK-2025-00392?", "Vad behandlades under § 1003?"), där embeddings är svaga och nyckelordssökning borde vinna. De skrevs innan jag körde hybriden, men n = 6 är för litet för säkra slutsatser.
+
+| Konfiguration | MRR alla (51) | R@1 | R@3 | MRR övriga (45) | MRR identifierare (6) | R@1 identifierare | Nej-svar AUC |
+|---|---|---|---|---|---|---|---|
+| Vektor (nuvarande) | 0.889 | 0.86 | 0.92 | 0.974 | 0.250 | 0.17 | 1.00 |
+| Hybrid, alla ord, vikt 1 | 0.717 | 0.67 | 0.71 | 0.806 | 0.052 | 0.00 | 1.00 |
+| Hybrid, ord i ≤ 5 % av chunks, vikt 1 | 0.885 | 0.84 | 0.92 | 0.940 | 0.472 | 0.33 | 1.00 |
+| Hybrid, ≤ 5 %, textvikt 0,25 | 0.887 | 0.84 | 0.92 | 0.950 | 0.417 | 0.33 | 1.00 |
+| Hybrid, ≤ 1 %, vikt 1 | 0.879 | 0.82 | 0.94 | 0.898 | 0.741 | 0.67 | 0.99 |
+| Hybrid, ≤ 1 %, textvikt 0,5 | 0.880 | 0.84 | 0.92 | 0.930 | 0.500 | 0.50 | 1.00 |
+| Hybrid, ≤ 2 %, textvikt 0,5 | 0.893 | 0.86 | 0.92 | 0.945 | 0.500 | 0.50 | 1.00 |
+| Router: ärendenummer/§ i frågan → hybrid ≤ 1 %, annars vektor (simulerad) | 0.947 | 0.92 | 0.98 | 0.974 | 0.741 | 0.67 | - |
+
+- **Ingen konfiguration slår vektorsökningen på de vanliga frågorna.** Utan filter på ordens vanlighet blir hybriden mycket sämre (MRR 0,974 → 0,806 på de 45 övriga), eftersom vanliga ord som "kommunstyrelsens" och "sammanträde" ger brus i textrankningen.
+- **På identifierarfrågor hjälper nyckelordssökningen tydligt:** MRR 0,25 → 0,74 och R@1 0,17 → 0,67 med bara ord i högst 1 % av chunkarna. Vektorsökningen hittar ofta inte ett ärendenummer alls (4 av 6 utanför topp 10).
+- **Priset:** på övriga frågor sjunker MRR från 0,974 till 0,90–0,95. Totalt över alla 51 är skillnaden liten (0,874–0,893 mot 0,889): ingen hybrid är bättre överlag.
+- **Felsökning:** en identifierare som finns i exakt en chunk hamnade först utanför topp 10, eftersom chunks som matchar flera måttligt vanliga ord ("ärende", "gäller") fick högre `ts_rank_cd` än chunken med det sällsynta ärendenumret. Därför fungerar strikt ordfilter bättre än vikter.
+- **Risk för överanpassning:** variationerna (filtergräns, vikt) valdes på samma frågor som de mäts på. Skillnader på någon tiondel MRR med n = 6 ska inte tas som säkra.
+- **Slutsats och beslut:** hybridsökning införs **inte** i tjänsten. En enkel router (om frågan innehåller ett ärendenummer eller "§ N" → hybrid, annars vektor) ger i simuleringen MRR 0,947 mot 0,889 för ren vektor på de 51 frågorna, men det är en simulering på en handvald delmängd. Den bör bara byggas om användarna faktiskt söker på ärendenummer, och mätas på fler identifierarfrågor först.

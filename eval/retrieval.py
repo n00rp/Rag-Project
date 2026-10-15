@@ -62,6 +62,54 @@ def index(pool, embedder, corpus, owner, strip, size, overlap, header=False) -> 
     return ids
 
 
+HYBRID_SQL = """
+WITH vec AS (
+    SELECT id, row_number() OVER (ORDER BY embedding <=> %(q)s) AS r FROM rag.chunks
+    WHERE owner_id = %(owner)s ORDER BY embedding <=> %(q)s LIMIT %(pool)s
+), fts AS (
+    SELECT id, row_number() OVER (ORDER BY ts_rank_cd(to_tsvector('swedish', content), query) DESC) AS r
+    FROM rag.chunks, to_tsquery(%(cfg)s, %(tsq)s) AS query
+    WHERE owner_id = %(owner)s AND to_tsvector('swedish', content) @@ query
+    ORDER BY ts_rank_cd(to_tsvector('swedish', content), query) DESC LIMIT %(pool)s
+)
+SELECT c.document_id, c.page, c.chunk_index, c.content, 1 - (c.embedding <=> %(q)s) AS cosine,
+       coalesce(%(wv)s / (%(rrf)s + vec.r), 0) + coalesce(%(wf)s / (%(rrf)s + fts.r), 0) AS score
+FROM rag.chunks c LEFT JOIN vec ON vec.id = c.id LEFT JOIN fts ON fts.id = c.id
+WHERE vec.id IS NOT NULL OR fts.id IS NOT NULL
+ORDER BY score DESC LIMIT %(k)s
+"""
+
+
+def rare_terms(pool, owner) -> tuple[dict[str, int], int]:
+    """Document frequency of every stemmed word among the owner's chunks (for the --idf filter)."""
+    with pool.connection() as conn:
+        n = conn.execute("SELECT count(*) FROM rag.chunks WHERE owner_id = %s", (owner,)).fetchone()[0]
+        rows = conn.execute(
+            "SELECT word, ndoc FROM ts_stat(%s)",
+            (f"SELECT to_tsvector('swedish', content) FROM rag.chunks WHERE owner_id = '{owner}'",),
+        ).fetchall()
+    return dict(rows), n
+
+
+def search_hybrid(pool, owner, text, q_emb, k, wv=1.0, wf=1.0, rrf=60, pool_size=30, df=None, max_df=0.05):
+    """Vector + Postgres full-text (Swedish stemming, OR of the question's words), fused with Reciprocal Rank Fusion.
+    Hit.score is the cosine of the chunk so min_score keeps its meaning; the ranking is by RRF.
+    With df: only words found in at most max_df of the chunks are used, so common words do not add noise."""
+    if df is None:
+        words = list(dict.fromkeys(re.findall(r"\w+", text.lower())))
+        cfg = "swedish"
+    else:
+        with pool.connection() as conn:
+            stems = conn.execute("SELECT unnest(tsvector_to_array(to_tsvector('swedish', %s)))", (text,)).fetchall()
+        words = [s[0] for s in stems if df[0].get(s[0], 0) <= max_df * df[1]]
+        cfg = "simple"  # already stemmed
+    tsq = " | ".join(f"'{w}'" for w in words) or "'x'"
+    params = dict(q=q_emb, owner=owner, tsq=tsq, k=k, pool=pool_size, wv=wv, wf=wf, rrf=rrf, cfg=cfg)
+    with pool.connection() as conn:
+        rows = conn.execute(HYBRID_SQL, params).fetchall()
+    return [db.Hit(r[0], r[1], r[2], r[3], r[4]) for r in rows]
+
+
 def auc(pos: list[float], neg: list[float]) -> float:
     """P(answerable top-1 score > unanswerable top-1 score); 0.5 = no separation."""
     wins = sum((p > n) + 0.5 * (p == n) for p in pos for n in neg)
@@ -84,6 +132,10 @@ def main() -> None:
     ap.add_argument("--label", default="run")
     ap.add_argument("--no-strip", action="store_true")
     ap.add_argument("--doc-header", action="store_true", help="prefix every chunk with the document context")
+    ap.add_argument("--hybrid", action="store_true", help="vector + Swedish full-text search fused with RRF")
+    ap.add_argument("--idf", action="store_true", help="hybrid: only use words found in few chunks")
+    ap.add_argument("--max-df", type=float, default=0.05, help="--idf: highest share of chunks a word may occur in")
+    ap.add_argument("--wf", type=float, default=1.0, help="weight of the full-text ranking in the fusion")
     ap.add_argument("--size", type=int)
     ap.add_argument("--overlap", type=int)
     ap.add_argument("--top-k", type=int, default=10)
@@ -116,9 +168,13 @@ def main() -> None:
     try:
         ids = index(pool, embedder, corpus, owner, strip, size, overlap, args.doc_header)
         name_of = {v: k for k, v in ids.items()}
+        df = rare_terms(pool, owner) if args.idf else None
         ranks, pos, neg, misses = {}, [], [], []
         for q in questions:
-            hits = db.search(pool, owner, embedder.embed_query(normalize_text(q["question"])), args.top_k)
+            text = normalize_text(q["question"])
+            q_emb = embedder.embed_query(text)
+            hits = (search_hybrid(pool, owner, text, q_emb, args.top_k, wf=args.wf, df=df, max_df=args.max_df) if args.hybrid
+                    else db.search(pool, owner, q_emb, args.top_k))
             top1 = hits[0].score if hits else 0.0
             if not q["answerable"]:
                 neg.append(top1)
@@ -143,13 +199,13 @@ def main() -> None:
     mrr = sum(1 / r for r in ranks.values() if r) / n
     t, kept, refused = best_threshold(pos, neg)
     result = {
-        "label": args.label, "strip": strip, "doc_header": args.doc_header, "size": size, "overlap": overlap, "n_answerable": n,
+        "label": args.label, "hybrid": args.hybrid, "idf": args.idf, "max_df": args.max_df, "wf": args.wf, "strip": strip, "doc_header": args.doc_header, "size": size, "overlap": overlap, "n_answerable": n,
         "recall": recall, "mrr": mrr, "auc": auc(pos, neg),
         "threshold": {"value": t, "answerable_kept": kept, "unanswerable_refused": refused},
         "top1_mean": {"answerable": sum(pos) / n, "unanswerable": sum(neg) / len(neg)},
         "ranks": ranks,
     }
-    print(f"\n== {args.label}  (strip={strip}, header={args.doc_header}, size={size}, overlap={overlap}, n={n})")
+    print(f"\n== {args.label}  (hybrid={args.hybrid}, strip={strip}, header={args.doc_header}, size={size}, overlap={overlap}, n={n})")
     print("recall@k  " + "  ".join(f"@{k}={recall[k]:.2f}" for k in KS) + f"   MRR={mrr:.3f}")
     print(f"nej-svar  AUC={result['auc']:.2f}  bästa tröskel {t:.3f}: behåller {kept:.0%} av besvarbara, "
           f"nekar {refused:.0%} av obesvarbara  (top-1 snitt {result['top1_mean']['answerable']:.3f} vs "
