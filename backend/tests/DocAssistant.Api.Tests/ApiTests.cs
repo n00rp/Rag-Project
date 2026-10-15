@@ -182,6 +182,21 @@ public sealed class ApiTests : IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task Clearing_history_removes_the_chat_but_keeps_documents()
+    {
+        var uploaded = await UploadAsync("skolskjuts.pdf");
+        await WaitForStatusAsync(uploaded.Id, DocumentStatus.Ready);
+        _factory.Ai.OnQuery = (_, _) => new QueryResult("Svar.", Grounded: true, []);
+        await _client.PostAsJsonAsync("/api/chat", new ChatRequest("Fråga?", null));
+
+        var response = await _client.DeleteAsync("/api/chat/history");
+
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        (await _client.GetFromJsonAsync<List<ChatAnswerDto>>("/api/chat/history", Json)).Should().BeEmpty();
+        (await _client.GetFromJsonAsync<List<DocumentDto>>("/api/documents", Json)).Should().Contain(d => d.Id == uploaded.Id);
+    }
+
+    [Fact]
     public async Task Swedish_characters_survive_upload_chat_and_history()
     {
         const string fileName = "Östra Ängby – protokoll åk 1–6.pdf";

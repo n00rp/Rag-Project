@@ -49,6 +49,14 @@ export function useHistory() {
   return useQuery({ queryKey: ['history'], queryFn: api.history })
 }
 
+export function useClearHistory() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: api.clearHistory,
+    onSuccess: () => qc.setQueryData<ChatAnswer[]>(['history'], []),
+  })
+}
+
 export function useAsk() {
   const qc = useQueryClient()
   return useMutation({

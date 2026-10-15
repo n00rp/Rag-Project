@@ -66,6 +66,8 @@ export const api = {
 
   history: () => request<ChatAnswer[]>('/api/chat/history'),
 
+  clearHistory: () => request<void>('/api/chat/history', { method: 'DELETE' }),
+
   health: () => request<Health>('/health'),
 }
 

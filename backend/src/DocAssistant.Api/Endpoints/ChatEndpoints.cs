@@ -28,6 +28,12 @@ public static class ChatEndpoints
                 .ToListAsync(ct);
             return rows.AsEnumerable().Reverse().Select(ToDto);
         });
+
+        group.MapDelete("/history", async (AppDbContext db, ICurrentUser user, CancellationToken ct) =>
+        {
+            await db.ChatMessages.Where(m => m.OwnerId == user.OwnerId).ExecuteDeleteAsync(ct);
+            return TypedResults.NoContent();
+        });
     }
 
     private static async Task<Results<Ok<ChatAnswerDto>, ProblemHttpResult>> Ask(

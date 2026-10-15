@@ -1,18 +1,31 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
-import { AlertCircle, ArrowUp, WifiOff } from 'lucide-react'
-import { useAsk, useDocuments, useHistory } from '../hooks/queries'
+import { AlertCircle, ArrowUp, Eraser, WifiOff } from 'lucide-react'
+import { useAsk, useClearHistory, useDocuments, useHistory } from '../hooks/queries'
 import { ApiError } from '../lib/api'
 import type { ViewerTarget } from '../lib/types'
 import { APP_NAME, Logo } from './Logo'
 import { AssistantRow, ChatTurn, UserBubble } from './ChatTurn'
 
-const SUGGESTIONS = [
-  'Vilka beslut har tagits om skolskjuts?',
-  'Vad säger dokumenten om budgeten för nästa år?',
-  'Sammanfatta de viktigaste besluten.',
+// Questions that were checked against the Göteborg demo protocols (see eval/README.md): each has its
+// answer in one or two places. Broad requests such as "summarise" or "list all" are not suggested
+// because the model only sees five excerpts and answers them badly.
+const DEMO_SUGGESTIONS = [
+  'Vad beslutade kommunstyrelsen om investeringar i europeisk försvarsindustri?',
+  'Vem anmälde jäv vid sammanträdet 2025-04-09?',
+  'Vad blev beslutet om ökad kamerabevakning?',
 ]
+// Templates for other documents: they fill in the question box instead of sending it.
+const GENERIC_SUGGESTIONS = ['Vad beslutades om …', 'Vem förordnades som …']
+
+// Ollama unloads an idle model, and loading it again can take about half a minute.
+const SLOW_AFTER_MS = 6000
 
 function TypingIndicator() {
+  const [slow, setSlow] = useState(false)
+  useEffect(() => {
+    const t = setTimeout(() => setSlow(true), SLOW_AFTER_MS)
+    return () => clearTimeout(t)
+  }, [])
   return (
     <div className="flex items-center gap-2 text-sm text-muted" role="status">
       <span className="flex gap-1" aria-hidden>
@@ -20,7 +33,7 @@ function TypingIndicator() {
         <span className="typing-dot size-1.5 rounded-full bg-muted" />
         <span className="typing-dot size-1.5 rounded-full bg-muted" />
       </span>
-      Söker i dokumenten…
+      {slow ? 'Modellen startar, det kan ta en halv minut första gången…' : 'Söker i dokumenten…'}
     </div>
   )
 }
@@ -29,11 +42,14 @@ export function ChatView({ onOpen }: { onOpen: (target: ViewerTarget) => void })
   const { data: history = [] } = useHistory()
   const { data: docs = [] } = useDocuments()
   const ask = useAsk()
+  const clear = useClearHistory()
   const [draft, setDraft] = useState('')
   const bottom = useRef<HTMLDivElement>(null)
   const textarea = useRef<HTMLTextAreaElement>(null)
 
   const hasReadyDocs = docs.some((d) => d.status === 'Ready')
+  const hasDemoDocs = docs.some((d) => d.status === 'Ready' && /^K[SF]_protokoll_/.test(d.fileName))
+  const suggestions = hasDemoDocs ? DEMO_SUGGESTIONS : GENERIC_SUGGESTIONS
   const canSend = hasReadyDocs && !ask.isPending && draft.trim().length > 0
 
   useEffect(() => {
@@ -46,6 +62,11 @@ export function ChatView({ onOpen }: { onOpen: (target: ViewerTarget) => void })
     setDraft('')
     if (textarea.current) textarea.current.style.height = 'auto'
     ask.mutate(q)
+  }
+
+  function fillDraft(text: string) {
+    setDraft(text)
+    textarea.current?.focus()
   }
 
   function onSubmit(e: FormEvent) {
@@ -78,10 +99,10 @@ export function ChatView({ onOpen }: { onOpen: (target: ViewerTarget) => void })
               </p>
               {hasReadyDocs && (
                 <div className="mt-6 flex w-full max-w-md flex-col gap-2">
-                  {SUGGESTIONS.map((s) => (
+                  {suggestions.map((s) => (
                     <button
                       key={s}
-                      onClick={() => send(s)}
+                      onClick={() => (hasDemoDocs ? send(s) : fillDraft(s.split('…')[0]))}
                       className="rounded-xl border border-line bg-surface px-4 py-3 text-left text-sm transition-colors hover:border-accent/60 hover:bg-accent-soft/40"
                     >
                       {s}
@@ -92,6 +113,16 @@ export function ChatView({ onOpen }: { onOpen: (target: ViewerTarget) => void })
             </div>
           ) : (
             <>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => clear.mutate()}
+                  disabled={clear.isPending || ask.isPending}
+                  className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs text-muted transition-colors hover:bg-surface-2 hover:text-fg disabled:opacity-50"
+                >
+                  <Eraser className="size-3.5" aria-hidden />
+                  Ny konversation
+                </button>
+              </div>
               {history.map((turn, i) => (
                 <ChatTurn key={turn.id} turn={turn} expandSources={i === history.length - 1} onOpen={onOpen} />
               ))}
