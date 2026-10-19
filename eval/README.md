@@ -1,6 +1,88 @@
 # Utvärdering
 
-`evalset.jsonl` har 44 frågor med känd rätt § (sidintervallet räknas ut ur PDF:erna) och 16 frågor som saknar svar i dokumenten (8 uppenbart utanför domänen, 8 som låter som protokollen men saknar stöd; skriptet kontrollerar att orden verkligen saknas). Frågorna är skrivna som ett första utkast från protokollens rubriker och ska granskas och kompletteras för hand (se projektplanen).
+Två generationer av evalsetet finns i den här mappen:
+
+- **v2 (nu, `evalset.jsonl`)**: 143 räknade besvarbara frågor, 7 frågetyper som vi vet är svaga (följs separat) och 40 frågor utan svar i dokumenten, uppdelade i **dev** (att tuna mot) och **test** (att titta på när ett beslut ska fattas). Byggs av `build_evalset.py`, som kontrollerar att varje förväntat ärende (§) finns, att varje påstått faktum står i källtexten och att orden i nej-frågorna verkligen saknas i dokumenten.
+- **v1 (`evalset_v1.jsonl`)**: det första utkastet med 51 + 16 frågor. Experimenten längre ned (kapitel "Experiment 1–4") är gjorda på v1 och ska läsas som riktning, inte som siffror att jämföra med v2.
+
+**Ingen fråga är granskad av en människa än** (`reviewed: false`). Det är den viktigaste begränsningen: frågorna är skrivna av mig utifrån protokollens rubriker och struktur, vilket gör sökningen lättare än den blir för riktiga användare. Granskningen sker med `make_review.py` → fyll i `review/evalset-review.md` → `apply_review.py` → `build_evalset.py` (se "Granska och komplettera" nedan).
+
+## Så körs det
+```bash
+cd ai-service      # alla kommandon kör med ai-service/.venv: .venv/Scripts/python <skript>
+python ../eval/run_all.py                        # retrieval + svar med gemma3:12b, domare qwen3:14b + llama3.1:8b
+python ../eval/run_all.py --skip-answers                # bara retrieval (ca en minut)
+python ../eval/retrieval.py --label x --doc-header      # ett retrieval-experiment med egna inställningar
+python ../eval/summarize_answers.py ../eval/results/baseline-v2-answers.json   # sammanfatta en sparad körning
+```
+- Alla huvudsiffror visas med **95 % bootstrap-intervall**. Med 56–87 frågor per del är en skillnad på 0,02 oftast brus.
+- **Tröskeln för "inget stöd"** väljs på dev och används oförändrad på test.
+- **Domare:** LLM-domare bedömer korrekthet och förankring. En modell dömer aldrig sig själv. "Korrekt" kräver att **alla** domare håller med (strikt); spannet uppåt (minst en domare) redovisas också. `calibrate.py` jämför domarna med en människas bedömning av ett urval (`--review-sample N` skriver `review/answer-samples.md`).
+- Frågor utan facit (bara rätt källa) räknas som korrekta om svaret citerar en källa på rätt sida.
+
+## Baslinje (evalset v2, 2026-10-19)
+Konfiguration: sidhuvud rensas, dokumentrubrik i varje chunk, 900/150 tecken, `min_score` 0,83, e5-small, `top_k` 5, modell gemma3:12b. Rådata i `results/baseline-v2-*.json`.
+
+**Sökning** (rätt sida bland träffarna; intervall = 95 %):
+
+| Del | Frågor | R@1 | R@3 | MRR |
+|---|---|---|---|---|
+| dev, alla | 87 | 0,84 [0,76–0,91] | 0,86 [0,78–0,93] | 0,855 |
+| dev, utan identifierare | 73 | 0,97 [0,93–1,00] | 0,99 [0,96–1,00] | 0,979 |
+| dev, bara identifierare | 14 | 0,14 [0,00–0,36] | 0,21 [0,00–0,43] | 0,208 |
+| test, alla | 56 | 0,71 [0,59–0,82] | 0,79 [0,68–0,88] | 0,754 |
+| test, utan identifierare | 42 | 0,93 [0,83–1,00] | 1,00 [1,00–1,00] | 0,964 |
+| test, bara identifierare | 14 | 0,07 [0,00–0,21] | 0,14 [0,00–0,36] | 0,121 |
+
+**Svar** (gemma3:12b; domare qwen3:14b + llama3.1:8b, domarna överens i 90–94 % av fallen):
+
+| Del | Korrekt (strikt) | Minst en domare | Felaktigt nekade | Citat rätt | Nekar obesvarbara |
+|---|---|---|---|---|---|
+| dev, alla | 0,71 [0,62–0,80] | 0,75 | 0,22 | 0,74 | 1,00 (22 av 22) |
+| dev, utan identifierare | 0,79 [0,70–0,88] | 0,84 | 0,12 | 0,82 | 1,00 |
+| test, alla | 0,66 [0,54–0,79] | 0,71 | 0,21 | 0,73 | 1,00 (18 av 18) |
+| test, utan identifierare | 0,83 [0,71–0,93] | 0,90 | 0,02 | 0,93 | 1,00 |
+
+Svarstid: median 1,1 s, 90:e percentilen 2,7 s.
+
+**Per frågetyp** (korrekta svar, andel):
+
+| Typ | Antal | Korrekt | Kommentar |
+|---|---|---|---|
+| beslut | 29 | 86 % | |
+| ämne | 23 | 91 % | |
+| belopp | 10 | 90 % | |
+| flera dokument | 9 | 89 % | svarar ofta från ett av dokumenten |
+| person | 25 | 80 % | några felaktiga nekanden ("inget stöd") trots att svaret finns |
+| datum | 7 | 71 % | |
+| detalj (röster, datum i ärendet) | 7 | 71 % | |
+| **identifierare** (ärendenummer, § + datum) | 28 | **21 %** | sökningen hittar inte ärendet: 75 % blir nekade |
+| **falsk premiss** ("Varför bifölls…" när det avslogs) | 4 | **0 %** | systemet rättar inte frågan, och nekar eller accepterar antagandet |
+| saknad totalsumma | 1 | 0 % | nekas med "inget stöd" |
+
+### Vad baslinjen visar
+1. **Vanliga frågor fungerar bra, men inte lika bra som v1 antydde.** Utan identifierare är sökningen i princip perfekt (MRR 0,96–0,98), men *svaren* är korrekta i ca 80 % (spann 79–90 % beroende på domare). Det som skiljer är bland annat felaktiga nekanden, svar som blandar ihop två protokoll (q02: jäv i både november 2024 och april 2025) och svar med överflödig eller felaktig tilläggsinformation.
+2. **Ärendenummer och paragrafer är det största enskilda hålet.** 28 av 143 frågor (20 %), korrekta svar 21 %. Det är en retrieval-brist (embeddings tolkar `SLK-2025-00392` dåligt), vilket experiment 4 (hybridsökning) pekade på med bara 6 frågor; nu finns 28 att mäta på.
+3. **Falska antaganden accepteras eller nekas, men rättas inte.** Det är precis fallet som ett strukturerat svar (`fullt/delvis/inget stöd`, plan B6) ska lösa.
+4. **Alla 40 frågor utan svar nekas** (0 av 40 felaktiga svar), men tröskeln är ställd på samma frågor, så siffran är optimistisk för frågor som liknar protokollens innehåll mer än mina.
+5. **Domarna är inte kalibrerade mot en människa.** De är oense i 6–10 % av fallen och gör synliga misstag åt båda hållen (qwen underkände "Nej, hemställan avslås" som svar på en ja/nej-fråga med facit "Nej, hemställan avslås"; llama underkände ett svar med rätt datum). Därför redovisas både strikt och lätt gräns. Kalibreringen görs med `calibrate.py` när ett urval är bedömt (se nedan).
+
+## Granska och komplettera frågorna
+```bash
+python ../eval/make_review.py          # skapar review/evalset-review.md (frågor, facit, rätt källa i klartext)
+# ... fyll i filen: ett x per fråga (stämmer / ändra / ta bort), lägg egna frågor sist ...
+python ../eval/apply_review.py         # sparar besluten i review/decisions.json
+python ../eval/build_evalset.py        # bygger om evalset.jsonl med besluten (reviewed, borttagna, ändrade, egna frågor)
+```
+`make_review.py` skriver inte över en fil som redan har markeringar (använd `--force`). Egna frågor skrivs `fråga | facit | KS0409 § 317`; utan dokument och § kan de inte räknas i sökmåtten förrän ärendet har angetts.
+
+För att kalibrera domarna: kör `answers.py --review-sample 12`, bedöm svaren i `review/answer-samples.md` (rätt/fel) och kör `calibrate.py`.
+
+---
+
+# Äldre experiment (evalset v1, utkast med 51 + 16 frågor)
+
+`evalset_v1.jsonl` har 44 frågor med känd rätt § (sidintervallet räknas ut ur PDF:erna) och 16 frågor som saknar svar i dokumenten (8 uppenbart utanför domänen, 8 som låter som protokollen men saknar stöd; skriptet kontrollerar att orden verkligen saknas). Frågorna är skrivna som ett första utkast från protokollens rubriker. Resultaten nedan är gjorda med `retrieval.py`/`answers.py` i deras tidigare form (utan dev/test-delning och utan intervall).
 
 ## Retrieval
 ```bash

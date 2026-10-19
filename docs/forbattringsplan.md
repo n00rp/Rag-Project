@@ -4,6 +4,15 @@ Utgångspunkt: fas 1 och 3 är gjorda, fas 4 är påbörjad (källvisare med mar
 
 Storlekar nedan är grova uppskattningar av arbetsinsats: **S** = ett kort arbetspass, **M** = några pass, **L** = en längre sammanhängande insats. De är inte mätta.
 
+## Status
+**Etapp 1 (grund): gjord 2026-10-19, med tre undantag.**
+- **B0 evalset v2:** 143 räknade besvarbara + 7 följda svaga frågetyper + 40 utan svar, dev/test-delat, byggt av `eval/build_evalset.py` med automatiska kontroller mot källtexten. Mätning med 95 %-intervall, två domare som aldrig dömer sig själva, `calibrate.py`, `run_all.py`. Baslinjen står i `eval/README.md`.
+- **Granskningsverktyg** (`make_review.py`, `apply_review.py`) är klara och testade. **Ingen fråga är granskad av en människa än** (du gör det sist). Domarna är heller inte kalibrerade mot en människa; `answers.py --review-sample` har skrivit `eval/review/answer-samples.md` för det.
+- **C:** `scripts/start.ps1` (WSL vaken, stack, modell, uppvärmning av hela kedjan: första frågan 1,7 s i stället för 17 s), `stop.ps1`, `backup.ps1`, `restore.ps1` (återställning testad mot en separat databas). **CI-lint** (ESLint, ruff över ai-service och eval, dotnet format) är tillagd.
+- **Medvetet inte gjort:** (1) `OLLAMA_KEEP_ALIVE` och `.wslconfig` (kräver ditt ok; startskriptet värmer upp modellen utan att ändra inställningar); (2) ett **andra dokumentset** för generalisering (nya filer att hämta, väntar på ditt svar om vilka); (3) **eval i CI** (kräver att CI kan hämta PDF:erna och installera torch, och kan inte provas lokalt: körs tills vidare lokalt med `run_all.py`).
+
+**Vad baslinjen sa (se `eval/README.md`):** utan ärendenummer är sökningen i princip perfekt men svaren är korrekta i ca 80 %; **ärendenummer/§-frågor är bara 21 % korrekta** (retrieval), **falska antaganden rättas inte** (0 av 4), och alla 40 frågor utan svar nekas. Etapp 3 (B4) och B6 pekas därför ut som de mest värdefulla.
+
 ## 0. Principer
 1. **Mät före och efter.** Inget som påverkar svaren införs utan en siffra från evalet (spår B). Ett experiment som inte hjälper dokumenteras som ett resultat, inte raderas.
 2. **Känslan kommer av detaljerna.** "Premium" och "LLM-känsla" är summan av strömmande text, ren typografi, rörelse som aldrig stör, tydliga tillstånd och noll hackighet. Det är inte en ny färg.
