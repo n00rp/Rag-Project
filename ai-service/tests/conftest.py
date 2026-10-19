@@ -42,6 +42,17 @@ def client(database_url):
         yield c
 
 
+@pytest.fixture(scope="session")
+def _owners(database_url):
+    """Owners created during the run; their chunks are removed at the end so the dev database does not fill up."""
+    names: list[str] = []
+    yield names
+    with psycopg.connect(database_url) as conn:
+        conn.execute("DELETE FROM rag.chunks WHERE owner_id = ANY(%s)", (names,))
+
+
 @pytest.fixture
-def owner() -> str:
-    return f"test-{uuid.uuid4()}"
+def owner(_owners) -> str:
+    name = f"test-{uuid.uuid4()}"
+    _owners.append(name)
+    return name

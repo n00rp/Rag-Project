@@ -35,7 +35,7 @@ from app import db  # noqa: E402
 from app.config import get_settings  # noqa: E402
 from app.embeddings import build_embedder  # noqa: E402
 from app.llm import OllamaLlm  # noqa: E402
-from app.rag import NO_SUPPORT_ANSWER, answer_question  # noqa: E402
+from app.rag import answer_question  # noqa: E402
 
 CITE = re.compile(r"\[(\d+)\]")
 JUDGE_SYSTEM = "Du är en sträng men rättvis bedömare av svar på svenska. Svara endast med JSON."

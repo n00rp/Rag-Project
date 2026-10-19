@@ -69,6 +69,19 @@ Adressen kan ändras efter en omstart av WSL/Windows; kontrollera då steg 1 ige
 
 **Fallgropar på stationären:** en apt-installerad Postgres i Ubuntu (`postgresql@16`) upptar port 5432 och måste stoppas (`sudo systemctl disable --now postgresql`). Python kan få SSL-fel mot goteborg.se; verifieringen ska inte stängas av.
 
+## Starta, stoppa och säkerhetskopiera (Windows, PowerShell)
+```powershell
+.\scripts\start.ps1      # håller WSL vaken, startar stacken, laddar modellen och värmer upp hela kedjan
+.\scripts\stop.ps1       # stoppar containrarna (data finns kvar); -Wsl släpper WSL, -UnloadModel lastar av modellen
+.\scripts\backup.ps1     # databas + uppladdade filer till backups\<tidsstämpel>\
+.\scripts\restore.ps1 -Backup backups\<mapp> -Database restore_check -DropAfter   # kontrollera att en kopia går att läsa
+.\scripts\restore.ps1 -Backup backups\<mapp>   # ERSÄTTER riktiga databasen (frågar först)
+```
+- Efter `start.ps1` tar första frågan ca 2 s. Utan uppvärmning tog den 17–28 s (embeddingmodellen och modellen i Ollama laddas första gången).
+- `start.ps1` ändrar inga inställningar på datorn; modellen hålls i minnet med `keep_alive` i API-anropet, inte med `OLLAMA_KEEP_ALIVE`.
+- Blockerar PowerShell skripten: `powershell -ExecutionPolicy Bypass -File .\scripts\start.ps1`.
+- Återställningen är testad mot en separat databas (alla chunks och uppladdade filer kom med). Att ersätta den riktiga databasen har inte körts.
+
 ## Laptop → GPU på stationären
 Laptopen har ingen GPU. Låt den prata med Ollama på stationären:
 1. Installera [Tailscale](https://tailscale.com) (gratis) på båda datorerna och logga in med samma konto.

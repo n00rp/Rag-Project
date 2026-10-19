@@ -30,7 +30,7 @@ jobs:
           cache: pip
           cache-dependency-path: ai-service/requirements*.txt
       - run: pip install -r requirements-dev.txt
-      - run: ruff check .
+      - run: ruff check . ../eval
       - run: pytest -q
 
   frontend:
@@ -46,6 +46,7 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
+      - run: npm run lint
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
@@ -72,5 +73,7 @@ jobs:
         with:
           dotnet-version: "10.0.x"
       - run: dotnet restore
+      # Generated migrations are not formatted by hand.
+      - run: dotnet format --no-restore --verify-no-changes --exclude "**/Migrations/**"
       - run: dotnet build --no-restore -c Release -warnaserror
       - run: dotnet test --no-build -c Release
