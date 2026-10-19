@@ -7,7 +7,7 @@ import { CitationChip } from './CitationChip'
 interface Props {
   text: string
   sources: ChatSource[]
-  onOpen: (target: ViewerTarget) => void
+  onOpen?: (target: ViewerTarget) => void
   /** The answer is still being written: show a caret after the last word. */
   streaming?: boolean
 }

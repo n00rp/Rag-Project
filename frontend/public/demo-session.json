@@ -1,0 +1,295 @@
+{
+ "recordedAt": "2026-10-19T17:23:12+00:00",
+ "model": "gemma3:12b",
+ "turns": [
+  {
+   "id": "demo-1",
+   "question": "Vad beslutade kommunstyrelsen om investeringar i europeisk försvarsindustri?",
+   "answer": "Yrkandet från KD, M, D och L angående revidering av Göteborgs Stads riktlinje för finansverksamheten för att tillåta investeringar i europeisk försvarsindustri avslås [2].",
+   "grounded": true,
+   "support": "fullt",
+   "broad": false,
+   "createdAt": "2026-10-19T17:23:12+00:00",
+   "sources": [
+    {
+     "documentId": "99ff8829-b437-4791-b553-7b14c768d20b",
+     "fileName": "KS_protokoll_20250409.pdf",
+     "page": 3,
+     "snippet": "§ 289 Ärendenummer SLK-2025-00035 Anmälan av jäv vid sammanträdet Beslut Hampus Magnusson (M) anmäler jäv under paragraf 317: Yrkande från KD, M, D och L angående revidering av Göteborgs Stads riktlinje för finansverksamheten för att tillåta investeringar i europeisk försvarsindustri.",
+     "score": 0.8349
+    },
+    {
+     "documentId": "99ff8829-b437-4791-b553-7b14c768d20b",
+     "fileName": "KS_protokoll_20250409.pdf",
+     "page": 36,
+     "snippet": "§ 317 Ärendenummer SLK-2025-00392 Yrkande från KD, M, D och L angående revidering av Göteborgs Stads riktlinje för finansverksamheten för att tillåta investeringar i europeisk försvarsindustri Beslut Yrkandet från KD, M, D och L avslås. Tidigare behandling Bordlagt den 26 mars 2025, § 276. Handlingar Yrkande från KD, M, D och L den 17 mars 2025. Yttrande från S, V och MP den 8 april 2025. Yrkanden Axel Josefson (M), Jörgen Fogelklou (SD) och tjänstgörande Emmyly Bönfors (C) yrkar bifall till yrkande från KD, M, D och L den 17 mars 2025. Ordföranden Jonas Attenius (S) yrkar avslag på yrkande från KD, M, D och L den 17 mars 2025. Propositionsordning Ordföranden ställer propositioner på bifall respektive avslag på yrkandet från KD, M, D och L och finner att det avslagits. Omröstning begärs.",
+     "score": 0.8287
+    },
+    {
+     "documentId": "6c7714df-8fa0-44fb-b865-9fd972f8580b",
+     "fileName": "KF_protokoll_20251127.pdf",
+     "page": 29,
+     "snippet": "§ 11, upphör att gälla. 4. Inriktningen för Gothenburg European Office, fastställd av kommunfullmäktige 2021-02-25 § 20, upphör att gälla. 5. Kommunstyrelsen får i uppdrag att ta fram en stadengemensam struktur som säkerställer ökad samordning, rådgivning och frekvens i det löpande arbetet med ansökningar av extern finansiering. Förslaget ska tydliggöra mandat, ansvar och prioriteringar samt syfta till att stärka stadens struktur och kapacitet att förbereda, ansöka samt implementera användningen av extern finansiering. 6. Gothenburg European Office resurser och samlade kompetens används i första hand för att stärka stadens interna kapacitet, med särskilt fokus på ansökningsprocesser. Inriktningen ska följa aktuella finansieringsmöjligheter, utöver tidigare beslutade prioriteringar. Handling 2025 nr 201.",
+     "score": 0.822
+    },
+    {
+     "documentId": "772a6bf5-f761-439c-96e5-4ac2e54baa1f",
+     "fileName": "KS_protokoll_20250611.pdf",
+     "page": 36,
+     "snippet": "8 mnkr till nämnden för arbetsmarknad och vuxenutbildning, 13 mnkr till socialnämnden Centrum, 4 mnkr till utbildningsnämnden, godkänns. 3. Hemställan från kretslopp och vattennämnden om överföring av investeringsmedel år 2025 om 24 mnkr från investeringar vatten- och avlopp till investeringar avfall, godkänns. 4. Hemställan från kretslopp och vattennämnden om överföring av investeringsmedel år 2025 om 28 mnkr från investeringar vatten- och avlopp till investeringar exploatering godkänns. 5. Stadsledningskontorets förslag om överföring av uppdrag och kommunbidrag om 0,5 mnkr från kommunstyrelsen till äldre samt vård- och omsorgsnämnden avseende samordning av offentliga måltider, godkänns. Kommunstyrelsen tillstyrker yrkande från S, V och MP den 10 juni 2025 och föreslår att kommunfullmäktige beslutar: 1.",
+     "score": 0.8174
+    },
+    {
+     "documentId": "fa73bbfe-f1d2-4250-9563-2af9c14523af",
+     "fileName": "KS_protokoll_20251126.pdf",
+     "page": 30,
+     "snippet": "för 2025 och framåt. 8. Kommunstyrelsen får i uppdrag att stötta utvecklingen av ett judiskt kunskapscentrum i samverkan med Judiska församlingen. 9. Idrotts- och föreningsnämnden får i uppdrag att utöka det särskilda driftsbidraget till Idrottsmuseet. För detta höjs nämndens kommunbidragsram med 0,5 mnkr för 2025. 10. Älvstranden Utveckling AB får i uppdrag att, utifrån ett hela staden-perspektiv som skapar bäst möjligheter för fortsatt stadsutveckling, ge exploateringsnämnden möjlighet att förvärva bolagets fastighetsinnehav inom området Skeppsbron. 11. Socialförvaltningen Centrum får ett stadenövergripande uppdrag att i samverkan med övriga socialnämnder och grundskolenämnden utöka verksamheten ”Volontär i skolan” så att den erbjuds inom samtliga fyra utbildningsområdena i Göteborg.",
+     "score": 0.8174
+    }
+   ]
+  },
+  {
+   "id": "demo-2",
+   "question": "Vem anmälde jäv vid sammanträdet 2025-04-09?",
+   "answer": "Hampus Magnusson (M) anmälde jäv [2].",
+   "grounded": true,
+   "support": "fullt",
+   "broad": false,
+   "createdAt": "2026-10-19T17:23:12+00:00",
+   "sources": [
+    {
+     "documentId": "99ff8829-b437-4791-b553-7b14c768d20b",
+     "fileName": "KS_protokoll_20250409.pdf",
+     "page": 36,
+     "snippet": "Ordföranden ställer propositioner på bifall respektive avslag på yrkandet från KD, M, D och L och finner att det avslagits. Omröstning begärs. Omröstning Godkänd voteringsproposition: \"Ja för avslag och Nej för bifall till yrkandet från KD, M, D och L.\" Daniel Bernmar (V), Viktoria Tryggvadottir Rolka (S), Blerta Hoti (S), Marina Johansson (S), Karin Pleijel (MP), tjänstgörande ersättarna Johannes Hulter (S) och Marie Brynolfsson (V) samt ordföranden Jonas Attenius (S) röstar Ja (8). Axel Josefson (M), Martin Wannholt (D), Jörgen Fogelklou (SD), Elisabet Lann (KD) och tjänstgörande ersättaren Emmyly Bönfors (C) röstar Nej (5). Jäv Hampus Magnusson (M) deltar inte i handläggningen av ärendet på grund av jäv. Protokollsanteckning Representanterna från S, V och MP antecknar som yttrande en skrivelse från den 8 april 2025.",
+     "score": 0.8827
+    },
+    {
+     "documentId": "99ff8829-b437-4791-b553-7b14c768d20b",
+     "fileName": "KS_protokoll_20250409.pdf",
+     "page": 3,
+     "snippet": "§ 289 Ärendenummer SLK-2025-00035 Anmälan av jäv vid sammanträdet Beslut Hampus Magnusson (M) anmäler jäv under paragraf 317: Yrkande från KD, M, D och L angående revidering av Göteborgs Stads riktlinje för finansverksamheten för att tillåta investeringar i europeisk försvarsindustri.",
+     "score": 0.8818
+    },
+    {
+     "documentId": "99ff8829-b437-4791-b553-7b14c768d20b",
+     "fileName": "KS_protokoll_20250409.pdf",
+     "page": 39,
+     "snippet": "från L den 9 april 2025. Protokollsanteckningar Representanterna från MP, S, V och C antecknar som yttrande en skrivelse från den 8 april 2025. Representanterna från M, D och KD antecknar som yttrande en skrivelse från den 8 april 2025. Protokollsutdrag skickas till Miljö- och klimatnämnden",
+     "score": 0.8732
+    },
+    {
+     "documentId": "99ff8829-b437-4791-b553-7b14c768d20b",
+     "fileName": "KS_protokoll_20250409.pdf",
+     "page": 29,
+     "snippet": "2025. Yttrande från C den 9 april 2025. Yrkanden Karin Pleijel (MP) yrkar bifall till stadsledningskontorets förslag och avslag på övriga yrkanden. Axel Josefson (M) yrkar bifall till yrkande från M, D, L och KD den 3 april 2025 och avslag på tilläggsyrkande från SD den 21 mars 2025. Jörgen Fogelklou (SD) yrkar bifall tilläggsyrkande från SD den 21 mars 2025. Tjänstgörande ersättaren Emmyly Bönfors (C) yrkar bifall till stadsledningskontorets förslag med hänvisning till yttrande från C den 9 april 2025. Propositionsordning Ordföranden Jonas Attenius (S) ställer först propositioner på yrkandena med undantag av tilläggsyrkandet och finner att yrkandet från Karin Pleijel och Emmyly Bönfors bifallits. Ordföranden ställer härefter propositioner på bifall respektive avslag på tilläggsyrkandet från SD och finner att det avslagits.",
+     "score": 0.8731
+    },
+    {
+     "documentId": "99ff8829-b437-4791-b553-7b14c768d20b",
+     "fileName": "KS_protokoll_20250409.pdf",
+     "page": 12,
+     "snippet": "6 mars 2025. Yttrande från SD den 4 april 2025. Protokollsanteckning Jörgen Fogelklou (SD) antecknar som yttrande en skrivelse från den 4 april 2025. Protokollsutdrag skickas till KF Handling 2025 nr 77",
+     "score": 0.872
+    }
+   ]
+  },
+  {
+   "id": "demo-3",
+   "question": "Vad behandlades under § 319 i kommunstyrelsens protokoll från 2025-04-09?",
+   "answer": "Under § 319 behandlades ett yrkande från SD om att redovisa i vilken omfattning Göteborgs Stads pensionskapital är investerade i gröna placeringar. Yrkandet avslås [1].",
+   "grounded": true,
+   "support": "fullt",
+   "broad": false,
+   "createdAt": "2026-10-19T17:23:12+00:00",
+   "sources": [
+    {
+     "documentId": "99ff8829-b437-4791-b553-7b14c768d20b",
+     "fileName": "KS_protokoll_20250409.pdf",
+     "page": 38,
+     "snippet": "§ 319 Ärendenummer SLK-2025-00397 Yrkande från SD om att redovisa i vilken omfattning Göteborgs Stads pensionskapital är investerade i gröna placeringar Beslut Yrkandet från SD avslås. Tidigare behandling Bordlagt den 26 mars 2025, § 280. Handling Yrkande från SD den 18 mars 2025. Yrkanden Jörgen Fogelklou (SD) yrkar bifall till yrkande från SD den 18 mars 2025. Tjänstgörande ersättaren Emmyly Bönfors (C), Axel Josefson (M) och ordföranden Jonas Attenius (S) yrkar avslag på yrkande från SD den 18 mars 2025. Propositionsordning Ordföranden ställer propositioner på bifall respektive avslag på yrkandet från SD och finner att det avslagits. Omröstning begärs.",
+     "score": 0.8489
+    },
+    {
+     "documentId": "99ff8829-b437-4791-b553-7b14c768d20b",
+     "fileName": "KS_protokoll_20250409.pdf",
+     "page": 24,
+     "snippet": "Protokollsutdrag skickas till KF Handling 2025 nr 79",
+     "score": 0.8697
+    },
+    {
+     "documentId": "99ff8829-b437-4791-b553-7b14c768d20b",
+     "fileName": "KS_protokoll_20250409.pdf",
+     "page": 1,
+     "snippet": "Tid: 10:00-10:44 Plats: Kommunstyrelsens sessionssal Paragrafer: § 289-336 Närvarande Ledamöter Jonas Attenius (S), ordförande Axel Josefson (M) Daniel Bernmar (V) Hampus Magnusson (M), jäv § 317 Viktoria Tryggvadottir Rolka (S) Blerta Hoti (S) Martin Wannholt (D) Jörgen Fogelklou (SD) Marina Johansson (S) Karin Pleijel (MP) Elisabet Lann (KD) Tjänstgörande ersättare Johannes Hulter (S), § 317 Marie Brynolfsson (V) Emmyly Bönfors (C) Övriga närvarande Josef Akar, Sebastian Hellqvist, Agneta Kjaerbeck, Timothy Tréville, Petra Elf, Jessica Blixt, Patrik Höstmad, Fredrik Lundgren, Dan-Ove Marcelind, Emma Dolderer, Eva Hessman, Jakob Rydén, Mathias Sköld, Christina Hofmann, Lina Isaksson Via Teams: Elisabeth Hulter, Sofia Kodelja, Gustav Öberg, Oskar Andersson, Lenita Strandberg, Hannes Hurtig, Hilda Andersson, Agnes Hedin Justeringsdag: 2025-04-28",
+     "score": 0.8688
+    },
+    {
+     "documentId": "99ff8829-b437-4791-b553-7b14c768d20b",
+     "fileName": "KS_protokoll_20250409.pdf",
+     "page": 53,
+     "snippet": "§ 333 Ärendenummer SLK-2025-00025 Inkomna remisser till Göteborgs Stad Beslut Antecknas. Handling Remisslista till kommunstyrelsen, 2025-04-09.",
+     "score": 0.8669
+    },
+    {
+     "documentId": "99ff8829-b437-4791-b553-7b14c768d20b",
+     "fileName": "KS_protokoll_20250409.pdf",
+     "page": 29,
+     "snippet": "§ 313 Ärendenummer SLK-2024-01235 Redovisning av uppdrag att förenkla tillståndsgivning för tillfällig alkoholservering under sommarhalvåret Beslut Kommunstyrelsen tillstyrker stadsledningskontorets förslag och föreslår att kommunfullmäktige beslutar: Redovisning av kommunfullmäktiges uppdrag i kommunfullmäktiges budget 2024 till miljö- och klimatnämnden, att förenkla tillståndsgivning för tillfällig alkoholservering under sommarhalvåret, antecknas och förklaras fullgjort. Tidigare behandling Bordlagt den 26 mars 2025, § 253. Handlingar Stadsledningskontorets tjänsteutlåtande den 28 februari 2025. Yrkande från M, D, L och KD den 3 april 2025 (reviderat). Tilläggsyrkande från SD den 21 mars 2025. Yttrande från C den 9 april 2025. Yrkanden Karin Pleijel (MP) yrkar bifall till stadsledningskontorets förslag och avslag på övriga yrkanden.",
+     "score": 0.8636
+    }
+   ]
+  },
+  {
+   "id": "demo-4",
+   "question": "Vad gäller ärende SLK-2025-00392?",
+   "answer": "Ärende SLK-2025-00392, som gäller yrkande från KD, M, D och L angående revidering av Göteborgs Stads riktlinje för finansverksamheten för att tillåta investeringar i europeisk försvarsindustri, avslås [1]. Yrkandet hade tidigare bordlagts den 26 mars 2025 [1].",
+   "grounded": true,
+   "support": "fullt",
+   "broad": false,
+   "createdAt": "2026-10-19T17:23:12+00:00",
+   "sources": [
+    {
+     "documentId": "99ff8829-b437-4791-b553-7b14c768d20b",
+     "fileName": "KS_protokoll_20250409.pdf",
+     "page": 36,
+     "snippet": "§ 317 Ärendenummer SLK-2025-00392 Yrkande från KD, M, D och L angående revidering av Göteborgs Stads riktlinje för finansverksamheten för att tillåta investeringar i europeisk försvarsindustri Beslut Yrkandet från KD, M, D och L avslås. Tidigare behandling Bordlagt den 26 mars 2025, § 276. Handlingar Yrkande från KD, M, D och L den 17 mars 2025. Yttrande från S, V och MP den 8 april 2025. Yrkanden Axel Josefson (M), Jörgen Fogelklou (SD) och tjänstgörande Emmyly Bönfors (C) yrkar bifall till yrkande från KD, M, D och L den 17 mars 2025. Ordföranden Jonas Attenius (S) yrkar avslag på yrkande från KD, M, D och L den 17 mars 2025. Propositionsordning Ordföranden ställer propositioner på bifall respektive avslag på yrkandet från KD, M, D och L och finner att det avslagits. Omröstning begärs.",
+     "score": 0.8486
+    },
+    {
+     "documentId": "6c7714df-8fa0-44fb-b865-9fd972f8580b",
+     "fileName": "KF_protokoll_20251127.pdf",
+     "page": 39,
+     "snippet": "§ 509 Ärendenummer SLK-2025-00040 Ordningsfråga Med anledning av att klockan är 21:40 frågar ordföranden, i enlighet med fullmäktiges arbetsordning, om sammanträdet ska fortsätta eller om återstående ärenden ska bordläggas. Beslut Beslutsärendena under paragraferna 510–515 bordläggs. Motionerna under paragraferna 516–531 bordläggs. Interpellationerna under paragraferna 532–533 behandlas genom att kommunfullmäktige tar ställning till om de får framställas och att de därefter bordläggs. Anmälningsärendena under paragraf 534 antecknas.",
+     "score": 0.8929
+    },
+    {
+     "documentId": "6c7714df-8fa0-44fb-b865-9fd972f8580b",
+     "fileName": "KF_protokoll_20251127.pdf",
+     "page": 54,
+     "snippet": "§ 524 Ärendenummer SLK-2025-00100 Motion av Agneta Kjaerbeck (SD), Jörgen Fogelklou (SD) och Emma Altenhammar (SD) om kartläggning av svenskfientlighetens omfattning och karaktär Beslut Ärendet bordläggs till sammanträdet den 11 december 2025. Tidigare behandling Bordlagt den 16 oktober 2025, § 474. Handlingar 2025 nr 187. Yrkande från M, L och KD den 15 oktober 2025.",
+     "score": 0.8853
+    },
+    {
+     "documentId": "772a6bf5-f761-439c-96e5-4ac2e54baa1f",
+     "fileName": "KS_protokoll_20250611.pdf",
+     "page": 8,
+     "snippet": "§ 535 Ärendenummer SLK-2025-00083 Hemställan från nämnden för funktionsstöd om att överta ansvaret för villkoren avseende habiliteringsersättning Beslut På förslag av Axel Josefson (M): Ärendet bordläggs till sammanträdet den 27 augusti 2025. Handling Stadsledningskontorets tjänsteutlåtande den 19 maj 2025.",
+     "score": 0.8826
+    },
+    {
+     "documentId": "6c7714df-8fa0-44fb-b865-9fd972f8580b",
+     "fileName": "KF_protokoll_20251127.pdf",
+     "page": 59,
+     "snippet": "§ 529 Ärendenummer SLK-2025-00344 Motion av Patrik Höstmad (D) om ett mer systematiskt och aktivt arbete inom brottsförebyggande och trygghetsskapande områdessamverkan Beslut Ärendet bordläggs till sammanträdet den 11 december 2025. Handling 2025 nr 217.",
+     "score": 0.882
+    }
+   ]
+  },
+  {
+   "id": "demo-5",
+   "question": "Ge en överblick över besluten om politiska sekreterare.",
+   "answer": "Här är en översikt över besluten om politiska sekreterare, baserat på de tillgängliga dokumenten. Observera att detta kan vara en ofullständig översikt eftersom jag endast har tillgång till utdrag ur dokumenten.\n\n*   **V:** Beatrice Klein förordnas som politisk sekreterare för V från och med den 10 januari 2025 till och med den 31 december 2026 [1].\n*   **KD:** Sofia Agrell förordnas som politisk sekreterare för KD från och med den 1 januari 2026 till och med den 31 december 2026 [2].\n*   **KD:** Mathias Axelsson förordnas som politisk sekreterare för KD från och med den 19 maj 2025 till och med den 31 december 2026 [3].\n*   **D:** Jonas Bergstedt förlängs som vikarierande politisk sekreterare för D på 25 procent, från och med den 1 december 2024 till och med den 31 januari 2025 [5].",
+   "grounded": true,
+   "support": "fullt",
+   "broad": true,
+   "createdAt": "2026-10-19T17:23:12+00:00",
+   "sources": [
+    {
+     "documentId": "125de1ba-e7a2-47b6-a21a-9e87794132c2",
+     "fileName": "KS_protokoll_20241127.pdf",
+     "page": 40,
+     "snippet": "§ 1018 Ärendenummer SLK-2024-00010:-1 Förordnande av politisk sekreterare för V Beslut 1. Beatrice Klein (V) förordnas som politisk sekreterare för V för tiden från och med den 10 januari 2025 till och med den 31 december 2026. 2. För anställningen gäller kommunallagens bestämmelser om politiska tjänstemän. 3. Lön och övriga anställningsvillkor fastställs av kommunstyrelsens arbetsutskott. Protokollsutdrag skickas till Beatrice Klein Stadsledningskontoret/Kontorsledning",
+     "score": 0.8724
+    },
+    {
+     "documentId": "fa73bbfe-f1d2-4250-9563-2af9c14523af",
+     "fileName": "KS_protokoll_20251126.pdf",
+     "page": 44,
+     "snippet": "§ 922 Ärendenummer SLK-2025-00007 Förordnande av politisk sekreterare för KD Beslut 1. Sofia Agrell (KD) förordnas som politisk sekreterare för KD för tiden från och med den 1 januari 2026 till och med den 31 december 2026. 2. För anställningen gäller kommunallagens bestämmelser om politiska tjänstemän. 3. Lön och övriga anställningsvillkor fastställs av kommunstyrelsens arbetsutskott. Protokollsutdrag skickas till Sofia Agrell Stadsledningskontoret/Kontorsledning",
+     "score": 0.8705
+    },
+    {
+     "documentId": "99ff8829-b437-4791-b553-7b14c768d20b",
+     "fileName": "KS_protokoll_20250409.pdf",
+     "page": 51,
+     "snippet": "§ 331 Ärendenummer SLK-2025-00007 Förordnande av politisk sekreterare för KD för tiden 2025-05-19--2026-12-31 Beslut 1. Mathias Axelsson förordnas som politisk sekreterare för KD för tiden från och med den 19 maj 2025 till och med den 31 december 2026. 2. För anställningen gäller kommunallagens bestämmelser om politiska tjänstemän. 3. Lön och övriga anställningsvillkor fastställs av kommunstyrelsens arbetsutskott. Protokollsutdrag skickas till Mathias Axelsson Stadsledningskontoret/Kontorsledning",
+     "score": 0.8637
+    },
+    {
+     "documentId": "fa73bbfe-f1d2-4250-9563-2af9c14523af",
+     "fileName": "KS_protokoll_20251126.pdf",
+     "page": 19,
+     "snippet": "§ 902 Ärendenummer SLK-2025-01057 Remiss från Justitiedepartementet - Promemorian Kompletterande förslag till betänkandet Skärpta regler och tydligare krav på vandel för uppehållstillstånd (SOU 2025:33) Beslut Enligt yrkande från V, S och MP: Yttrande över remissen Kompletterande förslag till betänkandet Skärpta regler och tydligare krav på vandel för uppehållstillstånd (SOU 2025:33), i enlighet med bilaga 2 till stadsledningskontorets förslag med det tillägg som framgår av yrkande från V, S och MP, översänds till Justitiedepartementet. Handlingar Stadsledningskontorets tjänsteutlåtande den 28 oktober 2025. Yrkande från V, S och MP den 21 november 2025. Yttrande från SD, M, D, och KD den 26 november 2025. Yrkanden Tjänstgörande ersättaren Marie Brynolfsson (V) yrkar bifall till yrkande från V, S och MP den 21 november 2025.",
+     "score": 0.8606
+    },
+    {
+     "documentId": "125de1ba-e7a2-47b6-a21a-9e87794132c2",
+     "fileName": "KS_protokoll_20241127.pdf",
+     "page": 41,
+     "snippet": "§ 1019 Ärendenummer SLK-2024-00010 Förlängning av förordnande av politisk sekreterare för D Beslut 1. Jonas Bergstedts (D) förordnande som vikarierande politisk sekreterare för D på 25 procent i stället för Veronica Öjeskär (D) förlängs för tiden från och med den 1 december 2024 till och med den 31 januari 2025. 2. För anställningen gäller kommunallagens bestämmelser om politiska tjänstemän. 3. Lön och övriga anställningsvillkor fastställs av kommunstyrelsens arbetsutskott. Protokollsutdrag skickas till Jonas Bergstedt Stadsledningskontoret/Kontorsledning",
+     "score": 0.8605
+    },
+    {
+     "documentId": "125de1ba-e7a2-47b6-a21a-9e87794132c2",
+     "fileName": "KS_protokoll_20241127.pdf",
+     "page": 14,
+     "snippet": "§ 996 Ärendenummer SLK-2024-00813 Remiss från Utbildningsdepartementet - Bildning, utbildning och delaktighet - folkbildningspolitik i en ny tid (SOU 2024:42) Beslut Enligt yrkande från V, S och MP: Yttrande över remissen Bildning, utbildning och delaktighet - en folkbildningspolitik i en ny tid (SOU 2024:42), enligt bilaga 1 i yrkande från V, S och MP, översänds till Utbildningsdepartementet. Handlingar Stadsledningskontorets tjänsteutlåtande den 28 oktober 2024. Yrkande från V, S och MP den 22 november 2024. Yrkande från SD den 20 november 2024. Yrkanden Jenny Broman (V) yrkar bifall till yrkande från V, S och MP den 22 november 2024 och avslag på övriga yrkanden. Axel Josefson (M) yrkar bifall till stadsledningskontorets förslag och avslag på övriga yrkanden. Jörgen Fogelklou (SD) yrkar bifall till yrkande från SD den 20 november 2024 och avslag på övriga yrkanden.",
+     "score": 0.8601
+    },
+    {
+     "documentId": "125de1ba-e7a2-47b6-a21a-9e87794132c2",
+     "fileName": "KS_protokoll_20241127.pdf",
+     "page": 17,
+     "snippet": "§ 998 Ärendenummer SLK-2024-00838 Remiss från Justitiedepartementet - Delbetänkandet Ökat informationsutbyte mellan myndigheter – Behov och föreslagna förändringar (SOU 2024:63) Beslut Enligt stadsledningskontorets förslag: Yttrande över remissen Ökat informationsflöde mellan myndigheter – Behov och föreslagna förändringar (SOU 2024:63), i enlighet med bilaga 2 till stadsledningskontorets tjänsteutlåtande, översänds till Justitiedepartementet Handlingar Stadsledningskontorets tjänsteutlåtande den 27 september 2024. Yrkande från M, D, L och KD den 22 november 2024. Yrkanden Ordföranden Jonas Attenius (S) yrkar bifall till stadsledningskontorets förslag och avslag på yrkande från M, D, L och KD den 22 november 2024. Axel Josefson (M) och Jörgen Fogelklou (SD) yrkar bifall till yrkande från M, D, L och KD den 22 november 2024.",
+     "score": 0.8598
+    },
+    {
+     "documentId": "99ff8829-b437-4791-b553-7b14c768d20b",
+     "fileName": "KS_protokoll_20250409.pdf",
+     "page": 35,
+     "snippet": "Yrkanden Tjänstgörande ersättaren Marie Brynolfsson (V) yrkar bifall till yrkande från V, S och MP den 4 april 2025 och avslag på övriga yrkanden. Jörgen Fogelklou (SD) yrkar i första hand bifall till stadsledningskontorets förslag och i andra hand bifall till yrkande från M, D, L och KD den 4 april 2025 beträffande beslutspunkterna med förslag till beslut av kommunstyrelsen för egen del. Axel Josefson (M) yrkar bifall till yrkande från M, D, L och KD den 4 april 2025 och avslag på övriga yrkanden. Tjänstgörande ersättaren Emmyly Bönfors (C) yrkar bifall till yrkande från C den 8 april 2025. Propositionsordning Ordföranden Jonas Attenius (S) ställer propositioner på yrkandena och finner att yrkandet från Marie Brynolfsson bifallits. Protokollsutdrag skickas till Nämnden för Intraservice Nämnden för demokrati och medborgarservice KF Handling 2025 nr 83",
+     "score": 0.8596
+    },
+    {
+     "documentId": "99ff8829-b437-4791-b553-7b14c768d20b",
+     "fileName": "KS_protokoll_20250409.pdf",
+     "page": 23,
+     "snippet": "§ 308 Ärendenummer SLK-2024-00780 Motion av Elisabet Lann (KD) och Kalle Bäck (KD) om att tillgängliggöra friidrottsanläggningar för allmänheten Beslut Kommunstyrelsen föreslår att kommunfullmäktige beslutar: Den av Elisabet Lann och Kalle Bäck väckta motionen anses besvarad. Handlingar Stadsledningskontorets tjänsteutlåtande den 10 mars 2025. Yrkande från KD, M, D och L den 4 april 2025. Yttrande från V, S och MP den 7 april 2025. Yrkanden Elisabet Lann (KD) och tjänstgörande ersättaren Emmyly Bönfors (C) yrkar bifall till yrkande från KD, M, D och L den 4 april 2025 om att tillstyrka motionen. Jörgen Fogelklou (SD) yrkar att motionen ska tillstyrkas. Daniel Bernmar (V) yrkar att motionen ska anses besvarad med hänvisning till yttrande från V, S och MP den 7 april 2025.",
+     "score": 0.8592
+    },
+    {
+     "documentId": "772a6bf5-f761-439c-96e5-4ac2e54baa1f",
+     "fileName": "KS_protokoll_20250611.pdf",
+     "page": 36,
+     "snippet": "offentliga måltider, godkänns. Kommunstyrelsen tillstyrker yrkande från S, V och MP den 10 juni 2025 och föreslår att kommunfullmäktige beslutar: 1. Det generella statsbidraget för tillämpning av den nya socialtjänstlagen på 3 600 tkr tilldelas äldre samt vård- och omsorgsnämnden, nämnden för funktionsstöd samt socialnämnderna Nordost, Centrum, Sydväst och Hisingen för 2025 genom att öka äldre samt vård- och omsorgsnämndens kommunbidrag med 600 tkr, nämnden för funktionsstöds kommunbidrag med 600 tkr, socialnämnden Nordost kommunbidrag med 940 tkr, socialnämnden Centrums kommunbidrag med 390 tkr, socialnämnden Sydväst kommunbidrag med 400 tkr och socialnämnden Hisingens kommunbidrag med 670 tkr. 2. Exploateringsnämndens hemställan om utökad investeringsram om 200 mnkr för 2025 för att finansiera strategiskt fastighetsförvärv Gullbergsvass 703:58 godkänns. 3.",
+     "score": 0.8574
+    },
+    {
+     "documentId": "772a6bf5-f761-439c-96e5-4ac2e54baa1f",
+     "fileName": "KS_protokoll_20250611.pdf",
+     "page": 47,
+     "snippet": "§ 565 Ärendenummer SLK-2025-00611 Yrkande från SD angående en effektiv och rimlig fördelning av arbetsuppgifter mellan hemtjänstens dag-, kvälls- och nattpersonal Beslut Yrkandet från SD avslås. Tidigare behandling Bordlagt den 21 maj 2025, § 471 och den 4 juni 2025, § 513. Handlingar Yrkande från SD den 13 maj 2025. Yttrande från D, M, L och KD den 28 maj 2025. Yrkanden Jörgen Fogelklou (SD) yrkar bifall till yrkande från SD den 13 maj 2025. Marina Johansson (S) och Axel Josefson (M) yrkar avslag på yrkande från SD den 13 maj 2025. Propositionsordning Ordföranden Jonas Attenius (S) ställer propositioner på bifall respektive avslag på yrkandet från SD och finner att det avslagits. Protokollsanteckning Representanterna från D, M och KD antecknar som yttrande en skrivelse från den 28 maj 2025. Reservation Jörgen Fogelklou (SD) reserverar sig mot beslutet till förmån för det egna yrkandet.",
+     "score": 0.8574
+    },
+    {
+     "documentId": "125de1ba-e7a2-47b6-a21a-9e87794132c2",
+     "fileName": "KS_protokoll_20241127.pdf",
+     "page": 31,
+     "snippet": "§ 1009 Ärendenummer SLK-2024-00577 Motion av Kristina Bergman Alme (L) om ökat stöd efter vårdnadsöverflytt Beslut Kommunstyrelsen tillstyrker yrkande från V, S och MP den 20 november 2024 och föreslår att kommunfullmäktige beslutar: 1. Första beslutssatsen i den av Kristina Bergman Alme väckta motionen bifalles. 2. Kommunfullmäktige ger socialnämnderna i uppdrag att utreda familjehemsplacerade barns och familjehems syn på vårdnadsöverflytt, inklusive input från vuxna som tidigare varit placerade i syfte att se över hur stöd till familjehem efter vårdnadsöverflytt skulle kunna förbättras 3. Uppdraget ska återrapporteras i respektive socialnämnd. 4. Andra beslutssatsen i den av Kristina Bergman Alme väckta motionen avslås. Tidigare behandling Bordlagt den 20 november 2024, § 950. Handlingar Stadsledningskontorets tjänsteutlåtande den 23 oktober 2024.",
+     "score": 0.8571
+    }
+   ]
+  },
+  {
+   "id": "demo-6",
+   "question": "Vad gäller ärende SLK-2030-00001?",
+   "answer": "Jag hittar inget stöd för det i dokumenten.",
+   "grounded": false,
+   "support": "inget",
+   "broad": false,
+   "createdAt": "2026-10-19T17:23:12+00:00",
+   "sources": []
+  }
+ ]
+}

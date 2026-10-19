@@ -19,7 +19,7 @@ export function DocumentPanel({ onOpen }: { onOpen: (target: ViewerTarget) => vo
         {isPending && (
           <div className="space-y-2" aria-label="Laddar dokument">
             {[0, 1, 2].map((i) => (
-              <div key={i} className="h-[88px] animate-pulse rounded-xl bg-surface-2" />
+              <div key={i} className="skeleton h-[88px] !rounded-xl" />
             ))}
           </div>
         )}

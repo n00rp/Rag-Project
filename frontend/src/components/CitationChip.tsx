@@ -5,7 +5,8 @@ import type { ChatSource, ViewerTarget } from '../lib/types'
 interface Props {
   index: number
   source: ChatSource
-  onOpen: (target: ViewerTarget) => void
+  /** Without it the chip only shows where the citation comes from (a recorded session has no documents to open). */
+  onOpen?: (target: ViewerTarget) => void
 }
 
 const CARD_WIDTH = 288
@@ -27,7 +28,7 @@ export function CitationChip({ index, source, onOpen }: Props) {
     <span className="relative inline-block">
       <button
         type="button"
-        onClick={() => onOpen({ documentId: source.documentId, fileName: source.fileName, page: source.page, snippet: source.snippet })}
+        onClick={() => onOpen?.({ documentId: source.documentId, fileName: source.fileName, page: source.page, snippet: source.snippet })}
         onMouseEnter={(e) => show(e.currentTarget)}
         onMouseLeave={() => setCard(null)}
         onFocus={(e) => show(e.currentTarget)}
@@ -51,7 +52,7 @@ export function CitationChip({ index, source, onOpen }: Props) {
             <span className="shrink-0 text-muted">· sida {source.page}</span>
           </span>
           <span className="mt-1.5 line-clamp-4 block text-xs leading-relaxed text-muted">{source.snippet}</span>
-          <span className="mt-2 block text-xs font-medium text-accent">Klicka för att öppna sidan</span>
+          {onOpen && <span className="mt-2 block text-xs font-medium text-accent">Klicka för att öppna sidan</span>}
         </span>
       )}
     </span>

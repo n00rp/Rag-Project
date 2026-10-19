@@ -3,6 +3,7 @@ import { FolderOpen, Moon, Search, Sun, WifiOff } from 'lucide-react'
 import { clsx } from 'clsx'
 import { ChatView } from './components/ChatView'
 import { CommandPalette, type Command } from './components/CommandPalette'
+import { DemoSession } from './components/DemoSession'
 import { DocumentPanel } from './components/DocumentPanel'
 import { APP_NAME, Logo } from './components/Logo'
 import { Sheet } from './components/ui/Sheet'
@@ -32,7 +33,7 @@ function HealthPill() {
   )
 }
 
-function OfflineBanner() {
+function OfflineBanner({ onShowDemo }: { onShowDemo: () => void }) {
   const { data, isError } = useHealth()
   if (data?.aiService !== false && !isError) return null
 
@@ -44,6 +45,9 @@ function OfflineBanner() {
           ? 'Kan inte nå servern just nu.'
           : 'AI-modellen är offline just nu. Du kan bläddra bland dokumenten – frågor fungerar när den är tillbaka.'}
       </span>
+      <button onClick={onShowDemo} className="shrink-0 font-semibold underline underline-offset-2 hover:no-underline">
+        Se en inspelad exempelsession
+      </button>
     </div>
   )
 }
@@ -53,6 +57,7 @@ export default function App() {
   const [viewer, setViewer] = useState<ViewerTarget | null>(null)
   const [docsOpen, setDocsOpen] = useState(false)
   const [paletteOpen, setPaletteOpen] = useState(false)
+  const [demoOpen, setDemoOpen] = useState(false)
   const clearHistory = useClearHistory()
   // Wide screens show the source next to the chat; the panel for the documents is always visible from `lg`.
   const wide = useMediaQuery('(min-width: 1280px)')
@@ -60,6 +65,7 @@ export default function App() {
   const closeViewer = useCallback(() => setViewer(null), [])
   const closeDocs = useCallback(() => setDocsOpen(false), [])
   const closePalette = useCallback(() => setPaletteOpen(false), [])
+  const closeDemo = useCallback(() => setDemoOpen(false), [])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -76,6 +82,7 @@ export default function App() {
     () => [
       { id: 'new', label: 'Ny konversation', run: () => clearHistory.mutate() },
       { id: 'theme', label: theme === 'dark' ? 'Byt till ljust läge' : 'Byt till mörkt läge', run: toggle },
+      { id: 'demo', label: 'Visa inspelad exempelsession', run: () => setDemoOpen(true) },
       ...(sidebarVisible ? [] : [{ id: 'docs', label: 'Visa dokument', run: () => setDocsOpen(true) }]),
       ...(viewer ? [{ id: 'close-source', label: 'Stäng källvisaren', hint: 'Esc', run: closeViewer }] : []),
     ],
@@ -114,7 +121,7 @@ export default function App() {
         </div>
       </header>
 
-      <OfflineBanner />
+      <OfflineBanner onShowDemo={() => setDemoOpen(true)} />
 
       <div className="flex min-h-0 flex-1">
         <aside className="hidden w-[22rem] shrink-0 border-r border-line bg-bg lg:block">
@@ -145,6 +152,7 @@ export default function App() {
           <PdfViewer target={viewer} onClose={closeViewer} />
         </Suspense>
       )}
+      {demoOpen && <DemoSession onClose={closeDemo} />}
       {paletteOpen && <CommandPalette commands={commands} onClose={closePalette} />}
     </div>
   )

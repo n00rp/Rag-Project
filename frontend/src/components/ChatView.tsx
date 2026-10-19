@@ -118,6 +118,13 @@ export function ChatView({ onOpen }: { onOpen: (target: ViewerTarget) => void })
                   ))}
                 </ul>
               )}
+              {hasReadyDocs && (
+                <p className="mt-7 max-w-lg text-balance text-xs leading-relaxed text-muted">
+                  Fungerar bäst när svaret står på ett eller två ställen: beslut, personer, belopp, ärendenummer och
+                  paragrafer. Sammanfattningar och att räkna eller lista allt bygger på ett urval av utdrag och kan vara
+                  ofullständiga.
+                </p>
+              )}
             </div>
           ) : (
             <>

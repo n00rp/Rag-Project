@@ -5,7 +5,7 @@ import { SourceCard } from './SourceCard'
 
 interface Props {
   sources: ChatSource[]
-  onOpen: (target: ViewerTarget) => void
+  onOpen?: (target: ViewerTarget) => void
 }
 
 function short(name: string, max = 26): string {
@@ -27,7 +27,7 @@ export function SourceStrip({ sources, onOpen }: Props) {
             <li key={`${s.documentId}-${s.page}-${i}`} className="contents">
               <button
                 type="button"
-                onClick={() => onOpen({ documentId: s.documentId, fileName: s.fileName, page: s.page, snippet: s.snippet })}
+                onClick={() => onOpen?.({ documentId: s.documentId, fileName: s.fileName, page: s.page, snippet: s.snippet })}
                 title={`${s.fileName}, sida ${s.page}`}
                 className="group inline-flex items-center gap-1.5 rounded-full border border-line bg-surface py-0.5 pl-0.5 pr-2.5 text-xs shadow-soft transition-colors duration-[var(--dur-fast)] hover:border-accent/60 hover:bg-accent-soft/50"
               >

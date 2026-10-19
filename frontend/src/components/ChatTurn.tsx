@@ -82,7 +82,8 @@ function AnswerActions({ text, createdAt, interrupted, onRegenerate, children }:
 
 interface TurnProps {
   turn: ChatAnswer
-  onOpen: (target: ViewerTarget) => void
+  /** Left out for a recorded session, whose sources cannot be opened. */
+  onOpen?: (target: ViewerTarget) => void
   /** Only given for the latest answer. */
   onRegenerate?: () => void
   onFeedback?: (rating: Rating | null, comment?: string) => void
