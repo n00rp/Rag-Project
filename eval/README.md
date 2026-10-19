@@ -97,6 +97,20 @@ Baslinjen visade att ärendenummer och paragrafer var det största hålet. Tre �
 
 Falska antaganden ("Varför bifölls…") rättas fortfarande inte (0 av 4); det hör till plan B6. **Domarnas överensstämmelse sjönk till 83 %** (strikt och lätt gräns skiljer 11 procentenheter på dev), så den strikta siffran är en undre gräns och en kalibrering mot en människa (`calibrate.py`) är angelägen.
 
+## Experiment 6: grannchunkar som kontext (förkastat)
+Hypotes: detaljfrågor ("hur många röstade ja?") nekas ofta fast rätt sida hittas, eftersom svaret ligger i chunken bredvid. `CONTEXT_NEIGHBORS=1` ger modellen även chunkarna före och efter varje träff på samma sida (källorna som visas för användaren är oförändrade). Mätt på dev med gemma3:12b (`results/e3/neighbors1-answers.json`):
+
+| | Utan | Med grannchunkar |
+|---|---|---|
+| Korrekt, alla (strikt) | 0,76 | 0,77 |
+| Korrekt (minst en domare) | 0,87 | 0,91 |
+| Felaktigt nekade | 0,10 | 0,06 |
+| Citat rätt | 0,85 | 0,89 |
+| Förankrat | 0,94 | 0,88 |
+| Latens median | 1,2 s | 1,4 s |
+
+Fem svar ändrades (3 till det bättre, 2 till det sämre), och **detaljfrågorna blev inte bättre** (3 → 2 av 5 korrekta). Förankringen sjönk, vilket stämmer med att mer text ger mer att dra felaktiga slutsatser från. Skillnaderna ligger inom bruset (domarna är överens i bara 81 %), och beslutsregeln (minst +0,02 strikt på dev) uppfylls inte. **Inställningen finns kvar men är avstängd.**
+
 ## Granska och komplettera frågorna
 ```bash
 python ../eval/make_review.py          # skapar review/evalset-review.md (frågor, facit, rätt källa i klartext)
