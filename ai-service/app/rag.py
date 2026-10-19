@@ -1,3 +1,4 @@
+from collections.abc import Iterator
 from dataclasses import dataclass
 from uuid import UUID
 
@@ -28,31 +29,60 @@ class Answer:
     sources: list[Hit]
 
 
+@dataclass(frozen=True)
+class Retrieval:
+    question: str
+    hits: list[Hit]
+    refused: bool  # nothing similar enough was found: do not even ask the model
+
+
 def build_user_prompt(question: str, hits: list[Hit]) -> str:
     context = "\n\n".join(f"[{i}] (sida {h.page})\n{h.content}" for i, h in enumerate(hits, start=1))
     return f"Kontext:\n\n{context}\n\nFråga: {question}"
 
 
-def answer_question(
+def retrieve(
     *,
     pool: ConnectionPool,
     embedder: Embedder,
-    llm: LlmClient,
     settings: Settings,
     owner_id: str,
     question: str,
     document_ids: list[UUID] | None = None,
     top_k: int | None = None,
-) -> Answer:
+) -> Retrieval:
     question = normalize_text(question)
     hits = db.search(
         pool, owner_id, embedder.embed_query(question), top_k or settings.top_k, document_ids
     )
     # Refuse on the best hit only. Filtering every hit drops relevant context: the right chunk often
     # scores just below the top one (e5 scores are compressed), see eval/README.md.
-    if not hits or hits[0].score < settings.min_score:
-        return Answer(NO_SUPPORT_ANSWER, grounded=False, sources=[])
+    return Retrieval(question, hits, refused=not hits or hits[0].score < settings.min_score)
 
-    text = llm.generate(SYSTEM_PROMPT, build_user_prompt(question, hits))
+
+def _finish(text: str, hits: list[Hit]) -> Answer:
     grounded = NO_SUPPORT_ANSWER not in text
     return Answer(text, grounded=grounded, sources=hits if grounded else [])
+
+
+def answer_question(*, llm: LlmClient, **retrieval_args) -> Answer:
+    retrieval = retrieve(**retrieval_args)
+    if retrieval.refused:
+        return Answer(NO_SUPPORT_ANSWER, grounded=False, sources=[])
+    return _finish(llm.generate(SYSTEM_PROMPT, build_user_prompt(retrieval.question, retrieval.hits)), retrieval.hits)
+
+
+def stream_answer(llm: LlmClient, retrieval: Retrieval) -> Iterator[tuple[str, object]]:
+    """Events of one answer: ("sources", hits) once, ("token", text) while the model writes, ("done", Answer) last.
+
+    A refusal is a single "done". If the model itself says there is no support, the sources that were announced
+    are dropped from the final Answer (grounded=False) and the caller must not show them."""
+    if retrieval.refused:
+        yield "done", Answer(NO_SUPPORT_ANSWER, grounded=False, sources=[])
+        return
+    yield "sources", retrieval.hits
+    parts: list[str] = []
+    for token in llm.stream(SYSTEM_PROMPT, build_user_prompt(retrieval.question, retrieval.hits)):
+        parts.append(token)
+        yield "token", token
+    yield "done", _finish("".join(parts).strip(), retrieval.hits)

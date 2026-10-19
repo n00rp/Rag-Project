@@ -1,3 +1,6 @@
+import json
+import re
+from collections.abc import Iterator
 from typing import Protocol
 
 import httpx
@@ -12,6 +15,10 @@ class LlmUnavailableError(Exception):
 class LlmClient(Protocol):
     def generate(self, system: str, user: str) -> str: ...
 
+    def stream(self, system: str, user: str) -> Iterator[str]:
+        """The answer in pieces, as the model produces it."""
+        ...
+
 
 class FakeLlm:
     """Extractive stand-in: echoes the first context passage. Lets the stack run without a GPU."""
@@ -24,6 +31,9 @@ class FakeLlm:
         body = user[start + len(marker) :].split("\n\n", 1)[0].strip()
         return f"(Fake-LLM) Enligt dokumenten: {body[:300]} [1]"
 
+    def stream(self, system: str, user: str) -> Iterator[str]:
+        yield from re.findall(r"\S+\s*", self.generate(system, user))
+
 
 class OllamaLlm:
     """Talks to Ollama's OpenAI-compatible endpoint, so any compatible server also works."""
@@ -35,23 +45,45 @@ class OllamaLlm:
         self._model = model
         self._timeout = timeout
 
-    def generate(self, system: str, user: str) -> str:
-        payload = {
+    def _payload(self, system: str, user: str, stream: bool) -> dict:
+        return {
             "model": self._model,
             "temperature": 0.1,
+            "stream": stream,
             "messages": [
                 {"role": "system", "content": system},
                 {"role": "user", "content": user},
             ],
         }
+
+    def generate(self, system: str, user: str) -> str:
         try:
-            resp = httpx.post(self._url, json=payload, timeout=self._timeout)
+            resp = httpx.post(self._url, json=self._payload(system, user, False), timeout=self._timeout)
             resp.raise_for_status()
         except (httpx.ConnectError, httpx.TimeoutException) as exc:
             raise LlmUnavailableError(str(exc)) from exc
         except httpx.HTTPStatusError as exc:
             raise LlmUnavailableError(f"LLM svarade {exc.response.status_code}") from exc
         return resp.json()["choices"][0]["message"]["content"].strip()
+
+    def stream(self, system: str, user: str) -> Iterator[str]:
+        """Server-sent events from the OpenAI-compatible endpoint: `data: {...}` lines, then `data: [DONE]`."""
+        try:
+            with httpx.stream("POST", self._url, json=self._payload(system, user, True), timeout=self._timeout) as resp:
+                resp.raise_for_status()
+                for line in resp.iter_lines():
+                    if not line.startswith("data:"):
+                        continue
+                    data = line[len("data:") :].strip()
+                    if data == "[DONE]":
+                        return
+                    delta = json.loads(data)["choices"][0]["delta"].get("content")
+                    if delta:
+                        yield delta
+        except (httpx.TransportError, httpx.TimeoutException) as exc:
+            raise LlmUnavailableError(str(exc)) from exc
+        except httpx.HTTPStatusError as exc:
+            raise LlmUnavailableError(f"LLM svarade {exc.response.status_code}") from exc
 
 
 def build_llm(settings: Settings) -> LlmClient:

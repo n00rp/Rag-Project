@@ -8,6 +8,9 @@ public class ChatMessage
     public required string Answer { get; set; }
     public bool Grounded { get; set; }
 
+    /// <summary>The answer was cut off (the user pressed stop, or the AI service failed while it was being written).</summary>
+    public bool Interrupted { get; set; }
+
     /// <summary>Serialized list of <see cref="Contracts.ChatSourceDto"/>, stored as jsonb.</summary>
     public string SourcesJson { get; set; } = "[]";
 

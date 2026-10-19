@@ -26,6 +26,8 @@ export interface ChatAnswer {
   grounded: boolean
   sources: ChatSource[]
   createdAt: string
+  /** The answer was cut off (stopped, or the model failed while writing it). */
+  interrupted?: boolean
 }
 
 export interface Health {

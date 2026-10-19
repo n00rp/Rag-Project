@@ -1,8 +1,10 @@
+import json
 import logging
 from contextlib import asynccontextmanager
 from uuid import UUID
 
 from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, UploadFile
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from app import db
@@ -12,7 +14,7 @@ from app.config import Settings, get_settings
 from app.embeddings import build_embedder
 from app.llm import LlmUnavailableError, build_llm
 from app.pdf import NoTextError, PdfError, extract_pages
-from app.rag import answer_question
+from app.rag import answer_question, retrieve, stream_answer
 
 log = logging.getLogger("ai-service")
 
@@ -100,6 +102,16 @@ def ingest(
     return IngestResponse(document_id=document_id, pages=page_count, chunks=len(chunks))
 
 
+def source_out(h) -> SourceOut:
+    return SourceOut(
+        document_id=h.document_id,
+        page=h.page,
+        chunk_index=h.chunk_index,
+        snippet=strip_header(h.content),
+        score=round(h.score, 4),
+    )
+
+
 @app.post("/query", response_model=QueryResponse, dependencies=[Depends(require_internal_key)])
 def query(req: QueryRequest, settings: Settings = Depends(get_settings)) -> QueryResponse:
     try:
@@ -118,19 +130,43 @@ def query(req: QueryRequest, settings: Settings = Depends(get_settings)) -> Quer
         raise HTTPException(status_code=503, detail="AI-modellen är inte tillgänglig just nu") from exc
 
     return QueryResponse(
-        answer=result.answer,
-        grounded=result.grounded,
-        sources=[
-            SourceOut(
-                document_id=h.document_id,
-                page=h.page,
-                chunk_index=h.chunk_index,
-                snippet=strip_header(h.content),
-                score=round(h.score, 4),
-            )
-            for h in result.sources
-        ],
+        answer=result.answer, grounded=result.grounded, sources=[source_out(h) for h in result.sources]
     )
+
+
+def _line(event: dict) -> str:
+    return json.dumps(event, ensure_ascii=False) + "\n"
+
+
+@app.post("/query/stream", dependencies=[Depends(require_internal_key)])
+def query_stream(req: QueryRequest, settings: Settings = Depends(get_settings)) -> StreamingResponse:
+    """The answer as it is written, one JSON event per line (application/x-ndjson):
+
+    {"type": "sources", "sources": [...]}   once, before the first token
+    {"type": "token", "text": "..."}        while the model writes
+    {"type": "done", "answer": "...", "grounded": true}   last; if grounded is false the sources must be ignored
+    {"type": "error", "code": "ai_unavailable", "message": "..."}   if the model cannot be reached
+
+    Retrieval happens before the response starts, so its errors are ordinary HTTP errors."""
+    retrieval = retrieve(
+        pool=app.state.pool, embedder=app.state.embedder, settings=settings, owner_id=req.owner_id,
+        question=req.question, document_ids=req.document_ids, top_k=req.top_k,
+    )
+
+    def events():
+        try:
+            for kind, payload in stream_answer(app.state.llm, retrieval):
+                if kind == "sources":
+                    yield _line({"type": "sources", "sources": [source_out(h).model_dump(mode="json") for h in payload]})
+                elif kind == "token":
+                    yield _line({"type": "token", "text": payload})
+                else:
+                    yield _line({"type": "done", "answer": payload.answer, "grounded": payload.grounded})
+        except LlmUnavailableError as exc:
+            log.warning("LLM unavailable: %s", exc)
+            yield _line({"type": "error", "code": "ai_unavailable", "message": "AI-modellen är inte tillgänglig just nu"})
+
+    return StreamingResponse(events(), media_type="application/x-ndjson")
 
 
 @app.delete("/documents/{document_id}", dependencies=[Depends(require_internal_key)])

@@ -57,15 +57,6 @@ export function useClearHistory() {
   })
 }
 
-export function useAsk() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (question: string) => api.ask(question),
-    onSuccess: (answer) =>
-      qc.setQueryData<ChatAnswer[]>(['history'], (old = []) => [...old, answer]),
-  })
-}
-
 export function useHealth() {
   return useQuery({
     queryKey: ['health'],

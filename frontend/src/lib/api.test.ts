@@ -19,7 +19,7 @@ describe('api error handling', () => {
       ),
     )
 
-    const error = await api.ask('hej').catch((e: unknown) => e)
+    const error = await api.history().catch((e: unknown) => e)
 
     expect(error).toBeInstanceOf(ApiError)
     expect((error as ApiError).status).toBe(503)

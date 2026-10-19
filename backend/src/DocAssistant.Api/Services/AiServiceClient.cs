@@ -1,4 +1,5 @@
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -9,6 +10,16 @@ public record IngestResult(Guid DocumentId, int Pages, int Chunks);
 public record AiSource(Guid DocumentId, int Page, int ChunkIndex, string Snippet, double Score);
 
 public record QueryResult(string Answer, bool Grounded, List<AiSource> Sources);
+
+/// <summary>One event of a streamed answer: sources once, tokens while the model writes, then done.</summary>
+public abstract record AiStreamEvent;
+
+public sealed record AiSourcesEvent(List<AiSource> Sources) : AiStreamEvent;
+
+public sealed record AiTokenEvent(string Text) : AiStreamEvent;
+
+/// <summary>The whole answer. If <paramref name="Grounded"/> is false the announced sources must not be shown.</summary>
+public sealed record AiDoneEvent(string Answer, bool Grounded) : AiStreamEvent;
 
 /// <summary>The AI service (or the LLM behind it) can't be reached right now.</summary>
 public class AiServiceUnavailableException(string message, Exception? inner = null) : Exception(message, inner);
@@ -23,6 +34,10 @@ public interface IAiServiceClient
 {
     Task<IngestResult> IngestAsync(string ownerId, Guid documentId, Stream file, string fileName, CancellationToken ct);
     Task<QueryResult> QueryAsync(string ownerId, string question, IReadOnlyList<Guid>? documentIds, CancellationToken ct);
+
+    /// <summary>Same question, but the answer arrives as it is written. Throws <see cref="AiServiceUnavailableException"/>
+    /// if the model cannot be reached, before the first event or in the middle of the stream.</summary>
+    IAsyncEnumerable<AiStreamEvent> QueryStreamAsync(string ownerId, string question, IReadOnlyList<Guid>? documentIds, CancellationToken ct);
     Task DeleteAsync(string ownerId, Guid documentId, CancellationToken ct);
     Task<bool> IsHealthyAsync(CancellationToken ct);
 }
@@ -50,6 +65,62 @@ public sealed class AiServiceClient(HttpClient http) : IAiServiceClient
     {
         var body = new { ownerId, question, documentIds };
         return await SendAsync<QueryResult>(() => http.PostAsJsonAsync("query", body, Json, ct), ct);
+    }
+
+    public async IAsyncEnumerable<AiStreamEvent> QueryStreamAsync(
+        string ownerId, string question, IReadOnlyList<Guid>? documentIds,
+        [EnumeratorCancellation] CancellationToken ct)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Post, "query/stream")
+        {
+            Content = JsonContent.Create(new { ownerId, question, documentIds }, options: Json),
+        };
+        // ResponseHeadersRead: hand over events as they arrive instead of waiting for the whole body.
+        using var response = await SendRawAsync(() => http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, ct));
+        await EnsureSuccessAsync(response, ct);
+
+        using var reader = new StreamReader(await response.Content.ReadAsStreamAsync(ct));
+        while (true)
+        {
+            string? line;
+            try
+            {
+                line = await reader.ReadLineAsync(ct);
+            }
+            catch (Exception ex) when (ex is IOException or HttpRequestException)
+            {
+                throw new AiServiceUnavailableException("Anslutningen till AI-tjänsten bröts.", ex);
+            }
+            if (line is null) yield break;
+            if (line.Length == 0) continue;
+            yield return ParseEvent(line);
+        }
+    }
+
+    private static AiStreamEvent ParseEvent(string line)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(line);
+            var root = doc.RootElement;
+            switch (root.GetProperty("type").GetString())
+            {
+                case "sources":
+                    return new AiSourcesEvent(root.GetProperty("sources").Deserialize<List<AiSource>>(Json) ?? []);
+                case "token":
+                    return new AiTokenEvent(root.GetProperty("text").GetString() ?? "");
+                case "done":
+                    return new AiDoneEvent(root.GetProperty("answer").GetString() ?? "", root.GetProperty("grounded").GetBoolean());
+                case "error":
+                    var message = root.TryGetProperty("message", out var m) ? m.GetString() : null;
+                    throw new AiServiceUnavailableException(message ?? "AI-tjänsten rapporterade ett fel.");
+            }
+        }
+        catch (Exception ex) when (ex is JsonException or KeyNotFoundException or InvalidOperationException)
+        {
+            throw new AiServiceUnavailableException("AI-tjänsten skickade ett oläsligt svar.", ex);
+        }
+        throw new AiServiceUnavailableException("AI-tjänsten skickade en okänd händelse.");
     }
 
     public async Task DeleteAsync(string ownerId, Guid documentId, CancellationToken ct)

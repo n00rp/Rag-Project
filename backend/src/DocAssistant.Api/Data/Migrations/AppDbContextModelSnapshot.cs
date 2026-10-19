@@ -38,6 +38,9 @@ namespace DocAssistant.Api.Data.Migrations
                     b.Property<bool>("Grounded")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("Interrupted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("OwnerId")
                         .IsRequired()
                         .HasMaxLength(100)

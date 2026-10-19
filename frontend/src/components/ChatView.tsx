@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
-import { AlertCircle, ArrowUp, Eraser, WifiOff } from 'lucide-react'
-import { useAsk, useClearHistory, useDocuments, useHistory } from '../hooks/queries'
-import { ApiError } from '../lib/api'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { ArrowUpRight, Eraser } from 'lucide-react'
+import { useClearHistory, useDocuments, useHistory } from '../hooks/queries'
+import { useChatStream } from '../hooks/useChatStream'
 import type { ViewerTarget } from '../lib/types'
+import { ChatTurn, LiveAnswer } from './ChatTurn'
+import { Composer, type ComposerHandle } from './Composer'
 import { APP_NAME, Logo } from './Logo'
-import { AssistantRow, ChatTurn, UserBubble } from './ChatTurn'
 
 // Questions that were checked against the Göteborg demo protocols (see eval/README.md): each has its
 // answer in one or two places. Broad requests such as "summarise" or "list all" are not suggested
@@ -17,185 +18,134 @@ const DEMO_SUGGESTIONS = [
 // Templates for other documents: they fill in the question box instead of sending it.
 const GENERIC_SUGGESTIONS = ['Vad beslutades om …', 'Vem förordnades som …']
 
-// Ollama unloads an idle model, and loading it again can take about half a minute.
-const SLOW_AFTER_MS = 6000
+/** Keeps the view pinned to the newest text, unless the reader has scrolled up to read something. */
+function useStickToBottom(dependency: unknown) {
+  const scroller = useRef<HTMLDivElement>(null)
+  const pinned = useRef(true)
 
-function TypingIndicator() {
-  const [slow, setSlow] = useState(false)
-  useEffect(() => {
-    const t = setTimeout(() => setSlow(true), SLOW_AFTER_MS)
-    return () => clearTimeout(t)
+  const onScroll = useCallback(() => {
+    const el = scroller.current
+    if (el) pinned.current = el.scrollHeight - el.scrollTop - el.clientHeight < 96
   }, [])
-  return (
-    <div className="flex items-center gap-2 text-sm text-muted" role="status">
-      <span className="flex gap-1" aria-hidden>
-        <span className="typing-dot size-1.5 rounded-full bg-muted" />
-        <span className="typing-dot size-1.5 rounded-full bg-muted" />
-        <span className="typing-dot size-1.5 rounded-full bg-muted" />
-      </span>
-      {slow ? 'Modellen startar, det kan ta en halv minut första gången…' : 'Söker i dokumenten…'}
-    </div>
-  )
+
+  useEffect(() => {
+    const el = scroller.current
+    if (el && pinned.current) el.scrollTop = el.scrollHeight
+  }, [dependency])
+
+  const jumpToBottom = useCallback(() => {
+    pinned.current = true
+    const el = scroller.current
+    if (el) el.scrollTop = el.scrollHeight
+  }, [])
+
+  return { scroller, onScroll, jumpToBottom }
 }
 
 export function ChatView({ onOpen }: { onOpen: (target: ViewerTarget) => void }) {
   const { data: history = [] } = useHistory()
   const { data: docs = [] } = useDocuments()
-  const ask = useAsk()
   const clear = useClearHistory()
+  const { live, busy, send, stop, dismiss } = useChatStream()
   const [draft, setDraft] = useState('')
-  const bottom = useRef<HTMLDivElement>(null)
-  const textarea = useRef<HTMLTextAreaElement>(null)
+  const composer = useRef<ComposerHandle>(null)
 
   const hasReadyDocs = docs.some((d) => d.status === 'Ready')
   const hasDemoDocs = docs.some((d) => d.status === 'Ready' && /^K[SF]_protokoll_/.test(d.fileName))
   const suggestions = hasDemoDocs ? DEMO_SUGGESTIONS : GENERIC_SUGGESTIONS
-  const canSend = hasReadyDocs && !ask.isPending && draft.trim().length > 0
+  const last = history.at(-1)
 
-  useEffect(() => {
-    bottom.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
-  }, [history.length, ask.isPending])
+  const { scroller, onScroll, jumpToBottom } = useStickToBottom(`${history.length}|${live?.text.length ?? -1}|${live?.phase}`)
 
-  function send(question: string) {
-    const q = question.trim()
-    if (!q || ask.isPending) return
+  function ask(question: string) {
+    jumpToBottom()
+    void send(question)
+  }
+
+  function submit() {
+    const question = draft
     setDraft('')
-    if (textarea.current) textarea.current.style.height = 'auto'
-    ask.mutate(q)
+    ask(question)
   }
 
-  function fillDraft(text: string) {
-    setDraft(text)
-    textarea.current?.focus()
-  }
-
-  function onSubmit(e: FormEvent) {
-    e.preventDefault()
-    send(draft)
-  }
-
-  function onKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
-      e.preventDefault()
-      send(draft)
-    }
-  }
-
-  const error = ask.error instanceof ApiError ? ask.error : ask.error ? new ApiError(0, 'Något gick fel.') : null
-  const isEmpty = history.length === 0 && !ask.isPending && !error
+  const isEmpty = history.length === 0 && live === null
 
   return (
     <div className="flex h-full flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col gap-6 px-4 py-6">
+      <div ref={scroller} onScroll={onScroll} className="min-h-0 flex-1 overflow-y-auto">
+        <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col gap-7 px-4 pb-8 pt-6">
           {isEmpty ? (
-            <div className="my-auto flex flex-col items-center py-10 text-center">
+            <div className="animate-rise my-auto flex flex-col items-center py-10 text-center">
               <Logo className="size-14" />
-              <h1 className="mt-5 text-2xl font-semibold tracking-tight">Fråga dina kommundokument</h1>
-              <p className="mt-2 max-w-md text-balance text-muted">
+              <h1 className="mt-6 text-balance text-3xl font-semibold tracking-tight">Fråga dina kommundokument</h1>
+              <p className="mt-3 max-w-md text-balance leading-relaxed text-muted">
                 {hasReadyDocs
                   ? `${APP_NAME} svarar utifrån dina dokument och visar exakt vilken sida svaret kommer från.`
                   : 'Ladda upp ett eller flera PDF-dokument till vänster för att börja ställa frågor.'}
               </p>
               {hasReadyDocs && (
-                <div className="mt-6 flex w-full max-w-md flex-col gap-2">
+                <ul className="mt-8 flex w-full max-w-lg flex-col gap-2.5">
                   {suggestions.map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => (hasDemoDocs ? send(s) : fillDraft(s.split('…')[0]))}
-                      className="rounded-xl border border-line bg-surface px-4 py-3 text-left text-sm transition-colors hover:border-accent/60 hover:bg-accent-soft/40"
-                    >
-                      {s}
-                    </button>
+                    <li key={s}>
+                      <button
+                        onClick={() => {
+                          if (hasDemoDocs) ask(s)
+                          else {
+                            setDraft(s.split('…')[0])
+                            composer.current?.focus()
+                          }
+                        }}
+                        className="group flex w-full items-center justify-between gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5 text-left text-[0.95rem] shadow-soft transition-all duration-[var(--dur)] hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-lift"
+                      >
+                        <span>{s}</span>
+                        <ArrowUpRight className="size-4 shrink-0 text-muted transition-colors group-hover:text-accent" aria-hidden />
+                      </button>
+                    </li>
                   ))}
-                </div>
+                </ul>
               )}
             </div>
           ) : (
             <>
-              <div className="flex justify-end">
-                <button
-                  onClick={() => clear.mutate()}
-                  disabled={clear.isPending || ask.isPending}
-                  className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs text-muted transition-colors hover:bg-surface-2 hover:text-fg disabled:opacity-50"
-                >
-                  <Eraser className="size-3.5" aria-hidden />
-                  Ny konversation
-                </button>
-              </div>
-              {history.map((turn, i) => (
-                <ChatTurn key={turn.id} turn={turn} expandSources={i === history.length - 1} onOpen={onOpen} />
-              ))}
-              {ask.isPending && (
-                <>
-                  <UserBubble text={ask.variables} />
-                  <AssistantRow>
-                    <TypingIndicator />
-                  </AssistantRow>
-                </>
-              )}
-              {error && !ask.isPending && (
-                <AssistantRow>
-                  <div
-                    role="alert"
-                    className="flex gap-2.5 rounded-xl bg-danger-soft p-3 text-sm text-danger"
+              {history.length > 0 && (
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => clear.mutate()}
+                    disabled={clear.isPending || busy}
+                    className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs text-muted transition-colors hover:bg-surface-2 hover:text-fg disabled:opacity-50"
                   >
-                    {error.isAiUnavailable ? (
-                      <WifiOff className="mt-0.5 size-4 shrink-0" aria-hidden />
-                    ) : (
-                      <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
-                    )}
-                    <div>
-                      <p>{error.message}</p>
-                      {ask.variables && (
-                        <button
-                          onClick={() => ask.mutate(ask.variables)}
-                          className="mt-1 font-medium underline-offset-2 hover:underline"
-                        >
-                          Försök igen
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </AssistantRow>
+                    <Eraser className="size-3.5" aria-hidden />
+                    Ny konversation
+                  </button>
+                </div>
               )}
+              {history.map((turn) => (
+                <ChatTurn
+                  key={turn.id}
+                  turn={turn}
+                  onOpen={onOpen}
+                  onRegenerate={turn === last && live === null ? () => ask(turn.question) : undefined}
+                />
+              ))}
+              {live && <LiveAnswer live={live} onOpen={onOpen} onRetry={() => ask(live.question)} onDismiss={dismiss} />}
             </>
           )}
-          <div ref={bottom} />
         </div>
       </div>
 
-      <div className="border-t border-line bg-bg/80 px-4 pb-4 pt-3 backdrop-blur">
-        <form
-          onSubmit={onSubmit}
-          className="mx-auto flex w-full max-w-3xl items-end gap-2 rounded-2xl border border-line bg-surface p-2 shadow-sm focus-within:border-accent"
-        >
-          <textarea
-            ref={textarea}
-            value={draft}
-            rows={1}
-            maxLength={2000}
-            disabled={!hasReadyDocs}
-            onChange={(e) => {
-              setDraft(e.target.value)
-              e.target.style.height = 'auto'
-              e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`
-            }}
-            onKeyDown={onKeyDown}
-            aria-label="Din fråga"
-            placeholder={hasReadyDocs ? 'Ställ en fråga om dokumenten…' : 'Ladda upp ett dokument först'}
-            className="max-h-40 min-h-9 flex-1 resize-none bg-transparent px-2 py-1.5 outline-none placeholder:text-muted focus-visible:outline-none disabled:cursor-not-allowed"
-          />
-          <button
-            type="submit"
-            disabled={!canSend}
-            aria-label="Skicka fråga"
-            className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-accent text-accent-fg transition-colors hover:bg-accent-hover disabled:bg-surface-2 disabled:text-muted"
-          >
-            <ArrowUp className="size-5" />
-          </button>
-        </form>
-        <p className="mx-auto mt-2 max-w-3xl text-center text-xs text-muted">
+      <div className="bg-gradient-to-t from-bg from-70% to-transparent px-4 pb-4 pt-2">
+        <Composer
+          ref={composer}
+          value={draft}
+          onChange={setDraft}
+          onSubmit={submit}
+          busy={busy}
+          onStop={stop}
+          onRecall={last ? () => setDraft(last.question) : undefined}
+          disabled={!hasReadyDocs}
+          placeholder={hasReadyDocs ? 'Ställ en fråga om dokumenten…' : 'Ladda upp ett dokument först'}
+        />
+        <p className="mx-auto mt-2.5 max-w-3xl text-center text-xs text-muted">
           Svaren genereras av en AI-modell. Kontrollera alltid mot källan.
         </p>
       </div>

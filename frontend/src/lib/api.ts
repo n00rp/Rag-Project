@@ -1,3 +1,4 @@
+import { readNdjson, type StreamEvent } from './stream'
 import type { ChatAnswer, DocumentDto, Health } from './types'
 
 export class ApiError extends Error {
@@ -57,12 +58,28 @@ export const api = {
   retryDocument: (id: string) =>
     request<DocumentDto>(`/api/documents/${id}/retry`, { method: 'POST' }),
 
-  ask: (question: string, documentIds?: string[]) =>
-    request<ChatAnswer>('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question, documentIds }),
-    }),
+  /**
+   * The answer as it is written. Errors before the first event (offline model, bad request) are thrown as
+   * ApiError; a failure in the middle arrives as an `error` event. Aborting `signal` stops the answer, and the
+   * server then keeps what was written.
+   */
+  askStream: async function* (question: string, signal?: AbortSignal, documentIds?: string[]): AsyncGenerator<StreamEvent> {
+    let res: Response
+    try {
+      res = await fetch('/api/chat/stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question, documentIds }),
+        signal,
+      })
+    } catch (e) {
+      if (e instanceof DOMException && e.name === 'AbortError') throw e
+      throw new ApiError(0, 'Kan inte nå servern. Kontrollera anslutningen.', 'network')
+    }
+    if (!res.ok) throw await toApiError(res)
+    if (!res.body) throw new ApiError(0, 'Servern skickade inget svar.', 'network')
+    yield* readNdjson<StreamEvent>(res.body)
+  },
 
   history: () => request<ChatAnswer[]>('/api/chat/history'),
 

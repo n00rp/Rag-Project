@@ -20,4 +20,11 @@ public record ChatRequest(string? Question, List<Guid>? DocumentIds);
 
 public record ChatSourceDto(Guid DocumentId, string FileName, int Page, string Snippet, double Score);
 
-public record ChatAnswerDto(Guid Id, string Question, string Answer, bool Grounded, IReadOnlyList<ChatSourceDto> Sources, DateTimeOffset CreatedAt);
+public record ChatAnswerDto(
+    Guid Id,
+    string Question,
+    string Answer,
+    bool Grounded,
+    IReadOnlyList<ChatSourceDto> Sources,
+    DateTimeOffset CreatedAt,
+    bool Interrupted = false);

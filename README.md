@@ -8,7 +8,8 @@ Ladda upp kommunala protokoll och beslutsunderlag (PDF) och ställ frågor på s
 
 ## Funktioner (hittills)
 - Dra-och-släpp-uppladdning av flera PDF:er med status i realtid (i kö → bearbetas → klar/misslyckades) och möjlighet att försöka igen.
-- Chatt med källhänvisningar: numrerade `[1]`-markeringar i svaret öppnar PDF:en på den citerade sidan.
+- **Strömmande svar** som växer fram ord för ord, med förlopp (söker, läser utdragen, skriver), stoppknapp, kopiera och "svara igen". Ett stoppat eller avbrutet svar sparas som det var.
+- Svar i Markdown (listor, fetstil, tabeller) med numrerade `[1]`-hänvisningar som visar källan vid hovring och öppnar PDF:en på sidan med det citerade utdraget markerat.
 - Svaret säger **"Jag hittar inget stöd i dokumenten"** i stället för att gissa när underlaget saknas.
 - Ljust/mörkt läge, responsivt ner till mobil, tillgänglighetsanpassat (tangentbord, aria, reducerad rörelse).
 - Tydligt offline-läge när AI-modellen inte är tillgänglig (dokumenten går fortfarande att bläddra bland).
@@ -106,8 +107,10 @@ Integrationstesterna kräver att databasen körs (`docker compose up -d db`). CI
 | `GET` | `/api/documents/{id}/file` | Originalfilen (inline, för PDF-visaren) |
 | `POST` | `/api/documents/{id}/retry` | Kör om ett misslyckat dokument |
 | `DELETE` | `/api/documents/{id}` | Ta bort dokument, vektorer och fil |
-| `POST` | `/api/chat` | Ställ en fråga |
+| `POST` | `/api/chat` | Ställ en fråga (svaret kommer när det är klart) |
+| `POST` | `/api/chat/stream` | Samma, men strömmat som `application/x-ndjson` (en JSON-händelse per rad: `sources`, `token`, `done`, `error`) |
 | `GET` | `/api/chat/history` | Tidigare frågor och svar |
+| `DELETE` | `/api/chat/history` | Rensa historiken (dokumenten ligger kvar) |
 | `GET` | `/health` | Status för databas och AI-tjänst |
 
 Fel returneras som RFC 7807 ProblemDetails. `503` med `code: "ai_unavailable"` betyder att AI-modellen inte kan nås.
@@ -116,7 +119,6 @@ Fel returneras som RFC 7807 ProblemDetails. `503` med `code: "ai_unavailable"` b
 - En demoanvändare delar allt. Riktig inloggning (JWT) och användarisolering i API-lagret kommer i fas 2; isoleringen i vektorsökningen finns redan.
 - Skannade PDF:er (utan textlager) stöds inte; användaren får ett tydligt felmeddelande. OCR är en möjlig förbättring.
 - Svarskvaliteten är mätt på ett eget frågeset (44 besvarbara + 16 obesvarbara frågor, [eval/README.md](eval/README.md)), men frågorna är skrivna av utvecklaren och domaren är en LLM. Siffrorna visar riktning, inte garanterad kvalitet.
-- Svaren strömmas inte än; gränssnittet visar en laddningsindikator.
 - Den riktiga embeddingmodellen och Ollama är ännu inte körda i full stack; fas 1 är verifierad med falska backends. De falska embeddingarna (ordräkning) hittar inte rätt avsnitt i de riktiga protokollen, vilket är väntat; sökkvaliteten kan bara bedömas med den riktiga modellen.
 - Tabeller och spaltlayout i PDF:er extraheras som löpande text och kan bli svårlästa.
 
