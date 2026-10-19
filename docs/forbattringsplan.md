@@ -18,6 +18,11 @@ Storlekar nedan är grova uppskattningar av arbetsinsats: **S** = ett kort arbet
 - **Mätt:** Lighthouse tillgänglighet 100 och bästa praxis 100 (mobil och skrivbord); **mobil prestanda 81** (89 innan Markdown-biblioteken; Markdown och PDF-visaren laddas nu lazy). Målet ≥ 90 hör till A8.
 - **Tester:** ai-service 52, backend 29, frontend 38, alla gröna.
 
+**Etapp 3 (sökning): delvis gjord 2026-10-19/20.**
+- **B4 införd** i en bättre form än planerad: hybridsökning för frågor med ärendenummer eller § (inte som en separat router i frontend), **datumfilter** (nytt) och **direkt nekande av okända nummer** (nytt). Sökning på identifierarfrågor: MRR 0,21 → 0,96 (dev), 0,12 → 0,91 (test); korrekta svar på dem 21 % → 68 %. Se `eval/README.md`, "Förbättring 1".
+- **B1 grannchunkar** (en enklare variant av §-chunkning: modellen får även chunkarna bredvid varje träff) är byggt bakom `CONTEXT_NEIGHBORS` (av) och ska mätas på svar.
+- **B2 omrankare och B3 större embeddingmodell: skjutna upp.** På evalset v2 är sökningen redan nära taket för alla frågetyper utom identifierare (MRR 0,98 dev, 0,96–0,98 test), så de kan inte visa en vinst som går att skilja från brus; de är heller dyra (modellnedladdning, latens, omindexering och ny `min_score`). De tas när evalsetet innehåller svårare frågor skrivna av dig, eftersom det är då det syns om sökningen räcker.
+
 **Vad baslinjen sa (se `eval/README.md`):** utan ärendenummer är sökningen i princip perfekt men svaren är korrekta i ca 80 %; **ärendenummer/§-frågor är bara 21 % korrekta** (retrieval), **falska antaganden rättas inte** (0 av 4), och alla 40 frågor utan svar nekas. Etapp 3 (B4) och B6 pekas därför ut som de mest värdefulla.
 
 ## 0. Principer

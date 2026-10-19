@@ -36,7 +36,7 @@ sys.path.insert(0, str(ROOT / "ai-service"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from metrics import bootstrap, fmt, fraction  # noqa: E402
-from retrieval import index, load_corpus, load_questions, section_spans  # noqa: E402
+from retrieval import index, load_corpus, load_questions, section_spans, with_overrides  # noqa: E402
 
 from app import db  # noqa: E402
 from app.config import get_settings  # noqa: E402
@@ -201,18 +201,23 @@ def main() -> None:
     ap.add_argument("--judges", nargs="+", default=["qwen3:14b", "llama3.1:8b"],
                     help="models that judge; a model is never judged by itself")
     ap.add_argument("--limit", type=int, help="only the first N scored questions (smoke test)")
+    ap.add_argument("--split", choices=["dev", "test", "all"], default="all", help="only questions of this part")
+    ap.add_argument("--set", action="append", default=[], metavar="NAME=VALUE",
+                    help="override a service setting for this run, e.g. --set context_neighbors=1")
     ap.add_argument("--review-sample", type=int, default=0, help="write N answers per model for a human check")
     ap.add_argument("--pdf-dir", type=Path, default=ROOT / "data" / "goteborg")
     ap.add_argument("--evalset", type=Path, default=ROOT / "eval" / "evalset.jsonl")
     ap.add_argument("--out", type=Path, default=ROOT / "eval" / "results" / "answers.json")
     args = ap.parse_args()
 
-    settings = get_settings()
+    settings = with_overrides(get_settings(), dict(item.split("=", 1) for item in args.set))
     base = settings.ollama_base_url.rstrip("/")
     corpus = load_corpus(args.pdf_dir)
     spans = section_spans(corpus)
     full_text = normalize_text(" ".join(p.text for pages in corpus.values() for p in pages)).lower()
     questions = load_questions(args.evalset, spans, full_text)
+    if args.split != "all":
+        questions = [q for q in questions if q["split"] == args.split]
     if args.limit:
         keep_a = [q for q in questions if q["answerable"] and q["scored"]][: args.limit]
         keep_n = [q for q in questions if not q["answerable"]][: max(2, args.limit // 4)]
@@ -223,6 +228,7 @@ def main() -> None:
             raise SystemExit(f"{m} behöver minst en annan domare i --judges")
 
     embedder = build_embedder(settings)
+    db.init_schema(settings.database_url, embedder.dim)
     pool = db.create_pool(settings.database_url)
     owner = f"eval-{uuid.uuid4()}"
     results: dict = {}

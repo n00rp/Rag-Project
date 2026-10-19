@@ -209,6 +209,11 @@ NEGATIVE_LOOKALIKE = [
     ("Vad beslutades om att stänga djurparken i Slottsskogen?", ["djurpark"]),
     ("Vilket beslut fattades om att införa fyra dagars skolvecka?", ["fyra dagars skolvecka", "fyradagarsvecka"]),
     ("Vad beslutade kommunstyrelsen om att införa en kommunal tandvårdsförsäkring?", ["tandvårdsförsäkring"]),
+    # invented case and section numbers: keyword search must not make these look supported
+    ("Vad gäller ärende SLK-2030-00001?", ["SLK-2030-00001"]),
+    ("Vad står i ärende SLK-2025-99999?", ["SLK-2025-99999"]),
+    ("Vad behandlades under § 9999 i kommunstyrelsens protokoll från 2025-04-09?", ["§ 9999"]),
+    ("Vad beslutades i § 8888 vid kommunfullmäktiges sammanträde 2024-03-21?", ["§ 8888"]),
     ("Vad beslutades om att bygga en gondolbana över Göta älv?", ["gondol"]),
 ]
 

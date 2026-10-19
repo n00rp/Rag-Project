@@ -55,6 +55,12 @@ def add_header(chunks: list[Chunk], header: str) -> list[Chunk]:
     return [replace(c, text=f"{header}{HEADER_SEP}{c.text}") for c in chunks]
 
 
+def split_header(content: str) -> tuple[str, str]:
+    """(document header, chunk text); the header is empty for chunks stored without one."""
+    header, sep, body = content.partition(HEADER_SEP)
+    return (header, body) if sep else ("", content)
+
+
 def strip_header(content: str) -> str:
     """The chunk text as it appears on the page, without the document header."""
     return content.split(HEADER_SEP, 1)[1] if HEADER_SEP in content else content

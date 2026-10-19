@@ -67,6 +67,36 @@ Svarstid: median 1,1 s, 90:e percentilen 2,7 s.
 4. **Alla 40 frågor utan svar nekas** (0 av 40 felaktiga svar), men tröskeln är ställd på samma frågor, så siffran är optimistisk för frågor som liknar protokollens innehåll mer än mina.
 5. **Domarna är inte kalibrerade mot en människa.** De är oense i 6–10 % av fallen och gör synliga misstag åt båda hållen (qwen underkände "Nej, hemställan avslås" som svar på en ja/nej-fråga med facit "Nej, hemställan avslås"; llama underkände ett svar med rätt datum). Därför redovisas både strikt och lätt gräns. Kalibreringen görs med `calibrate.py` när ett urval är bedömt (se nedan).
 
+## Förbättring 1 (etapp 3): ärendenummer, datum och okända nummer
+Baslinjen visade att ärendenummer och paragrafer var det största hålet. Tre ändringar i tjänsten (`app/rag.py`, `app/db.py`), alla med tester:
+
+1. **Hybridsökning bara för frågor med ärendenummer eller `§ N`:** vektorsökning + Postgres fulltextsökning (svenska, endast ord som finns i högst 1 % av chunkarna), ihopslagna med Reciprocal Rank Fusion (textvikt 2). Övriga frågor går som förut, så de påverkas inte (experiment 4 visade att hybrid för alla frågor kostar träffsäkerhet).
+2. **Datumfilter:** står `2025-04-09` i frågan söker vi först bara i chunks som har datumet (det står i dokumentrubriken); finns det inget faller sökningen tillbaka på allt.
+3. **Okänt nummer nekas direkt:** nämner frågan ett ärendenummer eller en paragraf som inte finns i något av ägarens dokument finns inget stöd, hur lik frågan än är ett protokoll (påhittade nummer fick likhet 0,82–0,89). En träff via nyckelord räknas dessutom som bevis i sig och nekas inte på låg likhet.
+
+**Sökning** (retrieval, rätt sida bland träffarna; samma evalset v2, dev/test):
+
+| Konfiguration | MRR dev, alla | MRR test, alla | Identifierare MRR dev / test |
+|---|---|---|---|
+| Ingen av ändringarna (vektor) | 0,855 | 0,754 | 0,21 / 0,12 |
+| Bara datumfilter | 0,861 | 0,765 | – |
+| Bara hybrid för identifierare | 0,968 | 0,904 | – |
+| **Hybrid + datumfilter (nu standard)** | **0,977** [0,94–1,00] | **0,959** [0,91–0,99] | **0,96 / 0,91** |
+
+Övriga frågetyper är oförändrade (MRR 0,98 dev / 0,98 test). Varianter av hybriden (ordfilter 1/2/5 % och textvikt 0,25–2) är mätta i `results/e3/`; strängt ordfilter (1 %) gav bäst resultat på identifierare men sämre på övriga frågor, vilket är anledningen till att den bara används när frågan har ett nummer. Beslutsregeln (minst +0,02 på dev, ingen försämring på test) är uppfylld.
+
+**Svar** (hela kedjan, gemma3:12b, domare qwen3:14b + llama3.1:8b; strikt = båda domarna godkänner):
+
+| | Baslinje dev | Nu dev | Baslinje test | Nu test |
+|---|---|---|---|---|
+| Korrekt, alla frågor | 0,71 | **0,76** (spann 0,76–0,87) | 0,66 | **0,84** (0,84–0,93) |
+| Identifierarfrågor korrekta | 21 % | **68 %** | | |
+| Identifierarfrågor nekade | 75 % | 0 % | | |
+| Frågor utan svar som nekas | 40 av 40 | **44 av 44** (inkl. 4 med påhittade nummer) | | |
+| Domarna överens (dev) | 94 % | 83 % | | |
+
+Falska antaganden ("Varför bifölls…") rättas fortfarande inte (0 av 4); det hör till plan B6. **Domarnas överensstämmelse sjönk till 83 %** (strikt och lätt gräns skiljer 11 procentenheter på dev), så den strikta siffran är en undre gräns och en kalibrering mot en människa (`calibrate.py`) är angelägen.
+
 ## Granska och komplettera frågorna
 ```bash
 python ../eval/make_review.py          # skapar review/evalset-review.md (frågor, facit, rätt källa i klartext)

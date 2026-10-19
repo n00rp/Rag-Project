@@ -23,6 +23,14 @@ class Settings(BaseSettings):
     strip_page_boilerplate: bool = True
     # Prefix every chunk with the document's first lines (date, body). Measured in eval/README.md.
     doc_header: bool = True
+    # Questions with a case number or "§ N" also get a keyword search (hybrid), and a date like 2025-04-09 limits the
+    # search to that meeting. Measured in eval/README.md (experiment "hybrid router").
+    hybrid_identifiers: bool = True
+    hybrid_max_df: float = 0.01  # keyword side only uses words found in at most this share of the chunks
+    hybrid_text_weight: float = 2.0
+    filter_by_date: bool = True
+    # Give the model the chunks next to each hit (same page) as well; sources shown to the user stay the same.
+    context_neighbors: int = 0
     chunk_size: int = 900
     chunk_overlap: int = 150
     top_k: int = 5

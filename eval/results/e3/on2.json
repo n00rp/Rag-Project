@@ -1,0 +1,4718 @@
+{
+  "label": "on2",
+  "config": {
+    "strip": true,
+    "header": true,
+    "size": 900,
+    "overlap": 150
+  },
+  "report": {
+    "threshold_from_dev": 0.8517280309362408,
+    "dev": {
+      "alla": {
+        "n_answerable": 87,
+        "n_unanswerable": 25,
+        "recall@1": [
+          0.9655172413793104,
+          0.9195402298850575,
+          1.0
+        ],
+        "recall@3": [
+          0.9885057471264368,
+          0.9655172413793104,
+          1.0
+        ],
+        "recall@5": [
+          0.9885057471264368,
+          0.9655172413793104,
+          1.0
+        ],
+        "mrr": [
+          0.9770114942528736,
+          0.9425287356321839,
+          1.0
+        ],
+        "auc": 0.9558620689655173,
+        "answered": [
+          0.9540229885057471,
+          0.9080459770114943,
+          0.9885057471264368
+        ],
+        "refused": [
+          0.76,
+          0.6,
+          0.92
+        ],
+        "threshold": 0.8517280309362408
+      },
+      "utan identifierare": {
+        "n_answerable": 73,
+        "n_unanswerable": 0,
+        "recall@1": [
+          0.9726027397260274,
+          0.9315068493150684,
+          1.0
+        ],
+        "recall@3": [
+          0.9863013698630136,
+          0.958904109589041,
+          1.0
+        ],
+        "recall@5": [
+          0.9863013698630136,
+          0.958904109589041,
+          1.0
+        ],
+        "mrr": [
+          0.9794520547945206,
+          0.9452054794520548,
+          1.0
+        ]
+      },
+      "bara identifierare": {
+        "n_answerable": 14,
+        "n_unanswerable": 0,
+        "recall@1": [
+          0.9285714285714286,
+          0.7857142857142857,
+          1.0
+        ],
+        "recall@3": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "recall@5": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mrr": [
+          0.9642857142857143,
+          0.8928571428571429,
+          1.0
+        ]
+      }
+    },
+    "test": {
+      "alla": {
+        "n_answerable": 56,
+        "n_unanswerable": 19,
+        "recall@1": [
+          0.9285714285714286,
+          0.8571428571428571,
+          0.9821428571428571
+        ],
+        "recall@3": [
+          0.9821428571428571,
+          0.9464285714285714,
+          1.0
+        ],
+        "recall@5": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mrr": [
+          0.9589285714285715,
+          0.9125,
+          0.9910714285714286
+        ],
+        "auc": 0.9896616541353384,
+        "answered": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "refused": [
+          0.8947368421052632,
+          0.7368421052631579,
+          1.0
+        ],
+        "threshold": 0.8517280309362408
+      },
+      "utan identifierare": {
+        "n_answerable": 42,
+        "n_unanswerable": 0,
+        "recall@1": [
+          0.9523809523809523,
+          0.8809523809523809,
+          1.0
+        ],
+        "recall@3": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "recall@5": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mrr": [
+          0.9761904761904762,
+          0.9404761904761905,
+          1.0
+        ]
+      },
+      "bara identifierare": {
+        "n_answerable": 14,
+        "n_unanswerable": 0,
+        "recall@1": [
+          0.8571428571428571,
+          0.6428571428571429,
+          1.0
+        ],
+        "recall@3": [
+          0.9285714285714286,
+          0.7857142857142857,
+          1.0
+        ],
+        "recall@5": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mrr": [
+          0.9071428571428571,
+          0.7571428571428571,
+          1.0
+        ]
+      }
+    },
+    "by_type": {
+      "belopp": {
+        "n": 10,
+        "mrr": 0.95,
+        "recall@3": 1.0
+      },
+      "beslut": {
+        "n": 29,
+        "mrr": 0.9827586206896551,
+        "recall@3": 1.0
+      },
+      "datum": {
+        "n": 7,
+        "mrr": 0.8571428571428571,
+        "recall@3": 0.8571428571428571
+      },
+      "detalj": {
+        "n": 7,
+        "mrr": 1.0,
+        "recall@3": 1.0
+      },
+      "falsk premiss": {
+        "n": 4,
+        "mrr": 1.0,
+        "recall@3": 1.0
+      },
+      "flera dokument": {
+        "n": 9,
+        "mrr": 0.9444444444444444,
+        "recall@3": 1.0
+      },
+      "identifierare": {
+        "n": 28,
+        "mrr": 0.9357142857142857,
+        "recall@3": 0.9642857142857143
+      },
+      "person": {
+        "n": 25,
+        "mrr": 1.0,
+        "recall@3": 1.0
+      },
+      "saknad-totalsumma": {
+        "n": 1,
+        "mrr": 1.0,
+        "recall@3": 1.0
+      },
+      "ämne": {
+        "n": 23,
+        "mrr": 1.0,
+        "recall@3": 1.0
+      }
+    }
+  },
+  "records": [
+    {
+      "id": "q01",
+      "type": "beslut",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad beslutade kommunstyrelsen om yrkandet om att tillåta investeringar i europeisk försvarsindustri?",
+      "top1": 0.8520998446881879,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          3
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ]
+      ]
+    },
+    {
+      "id": "q02",
+      "type": "person",
+      "split": "test",
+      "answerable": true,
+      "question": "Vem anmälde jäv vid kommunstyrelsens sammanträde 2025-04-09 och under vilken paragraf?",
+      "top1": 0.8796035909534575,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          3
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          39
+        ]
+      ]
+    },
+    {
+      "id": "q03",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad beslutade kommunstyrelsen om Göteborgsförslag 13204 om obligatorisk klimatutbildning för politiker?",
+      "top1": 0.9082639217376709,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          26
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          36
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          9
+        ]
+      ]
+    },
+    {
+      "id": "q04",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad blev beslutet om yrkandet om ökad kamerabevakning från M, D, L och KD?",
+      "top1": 0.8827611943768093,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          48
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          54
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          26
+        ]
+      ]
+    },
+    {
+      "id": "q05",
+      "type": "beslut",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad hände med SD:s yrkande om hur stor del av pensionskapitalet som är investerat i gröna placeringar?",
+      "top1": 0.8743479512437571,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          38
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          40
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          28
+        ]
+      ]
+    },
+    {
+      "id": "q06",
+      "type": "beslut",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad beslutades om SD:s yrkande om att revidera avfallsplanen 2021–2030?",
+      "top1": 0.883701503276825,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          40
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          35
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          25
+        ]
+      ]
+    },
+    {
+      "id": "q07",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vem förordnades som politisk sekreterare för KD från och med 2025-05-19?",
+      "top1": 0.89985377193369,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          51
+        ]
+      ]
+    },
+    {
+      "id": "q08",
+      "type": "ämne",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad handlade motionen om att utreda ett förbud mot slöja på barn i förskolan om?",
+      "top1": 0.8681579153631891,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          19
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          16
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          64
+        ]
+      ]
+    },
+    {
+      "id": "q09",
+      "type": "ämne",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad står det om handlingsplanen 2025–2028 för att nå Målbild Koll2035?",
+      "top1": 0.8929528125580772,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          7
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          64
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          20
+        ]
+      ]
+    },
+    {
+      "id": "q10",
+      "type": "beslut",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad blev beslutet om yrkandet om enkelriktning av Askims Stationsväg?",
+      "top1": 0.8740987777710023,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          48
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          45
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          5
+        ]
+      ]
+    },
+    {
+      "id": "q11",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad beslutades om yrkandet om gratis sommarsimskola för barn 5–9 år?",
+      "top1": 0.8848319259586482,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          52
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          17
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          16
+        ]
+      ]
+    },
+    {
+      "id": "q12",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad hände med SD:s yrkande om fördelning av arbetsuppgifter mellan hemtjänstens dag-, kvälls- och nattpersonal?",
+      "top1": 0.8837539553642273,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          47
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          31
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          12
+        ]
+      ]
+    },
+    {
+      "id": "q13",
+      "type": "ämne",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad gäller Göteborgs Stads vatten- och avloppstaxa för år 2026?",
+      "top1": 0.895443320274353,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          10
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          17
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          37
+        ]
+      ]
+    },
+    {
+      "id": "q14",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Anmäldes något jäv vid kommunstyrelsens sammanträde 2025-06-11?",
+      "top1": 0.901607871055603,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          4
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          60
+        ]
+      ]
+    },
+    {
+      "id": "q15",
+      "type": "ämne",
+      "split": "test",
+      "answerable": true,
+      "question": "Vilken policy behandlades om säkerhet och beredskap i Göteborgs Stad?",
+      "top1": 0.8490210951541549,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          30
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          29
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          42
+        ]
+      ]
+    },
+    {
+      "id": "q16",
+      "type": "ämne",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad gäller reglerna om gårdsförsäljning av alkoholdrycker och miljö- och klimatnämndens taxa?",
+      "top1": 0.8499618262075305,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          18
+        ]
+      ]
+    },
+    {
+      "id": "q17",
+      "type": "ämne",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad behandlades om nya Gårdstensskolan?",
+      "top1": 0.8470742197588567,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          33
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          16
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          64
+        ]
+      ]
+    },
+    {
+      "id": "q18",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad beslutades om SD:s skrivelse till nationell samordnare för frivillig återvandring?",
+      "top1": 0.87182683516581,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20251126.pdf",
+          35
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          28
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          27
+        ]
+      ]
+    },
+    {
+      "id": "q19",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vem förordnades som politisk sekreterare för KD den 26 november 2025?",
+      "top1": 0.8952503800392151,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20251126.pdf",
+          44
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          51
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          40
+        ]
+      ]
+    },
+    {
+      "id": "q20",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Anmäldes något jäv vid kommunstyrelsens sammanträde 2025-11-26?",
+      "top1": 0.9002492427825928,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20251126.pdf",
+          3
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          52
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          51
+        ]
+      ]
+    },
+    {
+      "id": "q21",
+      "type": "ämne",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad gäller laglighetsprövningen av beslutet om budget 2026?",
+      "top1": 0.8831436897261055,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20251126.pdf",
+          54
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          13
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          19
+        ]
+      ]
+    },
+    {
+      "id": "q22",
+      "type": "ämne",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad beslutades om motionen om fler ställplatser för husbilar?",
+      "top1": 0.8780472874641418,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20251126.pdf",
+          41
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          41
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          41
+        ]
+      ]
+    },
+    {
+      "id": "q23",
+      "type": "ämne",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad visade halvtidsutvärderingen av planen för kulturprogrammet 2023–2026?",
+      "top1": 0.873148866108129,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20251126.pdf",
+          27
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          39
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          30
+        ]
+      ]
+    },
+    {
+      "id": "q24",
+      "type": "ämne",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad står om Göteborgs Stads plan mot rasism 2026–2028?",
+      "top1": 0.8952571420448171,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20251126.pdf",
+          8
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          28
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          22
+        ]
+      ]
+    },
+    {
+      "id": "q25",
+      "type": "beslut",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad beslutade kommunstyrelsen om SD:s yrkande om en suicidpreventiv referensgrupp?",
+      "top1": 0.8809042572975159,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          24
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          25
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          25
+        ]
+      ]
+    },
+    {
+      "id": "q26",
+      "type": "beslut",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad hände med SD:s yrkande om en skrivelse till Åklagarmyndigheten?",
+      "top1": 0.8618030034421099,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          25
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          35
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          31
+        ]
+      ]
+    },
+    {
+      "id": "q27",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad beslutades om D och M:s yrkande om utökade bakgrundskontroller?",
+      "top1": 0.8670167922973633,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          26
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          48
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          16
+        ]
+      ]
+    },
+    {
+      "id": "q28",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vem förordnades som politisk sekreterare för V i november 2024?",
+      "top1": 0.8894551462259818,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          40
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          41
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          44
+        ]
+      ]
+    },
+    {
+      "id": "q29",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vem anmälde jäv vid sammanträdet 2024-11-27 och under vilken paragraf?",
+      "top1": 0.8800777196884155,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          3
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          25
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          13
+        ]
+      ]
+    },
+    {
+      "id": "q30",
+      "type": "ämne",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad gäller uppräkningen av arvoden för förtroendevalda för år 2025?",
+      "top1": 0.8838804031574851,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          29
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          6
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          40
+        ]
+      ]
+    },
+    {
+      "id": "q31",
+      "type": "ämne",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad beslutades om att Göteborg ska ansluta sig till organisationen Krogar mot knark?",
+      "top1": 0.8836454957165444,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          22
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          23
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          23
+        ]
+      ]
+    },
+    {
+      "id": "q32",
+      "type": "ämne",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad står om Älvstranden Utvecklings avvecklingsplan?",
+      "top1": 0.8555940475705849,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          8
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          9
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          30
+        ]
+      ]
+    },
+    {
+      "id": "q33",
+      "type": "ämne",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad gäller villkorat kapitaltillskott till AB Liseberg?",
+      "top1": 0.8959429922137877,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          11
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          11
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          11
+        ]
+      ]
+    },
+    {
+      "id": "q34",
+      "type": "ämne",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad innebär den nya förbundsordningen för Göteborgsregionens kommunalförbund?",
+      "top1": 0.8802779388262085,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          24
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          10
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          12
+        ]
+      ]
+    },
+    {
+      "id": "q35",
+      "type": "person",
+      "split": "test",
+      "answerable": true,
+      "question": "Vem utsågs till ny ersättare i kommunfullmäktige i stället för Joakim Berlin?",
+      "top1": 0.8582965985006231,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          4
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          94
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          104
+        ]
+      ]
+    },
+    {
+      "id": "q36",
+      "type": "person",
+      "split": "test",
+      "answerable": true,
+      "question": "Vem utsågs till ny ersättare i kommunfullmäktige i stället för Anna Ahlborg?",
+      "top1": 0.8571444749832153,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          5
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          106
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          104
+        ]
+      ]
+    },
+    {
+      "id": "q37",
+      "type": "ämne",
+      "split": "dev",
+      "answerable": true,
+      "question": "Varför bordlades beslutsärendena under paragraferna 120–123?",
+      "top1": 0.8312303625070676,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          29
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          39
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          15
+        ]
+      ]
+    },
+    {
+      "id": "q38",
+      "type": "ämne",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad gäller uppsägningen av samarbetsavtalet om Kvalitetsmässan?",
+      "top1": 0.8615397214889526,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          23
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          10
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          3
+        ]
+      ]
+    },
+    {
+      "id": "q39",
+      "type": "ämne",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad handlar interpellationen om råttor i Göteborg om och när bordlades den till?",
+      "top1": 0.8992958604869775,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          6
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          8
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          7
+        ]
+      ]
+    },
+    {
+      "id": "q40",
+      "type": "ämne",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad beslutades om det reviderade inhyrningsbeslutet för Göteborgs konstmuseum?",
+      "top1": 0.8705468851001943,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          18
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          76
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          18
+        ]
+      ]
+    },
+    {
+      "id": "q41",
+      "type": "ämne",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad gäller den nya beräkningsgrunden för avgifter för upplåtelse av offentlig plats?",
+      "top1": 0.9075391347683008,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          23
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          85
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          82
+        ]
+      ]
+    },
+    {
+      "id": "q42",
+      "type": "ämne",
+      "split": "test",
+      "answerable": true,
+      "question": "Vilka kommunövergripande insatser för suicidprevention beslutades?",
+      "top1": 0.8811629556223207,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          25
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          25
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          88
+        ]
+      ]
+    },
+    {
+      "id": "q43",
+      "type": "ämne",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad beslutades om Göteborgs Stads delårsrapport per augusti 2025?",
+      "top1": 0.8920061322448846,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          11
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          37
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          4
+        ]
+      ]
+    },
+    {
+      "id": "q44",
+      "type": "ämne",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad gäller modellen för miljödifferentierad båtplatsavgift i småbåtshamnarna?",
+      "top1": 0.8974075317382812,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          34
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          103
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          103
+        ]
+      ]
+    },
+    {
+      "id": "q45",
+      "type": "saknad-totalsumma",
+      "split": "dev",
+      "answerable": true,
+      "question": "Hur stor var den kompletterande budgeten i maj 2025?",
+      "top1": 0.8517280309362408,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          13
+        ]
+      ]
+    },
+    {
+      "id": "q46",
+      "type": "identifierare",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad gäller ärende SLK-2025-00392?",
+      "top1": 0.8485996723175049,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          36
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          39
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          54
+        ]
+      ]
+    },
+    {
+      "id": "q47",
+      "type": "identifierare",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad beslutades i § 558 vid kommunstyrelsens sammanträde 2025-06-11?",
+      "top1": 0.8840022087097168,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          35
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          44
+        ]
+      ]
+    },
+    {
+      "id": "q48",
+      "type": "identifierare",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad står i ärende SLK-2025-00309?",
+      "top1": 0.8788215066407378,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          21
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          21
+        ]
+      ]
+    },
+    {
+      "id": "q49",
+      "type": "identifierare",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad behandlades under § 1003 i kommunstyrelsen 2024-11-27?",
+      "top1": 0.8516430854797363,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          24
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          21
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          29
+        ]
+      ]
+    },
+    {
+      "id": "q50",
+      "type": "identifierare",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad står i ärende SLK-2025-00479?",
+      "top1": 0.8164062147261568,
+      "refused": false,
+      "rank": 5,
+      "top3": [
+        [
+          "KS_protokoll_20251126.pdf",
+          21
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          21
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          15
+        ]
+      ]
+    },
+    {
+      "id": "q51",
+      "type": "identifierare",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad gäller ärendenummer SLK-2024-00026?",
+      "top1": 0.8829139277714058,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          39
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          58
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          30
+        ]
+      ]
+    },
+    {
+      "id": "n01",
+      "type": "saknas",
+      "split": "test",
+      "answerable": false,
+      "question": "Vad kostar ett månadskort för pensionärer i Stockholm?",
+      "top1": 0.8076629271909143,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          15
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          15
+        ]
+      ]
+    },
+    {
+      "id": "n02",
+      "type": "saknas",
+      "split": "test",
+      "answerable": false,
+      "question": "Vem vann fotbolls-SM för herrar 2025?",
+      "top1": 0.8294448561468992,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          28
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          70
+        ]
+      ]
+    },
+    {
+      "id": "n03",
+      "type": "saknas",
+      "split": "test",
+      "answerable": false,
+      "question": "Vilket recept på köttbullar rekommenderar kommunen?",
+      "top1": 0.8243141279033361,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          29
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          43
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          34
+        ]
+      ]
+    },
+    {
+      "id": "n04",
+      "type": "saknas",
+      "split": "test",
+      "answerable": false,
+      "question": "Vad beslutade kommunfullmäktige om att bygga en kommunal flygplats?",
+      "top1": 0.8178346374232067,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          34
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          85
+        ]
+      ]
+    },
+    {
+      "id": "n05",
+      "type": "saknas",
+      "split": "dev",
+      "answerable": false,
+      "question": "Hur många invånare har Kiruna kommun?",
+      "top1": 0.7695469993622913,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          86
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          89
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          83
+        ]
+      ]
+    },
+    {
+      "id": "n06",
+      "type": "saknas",
+      "split": "test",
+      "answerable": false,
+      "question": "Vad beslutades om att införa fyradagarsvecka för kommunens anställda?",
+      "top1": 0.8258906602859556,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          1
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          29
+        ]
+      ]
+    },
+    {
+      "id": "n07",
+      "type": "saknas",
+      "split": "test",
+      "answerable": false,
+      "question": "Vad är lösenordet till stadens ekonomisystem?",
+      "top1": 0.8098336088855733,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          19
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          12
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          91
+        ]
+      ]
+    },
+    {
+      "id": "n08",
+      "type": "saknas",
+      "split": "test",
+      "answerable": false,
+      "question": "Vad är skillnaden mellan Python och Java?",
+      "top1": 0.7922885417938232,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          91
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          100
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          79
+        ]
+      ]
+    },
+    {
+      "id": "n09",
+      "type": "saknas-svår",
+      "split": "test",
+      "answerable": false,
+      "question": "Vad beslutade kommunstyrelsen om bygget av en ny simhall i Angered?",
+      "top1": 0.8229589918590585,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          52
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          46
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          11
+        ]
+      ]
+    },
+    {
+      "id": "n10",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vilket beslut fattades om att förbjuda vattenskotrar i Göteborgs skärgård?",
+      "top1": 0.821586012840271,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          6
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          11
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          21
+        ]
+      ]
+    },
+    {
+      "id": "n11",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vad beslutade kommunfullmäktige om att införa trängselskatt i centrala Göteborg?",
+      "top1": 0.8406213711951588,
+      "refused": false,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          6
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          19
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          1
+        ]
+      ]
+    },
+    {
+      "id": "n12",
+      "type": "saknas-svår",
+      "split": "test",
+      "answerable": false,
+      "question": "Vad beslutade kommunstyrelsen om att sälja Ullevi stadion?",
+      "top1": 0.8144481182098389,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          12
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          30
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ]
+      ]
+    },
+    {
+      "id": "n13",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vilket yrkande från Liberalerna om gratis tandvård för alla barn behandlades?",
+      "top1": 0.8124396540332474,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          52
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          13
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          23
+        ]
+      ]
+    },
+    {
+      "id": "n14",
+      "type": "saknas-svår",
+      "split": "test",
+      "answerable": false,
+      "question": "Vad blev beslutet om en kommunal bilpool för politikerna?",
+      "top1": 0.8289514183998108,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          34
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          38
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          36
+        ]
+      ]
+    },
+    {
+      "id": "n15",
+      "type": "saknas-svår",
+      "split": "test",
+      "answerable": false,
+      "question": "Vad beslutades om att införa vegetarisk kost i alla förskolor?",
+      "top1": 0.800504636734449,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          64
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          19
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          43
+        ]
+      ]
+    },
+    {
+      "id": "n16",
+      "type": "saknas-svår",
+      "split": "test",
+      "answerable": false,
+      "question": "Vad beslutade kommunstyrelsen om byggandet av en tunnel under Slottsskogen?",
+      "top1": 0.8169705380814961,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          30
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          44
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          33
+        ]
+      ]
+    },
+    {
+      "id": "q101",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad ansåg kommunstyrelsen om motionen om att införa lagen om valfrihet i vård- och omsorgsboenden?",
+      "top1": 0.8714211659776485,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          13
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          31
+        ]
+      ]
+    },
+    {
+      "id": "q102",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Hur gick det med SD-motionen om att Göteborgs måltidspolicy ska likna Uddevallas?",
+      "top1": 0.8924436569213867,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          43
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          103
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          5
+        ]
+      ]
+    },
+    {
+      "id": "q103",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vilket beslut föreslog kommunstyrelsen om motionen om trafiklösning från Wannholt och Höstmad?",
+      "top1": 0.8711112372080275,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          45
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          44
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          41
+        ]
+      ]
+    },
+    {
+      "id": "q104",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad blev utfallet för motionen om nattågslinjer från Darvik och Bönfors?",
+      "top1": 0.8665534853935242,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          41
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          58
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          45
+        ]
+      ]
+    },
+    {
+      "id": "q105",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad beslutades om motionen om att öppna friidrottsanläggningar för allmänheten?",
+      "top1": 0.8598799872541504,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          64
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          22
+        ]
+      ]
+    },
+    {
+      "id": "q106",
+      "type": "beslut",
+      "split": "test",
+      "answerable": true,
+      "question": "Beviljades hemställan från Intraservice om att utreda personuppgiftsansvaret kring Navet?",
+      "top1": 0.8745142967087869,
+      "refused": false,
+      "rank": 2,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          32
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          25
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          14
+        ]
+      ]
+    },
+    {
+      "id": "q107",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Godkändes inhyrningsbeslutet för förskolan på Grönebackens gata?",
+      "top1": 0.8890591859817505,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          17
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          76
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          32
+        ]
+      ]
+    },
+    {
+      "id": "q108",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Godkändes delårsrapporten för Tolkförmedling Väst 2024?",
+      "top1": 0.9080538804498999,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          11
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          12
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          11
+        ]
+      ]
+    },
+    {
+      "id": "q109",
+      "type": "beslut",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad beslutades om Göteborg Energis önskan att investera i sol- och vindkraft utanför kommunen?",
+      "top1": 0.8729076385498047,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          20
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          28
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          31
+        ]
+      ]
+    },
+    {
+      "id": "q110",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vilken strategi ställde sig Göteborgs Stad bakom när det gäller god och nära vård?",
+      "top1": 0.8638506016820325,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          9
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          17
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          12
+        ]
+      ]
+    },
+    {
+      "id": "q111",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vilken uppgift gavs till Grefab om miljödifferentierade båtplatsavgifter?",
+      "top1": 0.887590593839254,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          34
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          103
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          36
+        ]
+      ]
+    },
+    {
+      "id": "q112",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad hände med uppdraget att utreda bilpoolslösningar för stadens bilar?",
+      "top1": 0.8564722027497186,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          38
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          37
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          41
+        ]
+      ]
+    },
+    {
+      "id": "q113",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad blev det av uppdraget att utöka Volontär i skolan till alla utbildningsområden, enligt redovisningen i november 2025?",
+      "top1": 0.8926304642778374,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          33
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          30
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          100
+        ]
+      ]
+    },
+    {
+      "id": "q114",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vilket underlag antogs för kvarteret Gösen i Gamlestaden?",
+      "top1": 0.8541352835813011,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          17
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          8
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          21
+        ]
+      ]
+    },
+    {
+      "id": "q115",
+      "type": "belopp",
+      "split": "dev",
+      "answerable": true,
+      "question": "Hur stort villkorat kapitaltillskott får Göteborgs Stadshus AB lämna till AB Liseberg Skår 40:17?",
+      "top1": 0.9265554634862586,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          11
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          11
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          11
+        ]
+      ]
+    },
+    {
+      "id": "q116",
+      "type": "belopp",
+      "split": "dev",
+      "answerable": true,
+      "question": "Hur mycket höjdes grundskolenämndens kommunbidragsram i kompletterande budget mars 2024?",
+      "top1": 0.9045176236475259,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          12
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          30
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          37
+        ]
+      ]
+    },
+    {
+      "id": "q117",
+      "type": "belopp",
+      "split": "test",
+      "answerable": true,
+      "question": "Hur mycket fick äldre samt vård- och omsorgsnämnden för digitala hjälpmedel 2024?",
+      "top1": 0.8704803249383073,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          12
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          12
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          12
+        ]
+      ]
+    },
+    {
+      "id": "q118",
+      "type": "belopp",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vilken projektbudget godkändes för program Masthuggskajen?",
+      "top1": 0.8672954023446506,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          19
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          33
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ]
+      ]
+    },
+    {
+      "id": "q119",
+      "type": "belopp",
+      "split": "test",
+      "answerable": true,
+      "question": "Hur stor projektbudget beslutades för Citybuss Norra Älvstranden och pendlingscykelbanan?",
+      "top1": 0.8803792809761872,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          21
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          72
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          21
+        ]
+      ]
+    },
+    {
+      "id": "q120",
+      "type": "belopp",
+      "split": "test",
+      "answerable": true,
+      "question": "Hur stort var utdelningskravet från Göteborgs Stadshus AB som föll bort för 2025?",
+      "top1": 0.8912942675141776,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          11
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          13
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          28
+        ]
+      ]
+    },
+    {
+      "id": "q121",
+      "type": "belopp",
+      "split": "dev",
+      "answerable": true,
+      "question": "Inom vilket belopp tillstyrktes Higabs utökade investering i Göteborgs konstmuseum?",
+      "top1": 0.8834011028170069,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          20
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          18
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          76
+        ]
+      ]
+    },
+    {
+      "id": "q122",
+      "type": "belopp",
+      "split": "test",
+      "answerable": true,
+      "question": "Hur mycket av den kompletterande budgeten i maj 2025 gick till grundskolenämnden av de 36 mnkr i schablonmedel?",
+      "top1": 0.8943076133728027,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          30
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ]
+      ]
+    },
+    {
+      "id": "q123",
+      "type": "belopp",
+      "split": "test",
+      "answerable": true,
+      "question": "Hur mycket investeringsmedel överfördes från vatten och avlopp till investeringar i avfall 2025?",
+      "top1": 0.8884407944416542,
+      "refused": false,
+      "rank": 2,
+      "top3": [
+        [
+          "KS_protokoll_20251126.pdf",
+          29
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          30
+        ]
+      ]
+    },
+    {
+      "id": "q124",
+      "type": "belopp",
+      "split": "dev",
+      "answerable": true,
+      "question": "Hur stort belopp av kommunbidraget flyttades från kommunstyrelsen till äldre samt vård- och omsorgsnämnden för offentliga måltider?",
+      "top1": 0.8617309414308717,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          13
+        ]
+      ]
+    },
+    {
+      "id": "q125",
+      "type": "datum",
+      "split": "test",
+      "answerable": true,
+      "question": "När sades samarbetsavtalet om Kvalitetsmässan upp?",
+      "top1": 0.8496849030444099,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          23
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          3
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          10
+        ]
+      ]
+    },
+    {
+      "id": "q126",
+      "type": "datum",
+      "split": "dev",
+      "answerable": true,
+      "question": "När och var justerades kommunfullmäktiges protokoll från mars 2024?",
+      "top1": 0.8784673286397873,
+      "refused": false,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          13
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          13
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          2
+        ]
+      ]
+    },
+    {
+      "id": "q127",
+      "type": "datum",
+      "split": "dev",
+      "answerable": true,
+      "question": "Från vilket datum förordnades Beatrice Klein som politisk sekreterare för V?",
+      "top1": 0.8710656838973965,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          40
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          33
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          41
+        ]
+      ]
+    },
+    {
+      "id": "q128",
+      "type": "datum",
+      "split": "dev",
+      "answerable": true,
+      "question": "Under vilken tid gäller Mathias Axelssons förordnande som politisk sekreterare?",
+      "top1": 0.8887151479721133,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          51
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          41
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          40
+        ]
+      ]
+    },
+    {
+      "id": "q129",
+      "type": "datum",
+      "split": "dev",
+      "answerable": true,
+      "question": "Till och med när förlängdes förordnandet för Jonas Bergstedts som vikarierande politisk sekreterare för D?",
+      "top1": 0.9069051091018401,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          41
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          44
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          40
+        ]
+      ]
+    },
+    {
+      "id": "q130",
+      "type": "datum",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vilken dag skrev stadsledningskontoret sitt tjänsteutlåtande om samrådsunderlaget inför rambudget 2026?",
+      "top1": 0.8804345273453561,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          25
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          4
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          33
+        ]
+      ]
+    },
+    {
+      "id": "q131",
+      "type": "datum",
+      "split": "test",
+      "answerable": true,
+      "question": "Hur länge gäller planen för stadens omvärlds- och intressebevakning?",
+      "top1": 0.8332964181900024,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          29
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          21
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ]
+      ]
+    },
+    {
+      "id": "q132",
+      "type": "person",
+      "split": "test",
+      "answerable": true,
+      "question": "Vem fick fullmakt att föra Göteborgs Stads talan i ärendet om de lokala ordningsföreskrifterna?",
+      "top1": 0.8550417423248291,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          16
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          35
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          29
+        ]
+      ]
+    },
+    {
+      "id": "q133",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vilka ledamöter yrkade bifall till yrkandet om europeisk försvarsindustri?",
+      "top1": 0.8238886840310304,
+      "refused": true,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          35
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          29
+        ]
+      ]
+    },
+    {
+      "id": "q134",
+      "type": "person",
+      "split": "test",
+      "answerable": true,
+      "question": "Vem var ordförande vid kommunstyrelsens sammanträde där yrkandet om försvarsindustrin avslogs?",
+      "top1": 0.8476227521896362,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          40
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          36
+        ]
+      ]
+    },
+    {
+      "id": "q135",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vem var det som tjänstgörande ersättare för C i omröstningen om försvarsindustrin?",
+      "top1": 0.8211169242858887,
+      "refused": true,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          35
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          36
+        ]
+      ]
+    },
+    {
+      "id": "q136",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vem anmälde jäv i ärendet om Förvaltningshögskolans partnerskap?",
+      "top1": 0.882274098260756,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          3
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          12
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          12
+        ]
+      ]
+    },
+    {
+      "id": "q137",
+      "type": "detalj",
+      "split": "dev",
+      "answerable": true,
+      "question": "Hur många röstade ja respektive nej i omröstningen om yrkandet om europeisk försvarsindustri?",
+      "top1": 0.8197439312934875,
+      "refused": true,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          40
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          38
+        ]
+      ]
+    },
+    {
+      "id": "q138",
+      "type": "detalj",
+      "split": "dev",
+      "answerable": true,
+      "question": "När bordlades yrkandet om försvarsindustri första gången?",
+      "top1": 0.7968615293502808,
+      "refused": true,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          3
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          47
+        ]
+      ]
+    },
+    {
+      "id": "q139",
+      "type": "detalj",
+      "split": "test",
+      "answerable": true,
+      "question": "Vilka motioner bordlades när klockan hade passerat 21:36 vid kommunfullmäktiges sammanträde i mars 2024?",
+      "top1": 0.8714948373141997,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          29
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          37
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          33
+        ]
+      ]
+    },
+    {
+      "id": "q140",
+      "type": "detalj",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vilka områden ska högvattenskyddet längs Göta älv skydda?",
+      "top1": 0.893422669564328,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          21
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          21
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          41
+        ]
+      ]
+    },
+    {
+      "id": "q141",
+      "type": "detalj",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vilken fastighet gäller Tre Stiftelsers hemställan om försäljning?",
+      "top1": 0.8437834568281881,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          15
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          21
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          36
+        ]
+      ]
+    },
+    {
+      "id": "q142",
+      "type": "detalj",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad är pilotkommunens uppdrag som Göteborgs Stad anmäler intresse för?",
+      "top1": 0.8795594644809104,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          22
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          28
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          79
+        ]
+      ]
+    },
+    {
+      "id": "q143",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Till vilken ordförande riktades interpellationen om arbetstidsförkortning inom förskolan?",
+      "top1": 0.8888674444635262,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          7
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          64
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          7
+        ]
+      ]
+    },
+    {
+      "id": "q144",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vem ställde interpellationen om en eventuell nedläggning av Trollängsskolan?",
+      "top1": 0.8881639375491217,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          62
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          19
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          7
+        ]
+      ]
+    },
+    {
+      "id": "q145",
+      "type": "person",
+      "split": "test",
+      "answerable": true,
+      "question": "Till vilken nämnds ordförande ställdes interpellationen om försäljningen av Cirkus Lorensberg?",
+      "top1": 0.8926264707668755,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          63
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          62
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          5
+        ]
+      ]
+    },
+    {
+      "id": "q146",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vem ställde interpellationen om att minska administrationen inom äldre- och omsorgsverksamheten i mars 2024?",
+      "top1": 0.8837217231128546,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          51
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          13
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          22
+        ]
+      ]
+    },
+    {
+      "id": "q147",
+      "type": "flera dokument",
+      "split": "test",
+      "answerable": true,
+      "question": "Vilka beslut har fattats om Tre Stiftelser?",
+      "top1": 0.8438945915636192,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          15
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          21
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          21
+        ]
+      ]
+    },
+    {
+      "id": "q148",
+      "type": "flera dokument",
+      "split": "test",
+      "answerable": true,
+      "question": "Hur har frågan om att Göteborg ska delta som pilotkommun mot antimuslimsk rasism behandlats?",
+      "top1": 0.9171814918518066,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          22
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          28
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          79
+        ]
+      ]
+    },
+    {
+      "id": "q149",
+      "type": "flera dokument",
+      "split": "dev",
+      "answerable": true,
+      "question": "Var behandlades den kompletterande budgeten i oktober 2025?",
+      "top1": 0.8523489236831665,
+      "refused": false,
+      "rank": 2,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          70
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          12
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          5
+        ]
+      ]
+    },
+    {
+      "id": "q150",
+      "type": "flera dokument",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad har beslutats om att Göteborgs Stad ska ta hem Skatteverkets uppgifter i Navet?",
+      "top1": 0.8765998556256396,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          32
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          25
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          12
+        ]
+      ]
+    },
+    {
+      "id": "q151",
+      "type": "flera dokument",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad har sagts om Göteborg Energis slutrapport för Fjärrkyla Älvstaden?",
+      "top1": 0.8844202229726197,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          34
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          41
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          31
+        ]
+      ]
+    },
+    {
+      "id": "q152",
+      "type": "flera dokument",
+      "split": "test",
+      "answerable": true,
+      "question": "Hur har motionen om ett migrationspolitiskt bokslut behandlats?",
+      "top1": 0.874056510571035,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          47
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          21
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          28
+        ]
+      ]
+    },
+    {
+      "id": "q153",
+      "type": "flera dokument",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad har hänt med motionen om Sankt Sigfrids plan och en öppen markanvisningstävling?",
+      "top1": 0.8758474588394165,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          46
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          44
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ]
+      ]
+    },
+    {
+      "id": "q154",
+      "type": "flera dokument",
+      "split": "dev",
+      "answerable": true,
+      "question": "Hur har förslaget om volontärer i skolan hanterats i kommunfullmäktige?",
+      "top1": 0.8602770566940308,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          33
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          13
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          30
+        ]
+      ]
+    },
+    {
+      "id": "q155",
+      "type": "flera dokument",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vilka beslut gäller Göteborgs konstmuseum?",
+      "top1": 0.8541047827632664,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          18
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          20
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          18
+        ]
+      ]
+    },
+    {
+      "id": "q156",
+      "type": "falsk premiss",
+      "split": "test",
+      "answerable": true,
+      "question": "Varför bifölls yrkandet om att tillåta investeringar i europeisk försvarsindustri?",
+      "top1": 0.8447983357430512,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          3
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          38
+        ]
+      ]
+    },
+    {
+      "id": "q157",
+      "type": "falsk premiss",
+      "split": "dev",
+      "answerable": true,
+      "question": "Varför avslogs motionen om friidrottsanläggningar för allmänheten?",
+      "top1": 0.8671217381547424,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          15
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          16
+        ]
+      ]
+    },
+    {
+      "id": "q158",
+      "type": "falsk premiss",
+      "split": "dev",
+      "answerable": true,
+      "question": "Varför bordlades motionen om nattågslinjer vid kommunstyrelsens sammanträde i april 2025?",
+      "top1": 0.9041269478722261,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          41
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          45
+        ]
+      ]
+    },
+    {
+      "id": "q159",
+      "type": "falsk premiss",
+      "split": "test",
+      "answerable": true,
+      "question": "Varför godkändes den nya beräkningsgrunden för avgifter för offentlig plats utan ändringar?",
+      "top1": 0.8728296236497404,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          23
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          85
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          82
+        ]
+      ]
+    },
+    {
+      "id": "q165",
+      "type": "identifierare",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad gäller ärende SLK-2025-00221?",
+      "top1": 0.8809833072443897,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          43
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          44
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          45
+        ]
+      ]
+    },
+    {
+      "id": "q166",
+      "type": "identifierare",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad gäller ärende SLK-2023-01012?",
+      "top1": 0.8673341511486514,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          31
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          33
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          39
+        ]
+      ]
+    },
+    {
+      "id": "q167",
+      "type": "identifierare",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad gäller ärende SLK-2025-00035?",
+      "top1": 0.88121009581029,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          4
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          3
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          3
+        ]
+      ]
+    },
+    {
+      "id": "q168",
+      "type": "identifierare",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad gäller ärende SLK-2024-00009:12?",
+      "top1": 0.8310251437395699,
+      "refused": false,
+      "rank": 2,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          4
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          5
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          30
+        ]
+      ]
+    },
+    {
+      "id": "q169",
+      "type": "identifierare",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad gäller ärende SLK-2024-00074?",
+      "top1": 0.8682147939077158,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          3
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          30
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          29
+        ]
+      ]
+    },
+    {
+      "id": "q170",
+      "type": "identifierare",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad gäller ärende SLK-2024-01212?",
+      "top1": 0.8623079739625484,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          31
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          30
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          33
+        ]
+      ]
+    },
+    {
+      "id": "q171",
+      "type": "identifierare",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad gäller ärende SLK-2024-01204?",
+      "top1": 0.8659107248889597,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          49
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          50
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          30
+        ]
+      ]
+    },
+    {
+      "id": "q172",
+      "type": "identifierare",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad gäller ärende SLK-2025-00489?",
+      "top1": 0.8672651210707282,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          14
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          39
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          46
+        ]
+      ]
+    },
+    {
+      "id": "q173",
+      "type": "identifierare",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad gäller ärende SLK-2024-01000?",
+      "top1": 0.8554280996322632,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          10
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          30
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          4
+        ]
+      ]
+    },
+    {
+      "id": "q174",
+      "type": "identifierare",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad gäller ärende SLK-2025-00018?",
+      "top1": 0.8677920699119568,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20251126.pdf",
+          45
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          56
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          52
+        ]
+      ]
+    },
+    {
+      "id": "q175",
+      "type": "identifierare",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad gäller ärende SLK-2025-00026?",
+      "top1": 0.8892137474290299,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          58
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          39
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          44
+        ]
+      ]
+    },
+    {
+      "id": "q176",
+      "type": "identifierare",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad gäller ärende SLK-2025-00398?",
+      "top1": 0.8736637830734253,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          25
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          46
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          39
+        ]
+      ]
+    },
+    {
+      "id": "q177",
+      "type": "identifierare",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad behandlades under § 319 i kommunstyrelsens protokoll från 2025-04-09?",
+      "top1": 0.8489241853035747,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          38
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          24
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          1
+        ]
+      ]
+    },
+    {
+      "id": "q178",
+      "type": "identifierare",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad behandlades under § 324 i kommunstyrelsens protokoll från 2025-04-09?",
+      "top1": 0.8610325538496656,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          44
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          15
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          39
+        ]
+      ]
+    },
+    {
+      "id": "q179",
+      "type": "identifierare",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad behandlades under § 330 i kommunstyrelsens protokoll från 2025-04-09?",
+      "top1": 0.8780456258031368,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          50
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          53
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          54
+        ]
+      ]
+    },
+    {
+      "id": "q180",
+      "type": "identifierare",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad behandlades under § 307 i kommunstyrelsens protokoll från 2025-04-09?",
+      "top1": 0.8726494388193242,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          22
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          2
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          19
+        ]
+      ]
+    },
+    {
+      "id": "q181",
+      "type": "identifierare",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad behandlades under § 890 i kommunstyrelsens protokoll från 2025-11-26?",
+      "top1": 0.8727706822430275,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20251126.pdf",
+          6
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          5
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          48
+        ]
+      ]
+    },
+    {
+      "id": "q182",
+      "type": "identifierare",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad behandlades under § 1000 i kommunstyrelsens protokoll från 2024-11-27?",
+      "top1": 0.8807955455305863,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          19
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          21
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          39
+        ]
+      ]
+    },
+    {
+      "id": "q183",
+      "type": "identifierare",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad behandlades under § 115 i kommunfullmäktiges protokoll från 2024-03-21?",
+      "top1": 0.8467906713485718,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          25
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          29
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          43
+        ]
+      ]
+    },
+    {
+      "id": "q184",
+      "type": "identifierare",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad behandlades under § 533 i kommunfullmäktiges protokoll från 2025-11-27?",
+      "top1": 0.8738067821379449,
+      "refused": false,
+      "rank": 2,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          39
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          63
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          64
+        ]
+      ]
+    },
+    {
+      "id": "q185",
+      "type": "identifierare",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad behandlades under § 119 i kommunfullmäktiges protokoll från 2024-03-21?",
+      "top1": 0.8692200857865775,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          29
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          12
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          8
+        ]
+      ]
+    },
+    {
+      "id": "q186",
+      "type": "identifierare",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad behandlades under § 293 i kommunstyrelsens protokoll från 2025-04-09?",
+      "top1": 0.8927483686508693,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          7
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          5
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          39
+        ]
+      ]
+    },
+    {
+      "id": "q187",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vem valdes in som ledamot i förbundsfullmäktige i Göteborgsregionens kommunalförbund i stället för Elisabet Lann (KD)?",
+      "top1": 0.8930025100708008,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          8
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          10
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          73
+        ]
+      ]
+    },
+    {
+      "id": "q188",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vem valdes in som ledamot i förbundsfullmäktige i Göteborgsregionens kommunalförbund i stället för Jonas Attenius (S)?",
+      "top1": 0.89481455714616,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          10
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          14
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          6
+        ]
+      ]
+    },
+    {
+      "id": "q189",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vem valdes in som ledamot i Göteborgs Stads råd för den nationella minoriteten romer i stället för Anna-Klara Behlin (V)?",
+      "top1": 0.9122241787776857,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          33
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          55
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          66
+        ]
+      ]
+    },
+    {
+      "id": "q190",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vem valdes in som ledamot i styrgruppen för politikerutbildning i stället för Jennifer Merelaid Hankins (V)?",
+      "top1": 0.8925244276211023,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          34
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          35
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          100
+        ]
+      ]
+    },
+    {
+      "id": "q191",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vem valdes in som ledamot i referensgrupp för ungdomsfullmäktige i stället för Jennifer Merelaid Hankins (V)?",
+      "top1": 0.8783345963556055,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          35
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          34
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          12
+        ]
+      ]
+    },
+    {
+      "id": "q192",
+      "type": "person",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vem valdes in som ledamot i Göteborgs Stads råd för den nationella minoriteten romer i stället för Christer Oxien (L)?",
+      "top1": 0.903553014781893,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          55
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          33
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          66
+        ]
+      ]
+    },
+    {
+      "id": "q193",
+      "type": "person",
+      "split": "test",
+      "answerable": true,
+      "question": "Vem valdes in som ledamot i förbundsstyrelsen för Göteborgsregionens kommunalförbund i stället för Jonas Attenius (S)?",
+      "top1": 0.8925431966781616,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20251126.pdf",
+          14
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          10
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          6
+        ]
+      ]
+    },
+    {
+      "id": "q194",
+      "type": "beslut",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad föreslog kommunstyrelsen att kommunfullmäktige skulle besluta om motionen av Kristina Bergman Alme (L) om ökat stöd efter vårdnadsöverflytt?",
+      "top1": 0.9295982206346726,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          31
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ]
+      ]
+    },
+    {
+      "id": "q195",
+      "type": "beslut",
+      "split": "test",
+      "answerable": true,
+      "question": "Vad föreslog kommunstyrelsen att kommunfullmäktige skulle besluta om motionen av Sarah Ullmark (M) och Edwin Friedlaender (M) om att avskaffa begränsningar för cykel-, mopedvagnar och food-trucks i Göteborg?",
+      "top1": 0.9262809289191509,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20251126.pdf",
+          15
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          19
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          72
+        ]
+      ]
+    },
+    {
+      "id": "q196",
+      "type": "beslut",
+      "split": "dev",
+      "answerable": true,
+      "question": "Vad föreslog kommunstyrelsen att kommunfullmäktige skulle besluta om motionen av Emma Altenhammar (SD), Jörgen Fogelklou (SD) och Agneta Kjaerbeck (SD) om att utreda en omorganisation där varje skolenhet inom grundskolan och gymnasieskolan leds av en egen ansvarig rektor?",
+      "top1": 0.916658952833603,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KS_protokoll_20251126.pdf",
+          16
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          32
+        ]
+      ]
+    },
+    {
+      "id": "q197",
+      "type": "detalj",
+      "split": "dev",
+      "answerable": true,
+      "question": "Till vilket sammanträde bordlades interpellationen från Emma Altenhammar (SD) om inrättandet av en styrgrupp för miljö- och klimatmål?",
+      "top1": 0.8914788631045484,
+      "refused": false,
+      "rank": 1,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          9
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          24
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          39
+        ]
+      ]
+    },
+    {
+      "id": "n101",
+      "type": "saknas",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vem är Sveriges statsminister?",
+      "top1": 0.8004332303742643,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          70
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          79
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          91
+        ]
+      ]
+    },
+    {
+      "id": "n102",
+      "type": "saknas",
+      "split": "test",
+      "answerable": false,
+      "question": "Hur lagar man pannkakor?",
+      "top1": 0.8036319970002207,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          23
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          23
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          22
+        ]
+      ]
+    },
+    {
+      "id": "n103",
+      "type": "saknas",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vad är huvudstaden i Australien?",
+      "top1": 0.7700523412165236,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          21
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          1
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          19
+        ]
+      ]
+    },
+    {
+      "id": "n104",
+      "type": "saknas",
+      "split": "test",
+      "answerable": false,
+      "question": "Hur många planeter finns det i solsystemet?",
+      "top1": 0.758629478257019,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          42
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          103
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          18
+        ]
+      ]
+    },
+    {
+      "id": "n105",
+      "type": "saknas",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vad kostar en Tesla Model 3?",
+      "top1": 0.7967178346682899,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          58
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          37
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          27
+        ]
+      ]
+    },
+    {
+      "id": "n106",
+      "type": "saknas",
+      "split": "dev",
+      "answerable": false,
+      "question": "Hur fungerar en kärnreaktor?",
+      "top1": 0.7946534875241837,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          31
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          37
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          38
+        ]
+      ]
+    },
+    {
+      "id": "n107",
+      "type": "saknas",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vem skrev boken om Pippi Långstrump?",
+      "top1": 0.7598213696586282,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20241127.pdf",
+          32
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          4
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          22
+        ]
+      ]
+    },
+    {
+      "id": "n108",
+      "type": "saknas",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vilken är världens högsta byggnad?",
+      "top1": 0.7705808877944946,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          21
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          21
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          41
+        ]
+      ]
+    },
+    {
+      "id": "n109",
+      "type": "saknas-svår",
+      "split": "test",
+      "answerable": false,
+      "question": "Vad beslutade kommunstyrelsen om avgiftsfri kollektivtrafik för pensionärer?",
+      "top1": 0.8291657378278404,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          40
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          15
+        ]
+      ]
+    },
+    {
+      "id": "n110",
+      "type": "saknas-svår",
+      "split": "test",
+      "answerable": false,
+      "question": "Vilket beslut fattades om att bygga en ny konserthall vid Gullbergsvass?",
+      "top1": 0.8062455769630937,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          82
+        ]
+      ]
+    },
+    {
+      "id": "n111",
+      "type": "saknas-svår",
+      "split": "test",
+      "answerable": false,
+      "question": "Vad beslutade fullmäktige om att förbjuda privata fyrverkerier?",
+      "top1": 0.7857172872333623,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          19
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          12
+        ]
+      ]
+    },
+    {
+      "id": "n112",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vad blev beslutet om att införa tiggeriförbud i Göteborg?",
+      "top1": 0.833003779291662,
+      "refused": false,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20251126.pdf",
+          15
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          46
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          41
+        ]
+      ]
+    },
+    {
+      "id": "n113",
+      "type": "saknas-svår",
+      "split": "test",
+      "answerable": false,
+      "question": "Vilket yrkande om att förbjuda böneutrop behandlades av kommunstyrelsen?",
+      "top1": 0.8406630754470825,
+      "refused": false,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          45
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          44
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ]
+      ]
+    },
+    {
+      "id": "n114",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vad beslutades om att sälja Slottsskogsvallen?",
+      "top1": 0.7889207257126897,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          11
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          36
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          63
+        ]
+      ]
+    },
+    {
+      "id": "n115",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vad beslutades om att införa en kommunal e-sportarena?",
+      "top1": 0.8290463293735647,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          91
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          29
+        ]
+      ]
+    },
+    {
+      "id": "n116",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vad beslutade fullmäktige om rekrytering av en kommunikationschef?",
+      "top1": 0.8131659738322526,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          34
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          35
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          19
+        ]
+      ]
+    },
+    {
+      "id": "n117",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vad beslutades om att Göteborg ska vara värd för Eurovision?",
+      "top1": 0.818676233291626,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          39
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          21
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          30
+        ]
+      ]
+    },
+    {
+      "id": "n118",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vilket beslut togs om en ny arena för Örgryte IS?",
+      "top1": 0.8045814270280147,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          46
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          30
+        ]
+      ]
+    },
+    {
+      "id": "n119",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vad beslutades om krav på cykelhjälm för barn?",
+      "top1": 0.8073980327011342,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          64
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          15
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          31
+        ]
+      ]
+    },
+    {
+      "id": "n120",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vilket yrkande gällde ett förbud mot plastpåsar i butiker?",
+      "top1": 0.7992914558301677,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          51
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          15
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          5
+        ]
+      ]
+    },
+    {
+      "id": "n121",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vad beslutades om att stänga djurparken i Slottsskogen?",
+      "top1": 0.8004288911308237,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          23
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          19
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          30
+        ]
+      ]
+    },
+    {
+      "id": "n122",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vilket beslut fattades om att införa fyra dagars skolvecka?",
+      "top1": 0.8091575617100276,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          64
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          7
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          43
+        ]
+      ]
+    },
+    {
+      "id": "n123",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vad beslutade kommunstyrelsen om att införa en kommunal tandvårdsförsäkring?",
+      "top1": 0.8210736023739827,
+      "refused": true,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          1
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          12
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          1
+        ]
+      ]
+    },
+    {
+      "id": "n124",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vad gäller ärende SLK-2030-00001?",
+      "top1": 0.8491248578354816,
+      "refused": false,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          43
+        ],
+        [
+          "KS_protokoll_20241127.pdf",
+          30
+        ],
+        [
+          "KS_protokoll_20250611.pdf",
+          8
+        ]
+      ]
+    },
+    {
+      "id": "n125",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vad står i ärende SLK-2025-99999?",
+      "top1": 0.8172479867935181,
+      "refused": false,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20251126.pdf",
+          21
+        ],
+        [
+          "KS_protokoll_20251126.pdf",
+          21
+        ],
+        [
+          "KF_protokoll_20251127.pdf",
+          15
+        ]
+      ]
+    },
+    {
+      "id": "n126",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vad behandlades under § 9999 i kommunstyrelsens protokoll från 2025-04-09?",
+      "top1": 0.8818207383155823,
+      "refused": false,
+      "rank": null,
+      "top3": [
+        [
+          "KS_protokoll_20250409.pdf",
+          24
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          39
+        ],
+        [
+          "KS_protokoll_20250409.pdf",
+          53
+        ]
+      ]
+    },
+    {
+      "id": "n127",
+      "type": "saknas-svår",
+      "split": "dev",
+      "answerable": false,
+      "question": "Vad beslutades i § 8888 vid kommunfullmäktiges sammanträde 2024-03-21?",
+      "top1": 0.8512818978382858,
+      "refused": false,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20240321.pdf",
+          9
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          13
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          19
+        ]
+      ]
+    },
+    {
+      "id": "n128",
+      "type": "saknas-svår",
+      "split": "test",
+      "answerable": false,
+      "question": "Vad beslutades om att bygga en gondolbana över Göta älv?",
+      "top1": 0.8303976261141746,
+      "refused": false,
+      "rank": null,
+      "top3": [
+        [
+          "KF_protokoll_20251127.pdf",
+          21
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          21
+        ],
+        [
+          "KF_protokoll_20240321.pdf",
+          21
+        ]
+      ]
+    }
+  ]
+}
