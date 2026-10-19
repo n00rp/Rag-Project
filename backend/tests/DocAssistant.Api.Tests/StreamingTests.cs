@@ -134,6 +134,22 @@ public sealed class StreamingTests : IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task Every_response_carries_a_trace_id_and_the_log_has_timings_but_not_the_question()
+    {
+        await ReadyDocumentAsync();
+        _factory.Ai.OnStream = (_, _, _) => Events(new AiTokenEvent("Svar."), new AiDoneEvent("Svar.", Grounded: true));
+        const string question = "En mycket särskild fråga som inte får loggas";
+
+        var response = await PostStreamAsync(question);
+        await ReadEventsAsync(response);
+
+        response.Headers.GetValues("X-Trace-Id").Single().Should().MatchRegex("^[0-9a-f]{32}$");
+        var line = _factory.Logs.Messages.Last(m => m.StartsWith("Chat answered (stream)"));
+        line.Should().Contain("outcome done").And.Contain($"{question.Length} chars").And.Contain("first token").And.Contain("total");
+        _factory.Logs.Messages.Should().NotContain(m => m.Contains(question));
+    }
+
+    [Fact]
     public async Task Model_unreachable_before_the_first_event_is_a_normal_503()
     {
         _factory.Ai.Failure = new AiServiceUnavailableException("nere");

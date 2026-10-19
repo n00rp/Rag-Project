@@ -1,13 +1,19 @@
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 using DocAssistant.Api.Data;
 using DocAssistant.Api.Endpoints;
 using DocAssistant.Api.Services;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
+
+// Every log line of a request carries its trace id; the HttpClient to the AI service sends it on (traceparent),
+// so one question can be followed through both services. See docs/dev-setup.md.
+builder.Logging.Configure(o => o.ActivityTrackingOptions = ActivityTrackingOptions.TraceId | ActivityTrackingOptions.SpanId);
 
 builder.Services.AddDbContext<AppDbContext>(o =>
     o.UseNpgsql(config.GetConnectionString("Default")
@@ -44,6 +50,16 @@ builder.Services.AddCors(o => o.AddDefaultPolicy(p => p
     .AllowAnyMethod()));
 
 var app = builder.Build();
+
+app.Use(async (context, next) =>
+{
+    context.Response.OnStarting(() =>
+    {
+        if (Activity.Current is { } activity) context.Response.Headers["X-Trace-Id"] = activity.TraceId.ToString();
+        return Task.CompletedTask;
+    });
+    await next();
+});
 
 app.UseExceptionHandler();
 app.UseStatusCodePages();

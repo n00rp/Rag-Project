@@ -82,6 +82,14 @@ Adressen kan ändras efter en omstart av WSL/Windows; kontrollera då steg 1 ige
 - Blockerar PowerShell skripten: `powershell -ExecutionPolicy Bypass -File .\scripts\start.ps1`.
 - Återställningen är testad mot en separat databas (alla chunks och uppladdade filer kom med). Att ersätta den riktiga databasen har inte körts.
 
+## Följa en fråga genom loggarna
+Båda tjänsterna skriver strukturerade loggar (en JSON-rad per händelse). .NET-API:et startar ett spår per anrop och skickar det vidare till AI-tjänsten (W3C `traceparent`), så samma **trace id** finns i båda. Varje svar från API:et har det i huvudet `X-Trace-Id` (syns i webbläsarens nätverksflik).
+```bash
+# i WSL: alla rader för en fråga, från båda tjänsterna
+docker compose logs api ai-service | grep <trace id>
+```
+Raderna med `"msg": "answer"` (AI-tjänsten) och `Chat answered` (API:et) har tiderna: sökning (`retrieve_ms`), tid till första ord (`first_token_ms`), totalt (`total_ms`), antal ord, stödnivå och om svaret stoppades eller bröts (`outcome`). **Frågetexten loggas aldrig**, bara dess längd.
+
 ## Laptop → GPU på stationären
 Laptopen har ingen GPU. Låt den prata med Ollama på stationären:
 1. Installera [Tailscale](https://tailscale.com) (gratis) på båda datorerna och logga in med samma konto.

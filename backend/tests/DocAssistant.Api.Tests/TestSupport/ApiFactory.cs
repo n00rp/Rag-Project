@@ -23,6 +23,8 @@ public sealed class ApiFactory : WebApplicationFactory<Program>
 
     public FakeAiServiceClient Ai { get; } = new();
 
+    public CapturingLoggerProvider Logs { get; } = new();
+
     public ApiFactory()
     {
         using var conn = new NpgsqlConnection(AdminConnection);
@@ -47,6 +49,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>
         {
             services.RemoveAll<IAiServiceClient>();
             services.AddSingleton<IAiServiceClient>(Ai);
+            services.AddSingleton<Microsoft.Extensions.Logging.ILoggerProvider>(Logs);
         });
     }
 

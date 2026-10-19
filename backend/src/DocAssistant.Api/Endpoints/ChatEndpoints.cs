@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using DocAssistant.Api.Contracts;
@@ -8,6 +9,9 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace DocAssistant.Api.Endpoints;
+
+/// <summary>Log category for chat requests.</summary>
+public sealed class ChatLog;
 
 public static class ChatEndpoints
 {
@@ -120,11 +124,13 @@ public static class ChatEndpoints
         AppDbContext db,
         ICurrentUser user,
         IAiServiceClient ai,
+        ILogger<ChatLog> log,
         CancellationToken ct)
     {
         var (ready, problem) = await PrepareAsync(request, db, user, ct);
         if (problem is not null) return problem;
 
+        var timer = Stopwatch.StartNew();
         QueryResult result;
         try
         {
@@ -140,6 +146,8 @@ public static class ChatEndpoints
 
         var message = await SaveAsync(db, user, ready.Question, result.Answer, result.Grounded,
             ToSourceDtos(result.Sources, ready.Names), interrupted: false, result.Support, result.Broad, ct);
+        log.LogInformation("Chat answered ({Mode}): {QuestionChars} chars, {Sources} sources, grounded {Grounded}, support {Support}, total {TotalMs} ms",
+            "plain", ready.Question.Length, result.Sources.Count, result.Grounded, result.Support, timer.ElapsedMilliseconds);
         return TypedResults.Ok(ToDto(message));
     }
 
@@ -155,6 +163,7 @@ public static class ChatEndpoints
         AppDbContext db,
         ICurrentUser user,
         IAiServiceClient ai,
+        ILogger<ChatLog> log,
         CancellationToken ct)
     {
         var (ready, problem) = await PrepareAsync(request, db, user, ct);
@@ -162,6 +171,9 @@ public static class ChatEndpoints
 
         return Results.Stream(async body =>
         {
+            var timer = Stopwatch.StartNew();
+            long? firstTokenMs = null;
+            var outcome = "done";
             var started = false;
             var answer = new StringBuilder();
             var sources = new List<ChatSourceDto>();
@@ -199,6 +211,7 @@ public static class ChatEndpoints
                             break;
                         case AiTokenEvent t:
                             answer.Append(t.Text);
+                            firstTokenMs ??= timer.ElapsedMilliseconds;
                             await Send(new { type = "token", text = t.Text });
                             break;
                         case AiDoneEvent d:
@@ -216,16 +229,24 @@ public static class ChatEndpoints
             }
             catch (AiServiceUnavailableException) when (!started)
             {
+                outcome = "unavailable";
                 throw; // nothing sent yet: becomes the usual 503 problem response
             }
             catch (AiServiceUnavailableException ex)
             {
+                outcome = "model_failed";
                 await SavePartialAsync();
                 await Send(new { type = "error", code = "ai_unavailable", message = ex.Message });
             }
             catch (OperationCanceledException)
             {
+                outcome = "stopped";
                 await SavePartialAsync(); // the user pressed stop or left the page
+            }
+            finally
+            {
+                log.LogInformation("Chat answered (stream): outcome {Outcome}, {QuestionChars} chars, {Sources} sources, support {Support}, first token {FirstTokenMs} ms, total {TotalMs} ms",
+                    outcome, ready!.Question.Length, sources.Count, support, firstTokenMs, timer.ElapsedMilliseconds);
             }
         }, "application/x-ndjson");
     }

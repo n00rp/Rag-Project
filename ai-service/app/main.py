@@ -1,5 +1,7 @@
 import json
 import logging
+import time
+import uuid
 from contextlib import asynccontextmanager
 from uuid import UUID
 
@@ -13,9 +15,11 @@ from app.chunking import add_header, chunk_pages, document_header, strip_header
 from app.config import Settings, get_settings
 from app.embeddings import build_embedder
 from app.llm import LlmUnavailableError, build_llm
+from app.logging_setup import configure_logging, trace_id_from, trace_id_var
 from app.pdf import NoTextError, PdfError, extract_pages
 from app.rag import answer_question, retrieve, stream_answer
 
+configure_logging()
 log = logging.getLogger("ai-service")
 
 
@@ -39,6 +43,20 @@ def require_internal_key(
 
 
 app = FastAPI(title="AI service", lifespan=lifespan)
+
+
+@app.middleware("http")
+async def trace_middleware(request, call_next):
+    """Adopts the trace id the API sent (W3C traceparent) so all log lines of one question share it."""
+    trace_id = trace_id_from(request.headers.get("traceparent")) or uuid.uuid4().hex
+    trace_id_var.set(trace_id)
+    started = time.perf_counter()
+    response = await call_next(request)
+    response.headers["X-Trace-Id"] = trace_id
+    if request.url.path != "/health":  # polled every few seconds
+        log.info("request", extra={"method": request.method, "path": request.url.path,
+                                   "status": response.status_code, "duration_ms": round((time.perf_counter() - started) * 1000)})
+    return response
 
 
 class IngestResponse(BaseModel):
@@ -116,6 +134,7 @@ def source_out(h) -> SourceOut:
 
 @app.post("/query", response_model=QueryResponse, dependencies=[Depends(require_internal_key)])
 def query(req: QueryRequest, settings: Settings = Depends(get_settings)) -> QueryResponse:
+    started = time.perf_counter()
     try:
         result = answer_question(
             pool=app.state.pool,
@@ -131,6 +150,9 @@ def query(req: QueryRequest, settings: Settings = Depends(get_settings)) -> Quer
         log.warning("LLM unavailable: %s", exc)
         raise HTTPException(status_code=503, detail="AI-modellen är inte tillgänglig just nu") from exc
 
+    log.info("answer", extra={"mode": "plain", "question_chars": len(req.question), "sources": len(result.sources),
+                              "grounded": result.grounded, "support": result.support, "broad": result.broad,
+                              "total_ms": round((time.perf_counter() - started) * 1000)})
     return QueryResponse(
         answer=result.answer, grounded=result.grounded, sources=[source_out(h) for h in result.sources],
         support=result.support, broad=result.broad,
@@ -153,12 +175,16 @@ def query_stream(req: QueryRequest, settings: Settings = Depends(get_settings)) 
     {"type": "error", "code": "ai_unavailable", "message": "..."}   if the model cannot be reached
 
     Retrieval happens before the response starts, so its errors are ordinary HTTP errors."""
+    started = time.perf_counter()
     retrieval = retrieve(
         pool=app.state.pool, embedder=app.state.embedder, settings=settings, owner_id=req.owner_id,
         question=req.question, document_ids=req.document_ids, top_k=req.top_k,
     )
+    retrieved_ms = round((time.perf_counter() - started) * 1000)
 
     def events():
+        first_token_ms = None
+        tokens = 0
         try:
             for kind, payload in stream_answer(app.state.llm, retrieval, settings.structured_answer):
                 if kind == "sources":
@@ -166,8 +192,16 @@ def query_stream(req: QueryRequest, settings: Settings = Depends(get_settings)) 
                 elif kind == "support":
                     yield _line({"type": "support", "level": payload})
                 elif kind == "token":
+                    tokens += 1
+                    if first_token_ms is None:
+                        first_token_ms = round((time.perf_counter() - started) * 1000)
                     yield _line({"type": "token", "text": payload})
                 else:
+                    log.info("answer", extra={
+                        "mode": "stream", "question_chars": len(req.question), "hits": len(retrieval.hits),
+                        "refused_by_search": retrieval.refused, "grounded": payload.grounded, "support": payload.support,
+                        "broad": payload.broad, "tokens": tokens, "retrieve_ms": retrieved_ms,
+                        "first_token_ms": first_token_ms, "total_ms": round((time.perf_counter() - started) * 1000)})
                     yield _line({"type": "done", "answer": payload.answer, "grounded": payload.grounded,
                                  "support": payload.support, "broad": payload.broad})
         except LlmUnavailableError as exc:
