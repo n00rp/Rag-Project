@@ -15,6 +15,8 @@ interface Box {
 interface Props {
   url: string
   page: number
+  /** 1 = the page fills the width of the viewer. */
+  zoom?: number
   /** Excerpt to highlight on the page. */
   snippet?: string
   onPageCount?: (pages: number) => void
@@ -23,7 +25,7 @@ interface Props {
 }
 
 /** One PDF page drawn on a canvas, with the cited excerpt highlighted on top. */
-export function PdfPage({ url, page, snippet, onPageCount, onError }: Props) {
+export function PdfPage({ url, page, zoom = 1, snippet, onPageCount, onError }: Props) {
   const container = useRef<HTMLDivElement>(null)
   const canvas = useRef<HTMLCanvasElement>(null)
   const [boxes, setBoxes] = useState<Box[]>([])
@@ -40,7 +42,7 @@ export function PdfPage({ url, page, snippet, onPageCount, onError }: Props) {
       onPageCount?.(pdf.numPages)
       const pdfPage = await pdf.getPage(Math.min(Math.max(page, 1), pdf.numPages))
       const available = container.current?.clientWidth || 640
-      const scale = available / pdfPage.getViewport({ scale: 1 }).width
+      const scale = (available / pdfPage.getViewport({ scale: 1 }).width) * zoom
       const viewport = pdfPage.getViewport({ scale })
       const ratio = window.devicePixelRatio || 1
 
@@ -60,14 +62,23 @@ export function PdfPage({ url, page, snippet, onPageCount, onError }: Props) {
       const items = content.items.filter((i) => 'str' in i)
       const covered = snippet ? findHighlightedItems(items.map((i) => i.str), snippet) : new Set<number>()
       setFound(snippet ? covered.size > 0 : null)
-      setBoxes(
-        [...covered].map((index) => {
-          const item = items[index]
-          const [, , , d, x, y] = Util.transform(viewport.transform, item.transform)
-          const height = Math.abs(d)
-          return { left: x, top: y - height * 0.85, width: item.width * scale, height: height * 1.15 }
-        }),
-      )
+      const placed = [...covered].map((index) => {
+        const item = items[index]
+        const [, , , d, x, y] = Util.transform(viewport.transform, item.transform)
+        const height = Math.abs(d)
+        return { left: x, top: y - height * 0.85, width: item.width * scale, height: height * 1.15 }
+      })
+      setBoxes(placed)
+
+      // Bring the highlighted text into view (the scrolling element is marked by the viewer).
+      if (placed.length > 0) {
+        const first = Math.min(...placed.map((b) => b.top))
+        requestAnimationFrame(() => {
+          const scroller = container.current?.closest<HTMLElement>('[data-pdf-scroll]')
+          const wrapper = canvas.current?.parentElement
+          if (scroller && wrapper) scroller.scrollTo({ top: Math.max(0, wrapper.offsetTop + first - 96), behavior: 'smooth' })
+        })
+      }
     }
 
     draw().catch(() => !cancelled && onError())
@@ -75,9 +86,9 @@ export function PdfPage({ url, page, snippet, onPageCount, onError }: Props) {
       cancelled = true
       task.destroy()
     }
-    // onPageCount/onError are not memoised by callers; the page, file and excerpt decide what is drawn.
+    // onPageCount/onError are not memoised by callers; the page, file, zoom and excerpt decide what is drawn.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [url, page, snippet])
+  }, [url, page, zoom, snippet])
 
   return (
     <div ref={container} className="w-full">

@@ -52,6 +52,19 @@ export function ChatView({ onOpen }: { onOpen: (target: ViewerTarget) => void })
   const composer = useRef<ComposerHandle>(null)
 
   const hasReadyDocs = docs.some((d) => d.status === 'Ready')
+
+  // "/" jumps to the question box from anywhere, unless the user is already typing somewhere.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return
+      const target = e.target as HTMLElement | null
+      if (target && (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))) return
+      e.preventDefault()
+      composer.current?.focus()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [])
   const hasDemoDocs = docs.some((d) => d.status === 'Ready' && /^K[SF]_protokoll_/.test(d.fileName))
   const suggestions = hasDemoDocs ? DEMO_SUGGESTIONS : GENERIC_SUGGESTIONS
   const last = history.at(-1)

@@ -1,11 +1,13 @@
-import { lazy, Suspense, useCallback, useState } from 'react'
-import { FolderOpen, Moon, Sun, WifiOff } from 'lucide-react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import { FolderOpen, Moon, Search, Sun, WifiOff } from 'lucide-react'
 import { clsx } from 'clsx'
 import { ChatView } from './components/ChatView'
+import { CommandPalette, type Command } from './components/CommandPalette'
 import { DocumentPanel } from './components/DocumentPanel'
 import { APP_NAME, Logo } from './components/Logo'
 import { Sheet } from './components/ui/Sheet'
-import { useHealth } from './hooks/queries'
+import { useClearHistory, useHealth } from './hooks/queries'
+import { useMediaQuery } from './hooks/useMediaQuery'
 import { useTheme } from './lib/theme'
 import type { ViewerTarget } from './lib/types'
 
@@ -50,8 +52,35 @@ export default function App() {
   const { theme, toggle } = useTheme()
   const [viewer, setViewer] = useState<ViewerTarget | null>(null)
   const [docsOpen, setDocsOpen] = useState(false)
+  const [paletteOpen, setPaletteOpen] = useState(false)
+  const clearHistory = useClearHistory()
+  // Wide screens show the source next to the chat; the panel for the documents is always visible from `lg`.
+  const wide = useMediaQuery('(min-width: 1280px)')
+  const sidebarVisible = useMediaQuery('(min-width: 1024px)')
   const closeViewer = useCallback(() => setViewer(null), [])
   const closeDocs = useCallback(() => setDocsOpen(false), [])
+  const closePalette = useCallback(() => setPaletteOpen(false), [])
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setPaletteOpen((open) => !open)
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [])
+
+  const commands = useMemo<Command[]>(
+    () => [
+      { id: 'new', label: 'Ny konversation', run: () => clearHistory.mutate() },
+      { id: 'theme', label: theme === 'dark' ? 'Byt till ljust läge' : 'Byt till mörkt läge', run: toggle },
+      ...(sidebarVisible ? [] : [{ id: 'docs', label: 'Visa dokument', run: () => setDocsOpen(true) }]),
+      ...(viewer ? [{ id: 'close-source', label: 'Stäng källvisaren', hint: 'Esc', run: closeViewer }] : []),
+    ],
+    [clearHistory, theme, toggle, sidebarVisible, viewer, closeViewer],
+  )
 
   return (
     <div className="flex h-dvh flex-col">
@@ -65,6 +94,15 @@ export default function App() {
             className="inline-flex items-center gap-1.5 rounded-lg border border-line px-3 py-1.5 text-sm font-medium hover:bg-surface-2 lg:hidden"
           >
             <FolderOpen className="size-4" aria-hidden /> Dokument
+          </button>
+          <button
+            onClick={() => setPaletteOpen(true)}
+            aria-label="Öppna kommandon (Ctrl+K)"
+            title="Kommandon (Ctrl+K)"
+            className="hidden items-center gap-2 rounded-lg border border-line px-2.5 py-1.5 text-xs text-muted hover:bg-surface-2 hover:text-fg sm:inline-flex"
+          >
+            <Search className="size-3.5" aria-hidden />
+            <kbd className="font-sans">Ctrl K</kbd>
           </button>
           <button
             onClick={toggle}
@@ -85,6 +123,13 @@ export default function App() {
         <main className="min-w-0 flex-1">
           <ChatView onOpen={setViewer} />
         </main>
+        {viewer && wide && (
+          <aside className="w-[min(44rem,42vw)] shrink-0 border-l border-line">
+            <Suspense fallback={null}>
+              <PdfViewer target={viewer} onClose={closeViewer} docked />
+            </Suspense>
+          </aside>
+        )}
       </div>
 
       <Sheet open={docsOpen} onClose={closeDocs} side="left" title="Dokument">
@@ -95,11 +140,12 @@ export default function App() {
           }}
         />
       </Sheet>
-      {viewer && (
+      {viewer && !wide && (
         <Suspense fallback={null}>
           <PdfViewer target={viewer} onClose={closeViewer} />
         </Suspense>
       )}
+      {paletteOpen && <CommandPalette commands={commands} onClose={closePalette} />}
     </div>
   )
 }

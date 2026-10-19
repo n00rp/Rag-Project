@@ -23,6 +23,12 @@ Storlekar nedan är grova uppskattningar av arbetsinsats: **S** = ett kort arbet
 - **B1 grannchunkar** (en enklare variant av §-chunkning: modellen får även chunkarna bredvid varje träff) är byggt bakom `CONTEXT_NEIGHBORS` (av) och mätt på svar och förkastat (netto +1 korrekt svar, detaljfrågorna blev inte bättre; se `eval/README.md`, experiment 6).
 - **B2 omrankare och B3 större embeddingmodell: skjutna upp.** På evalset v2 är sökningen redan nära taket för alla frågetyper utom identifierare (MRR 0,98 dev, 0,96–0,98 test), så de kan inte visa en vinst som går att skilja från brus; de är heller dyra (modellnedladdning, latens, omindexering och ny `min_score`). De tas när evalsetet innehåller svårare frågor skrivna av dig, eftersom det är då det syns om sökningen räcker.
 
+**Etapp 4 (layout och återkoppling): gjord 2026-10-20.**
+- **A4:** på skärmar ≥ 1280 px öppnas källvisaren **bredvid** chatten (på smalare skärmar är den kvar som sidopanel), med **zoom** (75–200 %) och **automatisk rullning till det markerade utdraget**. Inte gjort: "nästa/föregående träff på samma sida" och en filtrering av frågan till ett valt dokument i dokumentpanelen (API:et stöder `documentIds`).
+- **A7:** tumme upp/ned på varje svar, en frivillig kommentar vid ned, sparat i databasen (`Rating`, `FeedbackComment`, migration, endpoint `PUT /api/chat/{id}/feedback`) och kvar efter omladdning. `eval/export_feedback.py` exporterar bedömda svar (git-ignorerade) som råmaterial till nya evalfrågor.
+- **A6:** `/` fokuserar frågefältet, **Ctrl/Cmd+K** öppnar en kommandopalett (ny konversation, byt tema, visa dokument, stäng källvisaren), `↑` i ett tomt fält hämtar förra frågan, `Esc` stoppar ett svar eller stänger källvisaren, Enter/Shift+Enter som förut. Inte gjort: "dra och släpp var som helst i fönstret" (dropzonen i dokumentpanelen finns).
+- **Tester:** ai-service 69, backend 32, frontend 47, alla gröna.
+
 **Vad baslinjen sa (se `eval/README.md`):** utan ärendenummer är sökningen i princip perfekt men svaren är korrekta i ca 80 %; **ärendenummer/§-frågor är bara 21 % korrekta** (retrieval), **falska antaganden rättas inte** (0 av 4), och alla 40 frågor utan svar nekas. Etapp 3 (B4) och B6 pekas därför ut som de mest värdefulla.
 
 ## 0. Principer

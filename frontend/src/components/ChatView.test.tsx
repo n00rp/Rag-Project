@@ -60,4 +60,14 @@ describe('ChatView', () => {
     await waitFor(() => expect(calls).toContain('DELETE /api/chat/history'))
     await waitFor(() => expect(screen.queryByText('Svar.')).not.toBeInTheDocument())
   })
+  it('focuses the question box when "/" is pressed outside a text field', async () => {
+    renderChat([doc('annat.pdf')])
+    const box = await screen.findByLabelText('Din fråga')
+    await waitFor(() => expect(box).toBeEnabled())
+
+    await userEvent.keyboard('/')
+
+    expect(box).toHaveFocus()
+    expect(box).toHaveValue('') // the slash itself is not typed
+  })
 })
