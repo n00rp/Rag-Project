@@ -12,6 +12,7 @@ namespace DocAssistant.Api.Endpoints;
 public static class ChatEndpoints
 {
     private const int MaxQuestionLength = 2000;
+    private const int MaxCommentLength = 1000;
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
     public static void MapChatEndpoints(this IEndpointRouteBuilder app)
@@ -29,6 +30,24 @@ public static class ChatEndpoints
                 .Take(Math.Clamp(limit, 1, 200))
                 .ToListAsync(ct);
             return rows.AsEnumerable().Reverse().Select(ToDto);
+        });
+
+        group.MapPut("/{id:guid}/feedback", async Task<Results<Ok<ChatAnswerDto>, NotFound, ProblemHttpResult>> (
+            Guid id, FeedbackRequest request, AppDbContext db, ICurrentUser user, CancellationToken ct) =>
+        {
+            if (request.Rating is not (null or "up" or "down"))
+                return TypedResults.Problem("Betyget måste vara 'up', 'down' eller tomt.", statusCode: StatusCodes.Status400BadRequest);
+            if (request.Comment is { Length: > MaxCommentLength })
+                return TypedResults.Problem($"Kommentaren är för lång (max {MaxCommentLength} tecken).", statusCode: StatusCodes.Status400BadRequest);
+
+            var message = await db.ChatMessages.FirstOrDefaultAsync(m => m.Id == id && m.OwnerId == user.OwnerId, ct);
+            if (message is null) return TypedResults.NotFound();
+
+            message.Rating = request.Rating;
+            // A comment only makes sense together with a rating, and is dropped when the rating is withdrawn.
+            message.FeedbackComment = request.Rating is null ? null : request.Comment?.Trim() is { Length: > 0 } c ? c : null;
+            await db.SaveChangesAsync(ct);
+            return TypedResults.Ok(ToDto(message));
         });
 
         group.MapDelete("/history", async (AppDbContext db, ICurrentUser user, CancellationToken ct) =>
@@ -204,5 +223,5 @@ public static class ChatEndpoints
     private static ChatAnswerDto ToDto(ChatMessage m) =>
         new(m.Id, m.Question, m.Answer, m.Grounded,
             JsonSerializer.Deserialize<List<ChatSourceDto>>(m.SourcesJson, Json) ?? [],
-            m.CreatedAt, m.Interrupted);
+            m.CreatedAt, m.Interrupted, m.Rating, m.FeedbackComment);
 }

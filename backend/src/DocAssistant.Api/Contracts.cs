@@ -27,4 +27,8 @@ public record ChatAnswerDto(
     bool Grounded,
     IReadOnlyList<ChatSourceDto> Sources,
     DateTimeOffset CreatedAt,
-    bool Interrupted = false);
+    bool Interrupted = false,
+    string? Rating = null,
+    string? FeedbackComment = null);
+
+public record FeedbackRequest(string? Rating, string? Comment);

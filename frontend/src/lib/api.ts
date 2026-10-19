@@ -1,5 +1,5 @@
 import { readNdjson, type StreamEvent } from './stream'
-import type { ChatAnswer, DocumentDto, Health } from './types'
+import type { ChatAnswer, DocumentDto, Health, Rating } from './types'
 
 export class ApiError extends Error {
   status: number
@@ -82,6 +82,13 @@ export const api = {
   },
 
   history: () => request<ChatAnswer[]>('/api/chat/history'),
+
+  setFeedback: (id: string, rating: Rating | null, comment?: string) =>
+    request<ChatAnswer>(`/api/chat/${id}/feedback`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rating, comment }),
+    }),
 
   clearHistory: () => request<void>('/api/chat/history', { method: 'DELETE' }),
 

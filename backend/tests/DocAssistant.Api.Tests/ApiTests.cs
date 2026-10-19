@@ -196,6 +196,61 @@ public sealed class ApiTests : IClassFixture<ApiFactory>
         (await _client.GetFromJsonAsync<List<DocumentDto>>("/api/documents", Json)).Should().Contain(d => d.Id == uploaded.Id);
     }
 
+    private async Task<ChatAnswerDto> AskAsync()
+    {
+        var uploaded = await UploadAsync();
+        await WaitForStatusAsync(uploaded.Id, DocumentStatus.Ready);
+        _factory.Ai.OnQuery = (_, _) => new QueryResult("Svar.", Grounded: true, []);
+        var response = await _client.PostAsJsonAsync("/api/chat", new ChatRequest("Fråga?", null));
+        return (await response.Content.ReadFromJsonAsync<ChatAnswerDto>(Json))!;
+    }
+
+    [Fact]
+    public async Task An_answer_can_be_rated_with_a_comment_and_the_rating_withdrawn()
+    {
+        var answer = await AskAsync();
+        answer.Rating.Should().BeNull();
+
+        var down = await _client.PutAsJsonAsync($"/api/chat/{answer.Id}/feedback", new FeedbackRequest("down", "  Fel belopp  "));
+        down.StatusCode.Should().Be(HttpStatusCode.OK);
+        var rated = (await down.Content.ReadFromJsonAsync<ChatAnswerDto>(Json))!;
+        rated.Rating.Should().Be("down");
+        rated.FeedbackComment.Should().Be("Fel belopp");
+
+        var stored = (await _client.GetFromJsonAsync<List<ChatAnswerDto>>("/api/chat/history", Json))!.Single(m => m.Id == answer.Id);
+        stored.Rating.Should().Be("down");
+        stored.FeedbackComment.Should().Be("Fel belopp");
+
+        var up = await (await _client.PutAsJsonAsync($"/api/chat/{answer.Id}/feedback", new FeedbackRequest("up", null)))
+            .Content.ReadFromJsonAsync<ChatAnswerDto>(Json);
+        up!.Rating.Should().Be("up");
+        up.FeedbackComment.Should().BeNull();
+
+        var withdrawn = await (await _client.PutAsJsonAsync($"/api/chat/{answer.Id}/feedback", new FeedbackRequest(null, "ignoreras")))
+            .Content.ReadFromJsonAsync<ChatAnswerDto>(Json);
+        withdrawn!.Rating.Should().BeNull();
+        withdrawn.FeedbackComment.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task Feedback_with_an_unknown_rating_or_a_far_too_long_comment_is_rejected()
+    {
+        var answer = await AskAsync();
+
+        (await _client.PutAsJsonAsync($"/api/chat/{answer.Id}/feedback", new FeedbackRequest("great", null)))
+            .StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        (await _client.PutAsJsonAsync($"/api/chat/{answer.Id}/feedback", new FeedbackRequest("down", new string('x', 1001))))
+            .StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Feedback_on_an_answer_that_does_not_exist_is_404()
+    {
+        var response = await _client.PutAsJsonAsync($"/api/chat/{Guid.NewGuid()}/feedback", new FeedbackRequest("up", null));
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
     [Fact]
     public async Task Swedish_characters_survive_upload_chat_and_history()
     {

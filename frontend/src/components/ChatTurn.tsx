@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { AlertCircle, Check, Copy, Info, RotateCcw, WifiOff } from 'lucide-react'
 import type { LiveTurn } from '../hooks/useChatStream'
 import { formatTimestamp } from '../lib/format'
-import type { ChatAnswer, ViewerTarget } from '../lib/types'
+import type { ChatAnswer, Rating, ViewerTarget } from '../lib/types'
 import { Answer } from './Answer'
+import { FeedbackButtons } from './FeedbackButtons'
 import { Logo } from './Logo'
 import { ProgressSteps } from './ProgressSteps'
 import { SourceStrip } from './SourceStrip'
@@ -40,11 +41,12 @@ function ActionButton({ onClick, label, children }: { onClick: () => void; label
   )
 }
 
-function AnswerActions({ text, createdAt, interrupted, onRegenerate }: {
+function AnswerActions({ text, createdAt, interrupted, onRegenerate, children }: {
   text: string
   createdAt: string
   interrupted?: boolean
   onRegenerate?: () => void
+  children?: React.ReactNode
 }) {
   const [copied, setCopied] = useState(false)
 
@@ -68,6 +70,7 @@ function AnswerActions({ text, createdAt, interrupted, onRegenerate }: {
           <RotateCcw className="size-3.5" aria-hidden />
         </ActionButton>
       )}
+      {children}
       <span className="ml-2 text-xs text-muted">
         {formatTimestamp(createdAt)}
         {interrupted && ' · avbruten'}
@@ -81,9 +84,10 @@ interface TurnProps {
   onOpen: (target: ViewerTarget) => void
   /** Only given for the latest answer. */
   onRegenerate?: () => void
+  onFeedback?: (rating: Rating | null, comment?: string) => void
 }
 
-export function ChatTurn({ turn, onOpen, onRegenerate }: TurnProps) {
+export function ChatTurn({ turn, onOpen, onRegenerate, onFeedback }: TurnProps) {
   return (
     <>
       <UserBubble text={turn.question} />
@@ -100,7 +104,9 @@ export function ChatTurn({ turn, onOpen, onRegenerate }: TurnProps) {
           <p className="mt-2 text-xs text-muted">Svaret avbröts innan det var klart.</p>
         )}
         <SourceStrip sources={turn.sources} onOpen={onOpen} />
-        <AnswerActions text={turn.answer} createdAt={turn.createdAt} interrupted={turn.interrupted} onRegenerate={onRegenerate} />
+        <AnswerActions text={turn.answer} createdAt={turn.createdAt} interrupted={turn.interrupted} onRegenerate={onRegenerate}>
+          {onFeedback && <FeedbackButtons turn={turn} onRate={onFeedback} />}
+        </AnswerActions>
       </AssistantRow>
     </>
   )

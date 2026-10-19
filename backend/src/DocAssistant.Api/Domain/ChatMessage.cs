@@ -11,6 +11,12 @@ public class ChatMessage
     /// <summary>The answer was cut off (the user pressed stop, or the AI service failed while it was being written).</summary>
     public bool Interrupted { get; set; }
 
+    /// <summary>The reader's verdict on the answer: "up", "down" or null (none). Feeds the eval set.</summary>
+    public string? Rating { get; set; }
+
+    /// <summary>Optional note that goes with a "down".</summary>
+    public string? FeedbackComment { get; set; }
+
     /// <summary>Serialized list of <see cref="Contracts.ChatSourceDto"/>, stored as jsonb.</summary>
     public string SourcesJson { get; set; } = "[]";
 

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ArrowUpRight, Eraser } from 'lucide-react'
-import { useClearHistory, useDocuments, useHistory } from '../hooks/queries'
+import { useClearHistory, useDocuments, useFeedback, useHistory } from '../hooks/queries'
 import { useChatStream } from '../hooks/useChatStream'
 import type { ViewerTarget } from '../lib/types'
 import { ChatTurn, LiveAnswer } from './ChatTurn'
@@ -46,6 +46,7 @@ export function ChatView({ onOpen }: { onOpen: (target: ViewerTarget) => void })
   const { data: history = [] } = useHistory()
   const { data: docs = [] } = useDocuments()
   const clear = useClearHistory()
+  const feedback = useFeedback()
   const { live, busy, send, stop, dismiss } = useChatStream()
   const [draft, setDraft] = useState('')
   const composer = useRef<ComposerHandle>(null)
@@ -125,6 +126,7 @@ export function ChatView({ onOpen }: { onOpen: (target: ViewerTarget) => void })
                   turn={turn}
                   onOpen={onOpen}
                   onRegenerate={turn === last && live === null ? () => ask(turn.question) : undefined}
+                  onFeedback={(rating, comment) => feedback.mutate({ id: turn.id, rating, comment })}
                 />
               ))}
               {live && <LiveAnswer live={live} onOpen={onOpen} onRetry={() => ask(live.question)} onDismiss={dismiss} />}

@@ -28,7 +28,12 @@ export interface ChatAnswer {
   createdAt: string
   /** The answer was cut off (stopped, or the model failed while writing it). */
   interrupted?: boolean
+  /** The reader's verdict on the answer. */
+  rating?: Rating | null
+  feedbackComment?: string | null
 }
+
+export type Rating = 'up' | 'down'
 
 export interface Health {
   database: boolean

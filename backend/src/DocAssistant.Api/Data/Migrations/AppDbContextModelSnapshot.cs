@@ -35,6 +35,9 @@ namespace DocAssistant.Api.Data.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("FeedbackComment")
+                        .HasColumnType("text");
+
                     b.Property<bool>("Grounded")
                         .HasColumnType("boolean");
 
@@ -50,6 +53,9 @@ namespace DocAssistant.Api.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("Rating")
+                        .HasColumnType("text");
 
                     b.Property<string>("SourcesJson")
                         .IsRequired()

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '../lib/api'
-import type { ChatAnswer, DocumentDto } from '../lib/types'
+import type { ChatAnswer, DocumentDto, Rating } from '../lib/types'
 
 const POLL_MS = 1500
 
@@ -47,6 +47,17 @@ export function useRetryDocument() {
 
 export function useHistory() {
   return useQuery({ queryKey: ['history'], queryFn: api.history })
+}
+
+/** Rates an answer; the saved message replaces the old one in the history right away. */
+export function useFeedback() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, rating, comment }: { id: string; rating: Rating | null; comment?: string }) =>
+      api.setFeedback(id, rating, comment),
+    onSuccess: (saved) =>
+      qc.setQueryData<ChatAnswer[]>(['history'], (old = []) => old.map((m) => (m.id === saved.id ? saved : m))),
+  })
 }
 
 export function useClearHistory() {
