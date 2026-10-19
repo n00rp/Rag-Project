@@ -50,7 +50,7 @@ def test_stream_refusal_is_a_single_done_event(client, owner):
     finally:
         app.dependency_overrides.pop(get_settings, None)
 
-    assert events == [{"type": "done", "answer": NO_SUPPORT_ANSWER, "grounded": False}]
+    assert events == [{"type": "done", "answer": NO_SUPPORT_ANSWER, "grounded": False, "support": "inget", "broad": False}]
 
 
 def test_stream_reports_an_unreachable_model_as_an_error_event(client, owner, monkeypatch):
@@ -73,7 +73,7 @@ def test_other_owners_cannot_stream_each_others_chunks(client, owner):
 
     events = read_events(client, "someone-else", "skolskjuts Björkby")
 
-    assert events == [{"type": "done", "answer": NO_SUPPORT_ANSWER, "grounded": False}]
+    assert events == [{"type": "done", "answer": NO_SUPPORT_ANSWER, "grounded": False, "support": "inget", "broad": False}]
 
 
 def ollama_with(handler):

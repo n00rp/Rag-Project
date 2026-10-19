@@ -95,7 +95,7 @@ def generate(pool, embedder, settings, base, owner, name_of, model, questions) -
         ans = answer_question(pool=pool, embedder=embedder, llm=llm, settings=settings,
                               owner_id=owner, question=normalize_text(q["question"]))
         dt = time.perf_counter() - t
-        runs.append({"q": q, "answer": ans.answer, "grounded": ans.grounded, "seconds": dt,
+        runs.append({"q": q, "answer": ans.answer, "grounded": ans.grounded, "support": ans.support, "seconds": dt,
                      "sources": [(name_of[h.document_id], h.page, h.content) for h in ans.sources]})
         print(f"  {model} {q['id']} {dt:5.1f}s {'nej-svar' if not ans.grounded else 'svar'}", flush=True)
     return runs
@@ -154,6 +154,8 @@ def summarize(runs: list[dict]) -> dict:
         "faithful": bootstrap([bool(r["faithful"]) for r in given], fraction),
         "refused_unanswerable": bootstrap([bool(r["correct"]) for r in unanswerable], fraction),
         "judge_agreement": (sum(agree) / len(agree)) if agree else None,
+        "partial": sum(r.get("support") == "delvis" for r in answerable),
+        "partial_unanswerable": sum(r.get("support") == "delvis" for r in unanswerable),
         "latency_median_s": lat[len(lat) // 2], "latency_p90_s": lat[int(len(lat) * 0.9)],
     }
 
@@ -192,6 +194,7 @@ def print_summary(model: str, split: str, group: str, s: dict) -> None:
           f"(minst en domare: {s['correct_any'][0]:.2f})  "
           f"felaktigt nekade {fmt(s['wrongly_refused'])}  citat rätt {fmt(s['cited_ok'])}  "
           f"nekar obesvarbara {fmt(s['refused_unanswerable'])}  förankrat {fmt(s['faithful'])}{agree}  "
+          f"delvis stöd: {s['partial']} av besvarbara, {s['partial_unanswerable']} av obesvarbara  "
           f"latens {s['latency_median_s']:.1f}/{s['latency_p90_s']:.1f}s")
 
 

@@ -29,6 +29,11 @@ Storlekar nedan är grova uppskattningar av arbetsinsats: **S** = ett kort arbet
 - **A6:** `/` fokuserar frågefältet, **Ctrl/Cmd+K** öppnar en kommandopalett (ny konversation, byt tema, visa dokument, stäng källvisaren), `↑` i ett tomt fält hämtar förra frågan, `Esc` stoppar ett svar eller stänger källvisaren, Enter/Shift+Enter som förut. Inte gjort: "dra och släpp var som helst i fönstret" (dropzonen i dokumentpanelen finns).
 - **Tester:** ai-service 69, backend 32, frontend 47, alla gröna.
 
+**Etapp 5 (smartare svar): delvis gjord 2026-10-20.**
+- **B6 strukturerat svar:** byggt och mätt, **inte infört** (`STRUCTURED_ANSWER`, av). Det löste beloppsfrågan och rättade flera falska antaganden men gav två nya felaktiga nekanden, och på test föll strikt korrekthet 0,84 → 0,79 (inom bruset; domarna är överens i bara 75–84 %). Beslutsregeln uppfylls inte. Hela kedjan finns ändå på plats och testad (stödnivå i strömmen, API, databas, märket "Delvis stöd i dokumenten"), så det går att slå på när domarna är kalibrerade. Se `eval/README.md`, experiment 7.
+- **B5 översiktsfrågor, i en lättviktsform:** de känns igen med ett snävt mönster, får 12 utdrag och en instruktion att säga att svaret kan vara ofullständigt, och gränssnittet visar ett märke. **Inte gjort:** förberäknade sammanfattningar per ärende vid indexering (kräver ett LLM-anrop per ärende och gör uppladdningen långsam) och riktig frågeklassificering med LLM. Räkning och "lista alla" bygger därför fortfarande på ett urval, men säger det.
+- **Tester:** ai-service 93, backend 34, frontend 51.
+
 **Vad baslinjen sa (se `eval/README.md`):** utan ärendenummer är sökningen i princip perfekt men svaren är korrekta i ca 80 %; **ärendenummer/§-frågor är bara 21 % korrekta** (retrieval), **falska antaganden rättas inte** (0 av 4), och alla 40 frågor utan svar nekas. Etapp 3 (B4) och B6 pekas därför ut som de mest värdefulla.
 
 ## 0. Principer

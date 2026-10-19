@@ -8,6 +8,7 @@ import { FeedbackButtons } from './FeedbackButtons'
 import { Logo } from './Logo'
 import { ProgressSteps } from './ProgressSteps'
 import { SourceStrip } from './SourceStrip'
+import { SupportNotice } from './SupportNotice'
 
 export function UserBubble({ text }: { text: string }) {
   return (
@@ -93,7 +94,10 @@ export function ChatTurn({ turn, onOpen, onRegenerate, onFeedback }: TurnProps) 
       <UserBubble text={turn.question} />
       <AssistantRow>
         {turn.grounded ? (
-          <Answer text={turn.answer} sources={turn.sources} onOpen={onOpen} />
+          <>
+            <SupportNotice support={turn.support} broad={turn.broad} />
+            <Answer text={turn.answer} sources={turn.sources} onOpen={onOpen} />
+          </>
         ) : (
           <div className="flex gap-2.5 rounded-2xl bg-warn-soft p-3.5 text-warn">
             <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
@@ -121,7 +125,7 @@ interface LiveProps {
 
 /** The answer that is being written right now (or that just failed). */
 export function LiveAnswer({ live, onOpen, onRetry, onDismiss }: LiveProps) {
-  const { error, text, phase, sources, stopped } = live
+  const { error, text, phase, sources, stopped, support } = live
   const unreachable = error?.isAiUnavailable
   const writing = !error && !stopped
 
@@ -131,6 +135,7 @@ export function LiveAnswer({ live, onOpen, onRetry, onDismiss }: LiveProps) {
       <AssistantRow>
         {text === '' && writing && <ProgressSteps phase={phase} sources={sources} />}
 
+        {text !== '' && <SupportNotice support={support ?? undefined} />}
         {text !== '' && <Answer text={text} sources={sources} onOpen={onOpen} streaming={writing} />}
 
         {stopped && <p className="mt-2 text-xs text-muted">Stoppad.</p>}

@@ -182,6 +182,21 @@ public sealed class ApiTests : IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task Partial_support_and_the_overview_flag_are_stored_with_the_answer()
+    {
+        var uploaded = await UploadAsync("budget.pdf");
+        await WaitForStatusAsync(uploaded.Id, DocumentStatus.Ready);
+        _factory.Ai.OnQuery = (_, _) => new QueryResult("Summan saknas.", Grounded: true, [], Support: "delvis", Broad: true);
+
+        var response = await _client.PostAsJsonAsync("/api/chat", new ChatRequest("Hur stor var budgeten?", null));
+
+        var answer = (await response.Content.ReadFromJsonAsync<ChatAnswerDto>(Json))!;
+        (answer.Support, answer.Broad).Should().Be(("delvis", true));
+        var stored = (await _client.GetFromJsonAsync<List<ChatAnswerDto>>("/api/chat/history", Json))!.Single(m => m.Id == answer.Id);
+        (stored.Support, stored.Broad).Should().Be(("delvis", true));
+    }
+
+    [Fact]
     public async Task Clearing_history_removes_the_chat_but_keeps_documents()
     {
         var uploaded = await UploadAsync("skolskjuts.pdf");

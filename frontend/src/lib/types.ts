@@ -30,10 +30,15 @@ export interface ChatAnswer {
   interrupted?: boolean
   /** The reader's verdict on the answer. */
   rating?: Rating | null
+  /** How well the documents support the answer: the model said "delvis" when they only partly do. */
+  support?: Support
+  /** An overview question (summary, count, list): built from the best excerpts, so it may be incomplete. */
+  broad?: boolean
   feedbackComment?: string | null
 }
 
 export type Rating = 'up' | 'down'
+export type Support = 'fullt' | 'delvis'
 
 export interface Health {
   database: boolean

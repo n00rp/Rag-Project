@@ -111,6 +111,26 @@ Hypotes: detaljfrågor ("hur många röstade ja?") nekas ofta fast rätt sida hi
 
 Fem svar ändrades (3 till det bättre, 2 till det sämre), och **detaljfrågorna blev inte bättre** (3 → 2 av 5 korrekta). Förankringen sjönk, vilket stämmer med att mer text ger mer att dra felaktiga slutsatser från. Skillnaderna ligger inom bruset (domarna är överens i bara 81 %), och beslutsregeln (minst +0,02 strikt på dev) uppfylls inte. **Inställningen finns kvar men är avstängd.**
 
+## Experiment 7: strukturerat svar med stödnivå (inte infört)
+Modellen börjar svaret med en rad `STÖD: fullt`, `STÖD: delvis` eller `STÖD: inget` (`STRUCTURED_ANSWER=true`). "Delvis" betyder att utdragen handlar om ämnet men saknar något frågan efterfrågar (en totalsumma som inte står där) eller motsäger ett antagande i frågan ("varför bifölls…" när det avslogs); då ska modellen säga det och redovisa vad som faktiskt står. Nekandet avgörs av raden i stället för av att modellen råkar skriva en viss mening. Mätt med gemma3:12b (`results/e5/`):
+
+| | Dev utan → med | Test utan → med |
+|---|---|---|
+| Korrekt (strikt) | 0,76 → 0,79 | 0,84 → 0,79 |
+| Korrekt (minst en domare) | 0,87 → 0,91 | 0,93 → 0,95 |
+| Felaktigt nekade | 0,10 → 0,06 | 0,02 → 0,04 |
+| Citat rätt | 0,85 → 0,91 | 0,93 → 0,91 |
+| Nekar obesvarbara | 25 av 25 → 25 av 25 | 19 av 19 → 19 av 19 |
+| Svar märkta "delvis" | 7 av 87 besvarbara, 0 av 25 obesvarbara | 3 av 56, 0 av 19 |
+| Latens median | 1,2 s → 2,5 s | 1,3 s → 1,5 s |
+
+**Det som blev bättre på riktigt:** beloppsfrågan q45 ("hur stor var den kompletterande budgeten", där protokollet saknar totalsumma) får nu ett korrekt delvis svar i stället för "inget stöd"; falska antaganden rättas i flera fall (q157, q159); en identifierarfråga och en ämnesfråga till. **Det som blev sämre på riktigt:** två svar blev nekanden i stället för svar (q106 "Beviljades hemställan…" och q156 "Varför bifölls…"), eftersom modellen oftare väljer `inget`. Flera andra "försämringar" är domarbrus: qwen underkänner svar med i praktiken oförändrad text (q132, q139, q174, q176), och domarna är överens i bara 75–84 % av fallen.
+
+**Beslut:** beslutsregeln ("ingen försämring på test") uppfylls inte (strikt 0,84 → 0,79, om än inom bruset), och latensen på dev fördubblas. Inställningen och hela kedjan för `support` finns kvar men är avstängd; det som saknas för att avgöra frågan är en kalibrerad domare (`calibrate.py`) eller riktiga bedömningar (tummen). Går den att slå på senare bör `inget` inte kunna ersätta ett svar som sökningen själv är säker på.
+
+## Översiktsfrågor (inte räknade i siffrorna)
+Frågor som kräver en genomgång av många ärenden ("sammanfatta…", "hur många yrkanden…", "lista alla…", "jämför…", "skillnaden mellan…") känns igen av `rag.BROAD`. De får 12 utdrag i stället för 5, modellen instrueras att bara redovisa det den ser och säga att översikten kan vara ofullständig, och gränssnittet visar märket "Översikt av de mest relevanta utdragen, kan vara ofullständig". Det gör svaren ärligare men inte fullständiga: en räkning eller lista bygger fortfarande på ett urval. Mönstret är medvetet snävt (precision före täckning): "Vilka yrkanden från SD avslogs…" och "Vilka ärenden hade samma utfall…" känns inte igen. De sju sådana frågorna i evalsetet följs bara för hand (`scored: false`).
+
 ## Granska och komplettera frågorna
 ```bash
 python ../eval/make_review.py          # skapar review/evalset-review.md (frågor, facit, rätt källa i klartext)

@@ -14,6 +14,12 @@ public class ChatMessage
     /// <summary>The reader's verdict on the answer: "up", "down" or null (none). Feeds the eval set.</summary>
     public string? Rating { get; set; }
 
+    /// <summary>How well the documents support the answer: "fullt" or "delvis" ("inget" is a refusal: Grounded is false).</summary>
+    public string Support { get; set; } = "fullt";
+
+    /// <summary>An overview question (summary, count, list): the answer is built from the best excerpts and may be incomplete.</summary>
+    public bool Broad { get; set; }
+
     /// <summary>Optional note that goes with a "down".</summary>
     public string? FeedbackComment { get; set; }
 

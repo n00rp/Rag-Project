@@ -1,8 +1,9 @@
-import type { ChatAnswer, ChatSource } from './types'
+import type { ChatAnswer, ChatSource, Support } from './types'
 
 /** One event of a streamed answer (see ChatEndpoints.Stream in the API). */
 export type StreamEvent =
   | { type: 'sources'; sources: ChatSource[] }
+  | { type: 'support'; level: Support }
   | { type: 'token'; text: string }
   | { type: 'done'; message: ChatAnswer }
   | { type: 'error'; code?: string; message: string }

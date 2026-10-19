@@ -29,6 +29,8 @@ public record ChatAnswerDto(
     DateTimeOffset CreatedAt,
     bool Interrupted = false,
     string? Rating = null,
-    string? FeedbackComment = null);
+    string? FeedbackComment = null,
+    string Support = "fullt",
+    bool Broad = false);
 
 public record FeedbackRequest(string? Rating, string? Comment);

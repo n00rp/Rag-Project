@@ -9,7 +9,7 @@ public record IngestResult(Guid DocumentId, int Pages, int Chunks);
 
 public record AiSource(Guid DocumentId, int Page, int ChunkIndex, string Snippet, double Score);
 
-public record QueryResult(string Answer, bool Grounded, List<AiSource> Sources);
+public record QueryResult(string Answer, bool Grounded, List<AiSource> Sources, string Support = "fullt", bool Broad = false);
 
 /// <summary>One event of a streamed answer: sources once, tokens while the model writes, then done.</summary>
 public abstract record AiStreamEvent;
@@ -19,7 +19,10 @@ public sealed record AiSourcesEvent(List<AiSource> Sources) : AiStreamEvent;
 public sealed record AiTokenEvent(string Text) : AiStreamEvent;
 
 /// <summary>The whole answer. If <paramref name="Grounded"/> is false the announced sources must not be shown.</summary>
-public sealed record AiDoneEvent(string Answer, bool Grounded) : AiStreamEvent;
+public sealed record AiDoneEvent(string Answer, bool Grounded, string Support = "fullt", bool Broad = false) : AiStreamEvent;
+
+/// <summary>How well the excerpts support the answer ("fullt" or "delvis"); sent once, before the text.</summary>
+public sealed record AiSupportEvent(string Level) : AiStreamEvent;
 
 /// <summary>The AI service (or the LLM behind it) can't be reached right now.</summary>
 public class AiServiceUnavailableException(string message, Exception? inner = null) : Exception(message, inner);
@@ -109,8 +112,14 @@ public sealed class AiServiceClient(HttpClient http) : IAiServiceClient
                     return new AiSourcesEvent(root.GetProperty("sources").Deserialize<List<AiSource>>(Json) ?? []);
                 case "token":
                     return new AiTokenEvent(root.GetProperty("text").GetString() ?? "");
+                case "support":
+                    return new AiSupportEvent(root.GetProperty("level").GetString() ?? "fullt");
                 case "done":
-                    return new AiDoneEvent(root.GetProperty("answer").GetString() ?? "", root.GetProperty("grounded").GetBoolean());
+                    return new AiDoneEvent(
+                        root.GetProperty("answer").GetString() ?? "",
+                        root.GetProperty("grounded").GetBoolean(),
+                        root.TryGetProperty("support", out var support) ? support.GetString() ?? "fullt" : "fullt",
+                        root.TryGetProperty("broad", out var broad) && broad.GetBoolean());
                 case "error":
                     var message = root.TryGetProperty("message", out var m) ? m.GetString() : null;
                     throw new AiServiceUnavailableException(message ?? "AI-tjänsten rapporterade ett fel.");

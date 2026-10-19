@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { api, ApiError } from '../lib/api'
-import type { ChatAnswer, ChatSource } from '../lib/types'
+import type { ChatAnswer, ChatSource, Support } from '../lib/types'
 
 /** Where a live answer is: no sources yet / sources found, model not started / model is writing. */
 export type Phase = 'searching' | 'reading' | 'writing'
@@ -10,6 +10,8 @@ export interface LiveTurn {
   question: string
   text: string
   sources: ChatSource[]
+  /** Set when the model has said the documents only partly support the answer. */
+  support: Support | null
   phase: Phase
   /** Set when the answer could not be produced (or broke off). */
   error: ApiError | null
@@ -63,12 +65,14 @@ export function useChatStream() {
       if (!q || controller.current) return
       const ctl = new AbortController()
       controller.current = ctl
-      setLive({ question: q, text: '', sources: [], phase: 'searching', error: null, stopped: false })
+      setLive({ question: q, text: '', sources: [], support: null, phase: 'searching', error: null, stopped: false })
 
       try {
         for await (const event of api.askStream(q, ctl.signal)) {
           if (event.type === 'sources') {
             update((t) => ({ ...t, sources: event.sources, phase: 'reading' }))
+          } else if (event.type === 'support') {
+            update((t) => ({ ...t, support: event.level }))
           } else if (event.type === 'token') {
             update((t) => ({ ...t, text: t.text + event.text, phase: 'writing' }))
           } else if (event.type === 'done') {

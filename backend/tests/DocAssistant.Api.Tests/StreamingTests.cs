@@ -98,6 +98,26 @@ public sealed class StreamingTests : IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task Support_level_and_the_overview_flag_are_forwarded_and_saved()
+    {
+        await ReadyDocumentAsync();
+        _factory.Ai.OnStream = (_, _, _) => Events(
+            new AiSupportEvent("delvis"),
+            new AiTokenEvent("Summan saknas."),
+            new AiDoneEvent("Summan saknas.", Grounded: true, Support: "delvis", Broad: true));
+
+        var events = await ReadEventsAsync(await PostStreamAsync("Hur stor var budgeten?"));
+
+        events.Select(e => e.GetProperty("type").GetString()).Should().Equal("support", "token", "done");
+        events[0].GetProperty("level").GetString().Should().Be("delvis");
+        var message = events[2].GetProperty("message");
+        message.GetProperty("support").GetString().Should().Be("delvis");
+        message.GetProperty("broad").GetBoolean().Should().BeTrue();
+        var saved = (await HistoryAsync()).Single(m => m.Id == message.GetProperty("id").GetGuid());
+        (saved.Support, saved.Broad).Should().Be(("delvis", true));
+    }
+
+    [Fact]
     public async Task A_refusal_is_saved_without_sources_even_though_they_were_announced()
     {
         var doc = await ReadyDocumentAsync();

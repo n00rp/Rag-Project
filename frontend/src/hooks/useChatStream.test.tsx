@@ -70,6 +70,17 @@ describe('useChatStream', () => {
     expect(result.current.busy).toBe(false)
   })
 
+  it('remembers when the model says the documents only partly support the answer', async () => {
+    const answer = controllableAnswer()
+    const { result } = setup()
+
+    act(() => void result.current.send('Fråga?'))
+    act(() => answer.push({ type: 'support', level: 'delvis' }))
+
+    await waitFor(() => expect(result.current.live?.support).toBe('delvis'))
+    act(() => result.current.stop())
+  })
+
   it('keeps the text on screen when stopped, until the server-side saved partial answer can be fetched', async () => {
     const partial = saved('Det här hann ', { interrupted: true })
     let serverHasIt = false

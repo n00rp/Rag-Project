@@ -31,6 +31,10 @@ class Settings(BaseSettings):
     filter_by_date: bool = True
     # Give the model the chunks next to each hit (same page) as well; sources shown to the user stay the same.
     context_neighbors: int = 0
+    # The model first says how well the excerpts support an answer (fullt/delvis/inget). Off until measured.
+    structured_answer: bool = False
+    # Overview questions ("sammanfatta", "hur många", "lista alla") get this many excerpts instead of top_k.
+    broad_top_k: int = 12
     chunk_size: int = 900
     chunk_overlap: int = 150
     top_k: int = 5

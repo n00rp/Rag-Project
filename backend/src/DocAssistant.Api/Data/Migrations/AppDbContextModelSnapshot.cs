@@ -32,6 +32,9 @@ namespace DocAssistant.Api.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("Broad")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -60,6 +63,10 @@ namespace DocAssistant.Api.Data.Migrations
                     b.Property<string>("SourcesJson")
                         .IsRequired()
                         .HasColumnType("jsonb");
+
+                    b.Property<string>("Support")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

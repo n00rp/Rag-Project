@@ -96,7 +96,7 @@ public static class ChatEndpoints
 
     private static async Task<ChatMessage> SaveAsync(
         AppDbContext db, ICurrentUser user, string question, string answer, bool grounded,
-        List<ChatSourceDto> sources, bool interrupted, CancellationToken ct)
+        List<ChatSourceDto> sources, bool interrupted, string support, bool broad, CancellationToken ct)
     {
         var message = new ChatMessage
         {
@@ -106,6 +106,8 @@ public static class ChatEndpoints
             Answer = answer,
             Grounded = grounded,
             Interrupted = interrupted,
+            Support = support,
+            Broad = broad,
             SourcesJson = JsonSerializer.Serialize(grounded ? sources : [], Json),
         };
         db.ChatMessages.Add(message);
@@ -137,7 +139,7 @@ public static class ChatEndpoints
         }
 
         var message = await SaveAsync(db, user, ready.Question, result.Answer, result.Grounded,
-            ToSourceDtos(result.Sources, ready.Names), interrupted: false, ct);
+            ToSourceDtos(result.Sources, ready.Names), interrupted: false, result.Support, result.Broad, ct);
         return TypedResults.Ok(ToDto(message));
     }
 
@@ -163,6 +165,8 @@ public static class ChatEndpoints
             var started = false;
             var answer = new StringBuilder();
             var sources = new List<ChatSourceDto>();
+            var support = "fullt";
+            var broad = false;
 
             async Task Send(object evt)
             {
@@ -175,7 +179,7 @@ public static class ChatEndpoints
             {
                 if (answer.Length > 0)
                     await SaveAsync(db, user, ready!.Question, answer.ToString().Trim(), grounded: true, sources,
-                        interrupted: true, CancellationToken.None);
+                        interrupted: true, support, broad, CancellationToken.None);
             }
 
             try
@@ -189,19 +193,25 @@ public static class ChatEndpoints
                             sources = ToSourceDtos(s.Sources, ready.Names);
                             await Send(new { type = "sources", sources });
                             break;
+                        case AiSupportEvent u:
+                            support = u.Level;
+                            await Send(new { type = "support", level = u.Level });
+                            break;
                         case AiTokenEvent t:
                             answer.Append(t.Text);
                             await Send(new { type = "token", text = t.Text });
                             break;
                         case AiDoneEvent d:
                             done = d;
+                            support = d.Support;
+                            broad = d.Broad;
                             break;
                     }
                 }
 
                 if (done is null) throw new AiServiceUnavailableException("AI-tjänsten avslutade svaret i förtid.");
                 var message = await SaveAsync(db, user, ready.Question, done.Answer, done.Grounded, sources,
-                    interrupted: false, ct);
+                    interrupted: false, done.Support, done.Broad, ct);
                 await Send(new { type = "done", message = ToDto(message) });
             }
             catch (AiServiceUnavailableException) when (!started)
@@ -223,5 +233,5 @@ public static class ChatEndpoints
     private static ChatAnswerDto ToDto(ChatMessage m) =>
         new(m.Id, m.Question, m.Answer, m.Grounded,
             JsonSerializer.Deserialize<List<ChatSourceDto>>(m.SourcesJson, Json) ?? [],
-            m.CreatedAt, m.Interrupted, m.Rating, m.FeedbackComment);
+            m.CreatedAt, m.Interrupted, m.Rating, m.FeedbackComment, m.Support, m.Broad);
 }

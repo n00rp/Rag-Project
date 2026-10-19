@@ -66,6 +66,8 @@ class QueryResponse(BaseModel):
     answer: str
     grounded: bool
     sources: list[SourceOut]
+    support: str = "fullt"  # fullt | delvis | inget
+    broad: bool = False  # an overview question: the answer may be incomplete
 
 
 @app.get("/health")
@@ -130,7 +132,8 @@ def query(req: QueryRequest, settings: Settings = Depends(get_settings)) -> Quer
         raise HTTPException(status_code=503, detail="AI-modellen är inte tillgänglig just nu") from exc
 
     return QueryResponse(
-        answer=result.answer, grounded=result.grounded, sources=[source_out(h) for h in result.sources]
+        answer=result.answer, grounded=result.grounded, sources=[source_out(h) for h in result.sources],
+        support=result.support, broad=result.broad,
     )
 
 
@@ -144,7 +147,9 @@ def query_stream(req: QueryRequest, settings: Settings = Depends(get_settings)) 
 
     {"type": "sources", "sources": [...]}   once, before the first token
     {"type": "token", "text": "..."}        while the model writes
-    {"type": "done", "answer": "...", "grounded": true}   last; if grounded is false the sources must be ignored
+    {"type": "support", "level": "delvis"}   (structured answers) how well the excerpts support the answer
+    {"type": "done", "answer": "...", "grounded": true, "support": "fullt", "broad": false}   last; if grounded is false
+    the sources must be ignored
     {"type": "error", "code": "ai_unavailable", "message": "..."}   if the model cannot be reached
 
     Retrieval happens before the response starts, so its errors are ordinary HTTP errors."""
@@ -155,13 +160,16 @@ def query_stream(req: QueryRequest, settings: Settings = Depends(get_settings)) 
 
     def events():
         try:
-            for kind, payload in stream_answer(app.state.llm, retrieval):
+            for kind, payload in stream_answer(app.state.llm, retrieval, settings.structured_answer):
                 if kind == "sources":
                     yield _line({"type": "sources", "sources": [source_out(h).model_dump(mode="json") for h in payload]})
+                elif kind == "support":
+                    yield _line({"type": "support", "level": payload})
                 elif kind == "token":
                     yield _line({"type": "token", "text": payload})
                 else:
-                    yield _line({"type": "done", "answer": payload.answer, "grounded": payload.grounded})
+                    yield _line({"type": "done", "answer": payload.answer, "grounded": payload.grounded,
+                                 "support": payload.support, "broad": payload.broad})
         except LlmUnavailableError as exc:
             log.warning("LLM unavailable: %s", exc)
             yield _line({"type": "error", "code": "ai_unavailable", "message": "AI-modellen är inte tillgänglig just nu"})
