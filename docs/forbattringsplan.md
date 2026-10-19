@@ -11,6 +11,13 @@ Storlekar nedan är grova uppskattningar av arbetsinsats: **S** = ett kort arbet
 - **C:** `scripts/start.ps1` (WSL vaken, stack, modell, uppvärmning av hela kedjan: första frågan 1,7 s i stället för 17 s), `stop.ps1`, `backup.ps1`, `restore.ps1` (återställning testad mot en separat databas). **CI-lint** (ESLint, ruff över ai-service och eval, dotnet format) är tillagd.
 - **Medvetet inte gjort:** (1) `OLLAMA_KEEP_ALIVE` och `.wslconfig` (kräver ditt ok; startskriptet värmer upp modellen utan att ändra inställningar); (2) ett **andra dokumentset** för generalisering (nya filer att hämta, väntar på ditt svar om vilka); (3) **eval i CI** (kräver att CI kan hämta PDF:erna och installera torch, och kan inte provas lokalt: körs tills vidare lokalt med `run_all.py`).
 
+**Etapp 2 (LLM-känsla): gjord 2026-10-19/20, med avvikelser.**
+- **A2 streaming:** `POST /query/stream` (ai-service) och `POST /api/chat/stream` (.NET), som NDJSON (en JSON-händelse per rad) i stället för SSE: webbläsaren skickar en POST med `fetch`, där NDJSON är enklare att läsa, och nginx kör redan utan buffring. Stopp (Esc), "Svara igen" och kopiera finns. Ett stoppat eller avbrutet svar **sparas** som det var (ny kolumn `Interrupted` + migration), så det finns kvar efter omladdning. Tid till första ord med varm modell: 0,2 s; källor syns efter 0,3 s genom nginx.
+- **A3:** Markdown i svaren (utan rå HTML, bara http(s)- och egna `cite:`-länkar), `[1]` och `[1, 3]` som citat-chips med hovringskort, källor som en lugn chip-rad med utdrag ett klick bort, förlopp (söker, läser, skriver). **Inte gjort:** märkena "Delvis stöd" och "Listan kan vara ofullständig" (kräver B5/B6) och **följdfrågor** (jag bedömde dem som lågt värde utan ett LLM-anrop; kan läggas till senare).
+- **A1:** förfinade tokens (kall blåsvart/ljus yta, blå-violett accent), rörelse- och skuggtokens, svarstypografi, blinkande markör, gradientlogo, svävande inmatningsruta, förslagskort. Ett formellt komponentbibliotek (shadcn/Radix) valdes bort: de nya byggstenarna är få och egna, och tokens ligger på ett ställe.
+- **Mätt:** Lighthouse tillgänglighet 100 och bästa praxis 100 (mobil och skrivbord); **mobil prestanda 81** (89 innan Markdown-biblioteken; Markdown och PDF-visaren laddas nu lazy). Målet ≥ 90 hör till A8.
+- **Tester:** ai-service 52, backend 29, frontend 38, alla gröna.
+
 **Vad baslinjen sa (se `eval/README.md`):** utan ärendenummer är sökningen i princip perfekt men svaren är korrekta i ca 80 %; **ärendenummer/§-frågor är bara 21 % korrekta** (retrieval), **falska antaganden rättas inte** (0 av 4), och alla 40 frågor utan svar nekas. Etapp 3 (B4) och B6 pekas därför ut som de mest värdefulla.
 
 ## 0. Principer

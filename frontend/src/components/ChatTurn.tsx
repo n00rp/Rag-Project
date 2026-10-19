@@ -3,7 +3,7 @@ import { AlertCircle, Check, Copy, Info, RotateCcw, WifiOff } from 'lucide-react
 import type { LiveTurn } from '../hooks/useChatStream'
 import { formatTimestamp } from '../lib/format'
 import type { ChatAnswer, ViewerTarget } from '../lib/types'
-import { AnswerContent } from './AnswerContent'
+import { Answer } from './Answer'
 import { Logo } from './Logo'
 import { ProgressSteps } from './ProgressSteps'
 import { SourceStrip } from './SourceStrip'
@@ -89,7 +89,7 @@ export function ChatTurn({ turn, onOpen, onRegenerate }: TurnProps) {
       <UserBubble text={turn.question} />
       <AssistantRow>
         {turn.grounded ? (
-          <AnswerContent text={turn.answer} sources={turn.sources} onOpen={onOpen} />
+          <Answer text={turn.answer} sources={turn.sources} onOpen={onOpen} />
         ) : (
           <div className="flex gap-2.5 rounded-2xl bg-warn-soft p-3.5 text-warn">
             <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
@@ -125,7 +125,7 @@ export function LiveAnswer({ live, onOpen, onRetry, onDismiss }: LiveProps) {
       <AssistantRow>
         {text === '' && writing && <ProgressSteps phase={phase} sources={sources} />}
 
-        {text !== '' && <AnswerContent text={text} sources={sources} onOpen={onOpen} streaming={writing} />}
+        {text !== '' && <Answer text={text} sources={sources} onOpen={onOpen} streaming={writing} />}
 
         {stopped && <p className="mt-2 text-xs text-muted">Stoppad.</p>}
 

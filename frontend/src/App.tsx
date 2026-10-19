@@ -95,9 +95,11 @@ export default function App() {
           }}
         />
       </Sheet>
-      <Suspense fallback={null}>
-        <PdfViewer target={viewer} onClose={closeViewer} />
-      </Suspense>
+      {viewer && (
+        <Suspense fallback={null}>
+          <PdfViewer target={viewer} onClose={closeViewer} />
+        </Suspense>
+      )}
     </div>
   )
 }
