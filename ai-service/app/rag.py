@@ -110,6 +110,18 @@ def system_prompt(structured: bool, broad: bool) -> str:
     return f"{base} {BROAD_NOTE}" if broad else base
 
 
+_TOPIC_SPLIT = re.compile(r"\s*[,;]\s*|\s+och\s+|\s+samt\s+")
+
+
+def topics(question: str) -> list[str]:
+    """The parts of a question that lists several things ("provanställning, uppsägningstid och semesterdagar"), or [].
+
+    One embedding of eight topics matches none of them, so a list of three or more short parts is searched part by part."""
+    parts = [p.strip(" ?.!") for p in _TOPIC_SPLIT.split(question)]
+    parts = [p for p in parts if p]
+    return parts if len(parts) >= 3 and all(len(p) >= 4 and len(p.split()) <= 6 for p in parts) else []
+
+
 def retrieve(
     *,
     pool: ConnectionPool,
@@ -119,8 +131,24 @@ def retrieve(
     question: str,
     document_ids: list[UUID] | None = None,
     top_k: int | None = None,
+    split: bool = True,
 ) -> Retrieval:
     question = normalize_text(question)
+    parts = topics(question) if split else []
+    if parts:
+        # The whole question (a few hits) plus each part (two hits each), merged without duplicates.
+        found: list[Hit] = []
+        seen: set[tuple[UUID, int]] = set()
+        for text, n in [(question, 3), *[(p, 2) for p in parts]]:
+            part = retrieve(pool=pool, embedder=embedder, settings=settings, owner_id=owner_id, question=text,
+                            document_ids=document_ids, top_k=n, split=False)
+            for h in part.hits:
+                if (h.document_id, h.chunk_index) not in seen:
+                    seen.add((h.document_id, h.chunk_index))
+                    found.append(h)
+        # A bare list of topics is no question and the model refuses it: ask for each point in turn instead.
+        asked = "Redogör för vad dokumenten säger om var och en av följande punkter, en i taget: " + "; ".join(parts) + "."
+        return Retrieval(asked, found[: max(settings.broad_top_k, min(2 * len(parts) + 2, 18))], refused=not found, broad=True)
     broad = bool(BROAD.search(question))
     k = top_k or (settings.broad_top_k if broad else settings.top_k)
 
@@ -175,11 +203,19 @@ def _with_neighbours(pool: ConnectionPool, owner_id: str, hits: list[Hit], reach
     return expanded
 
 
+def _is_refusal(text: str, broad: bool) -> bool:
+    """The model said it has no support. An overview of several points may say so for one of them (the exact refusal
+    sentence) and still answer the others, so a long broad answer is kept."""
+    if NO_SUPPORT_ANSWER not in text:
+        return False
+    return not (broad and len(text.replace(NO_SUPPORT_ANSWER, "").strip()) >= 200)
+
+
 def _finish(text: str, hits: list[Hit], structured: bool = False, broad: bool = False) -> Answer:
     support, body = parse_support(text) if structured else (None, text)
     if support is None:
-        support = "inget" if NO_SUPPORT_ANSWER in text else "fullt"
-    grounded = support != "inget" and NO_SUPPORT_ANSWER not in body
+        support = "inget" if _is_refusal(text, broad) else "fullt"
+    grounded = support != "inget" and not _is_refusal(body, broad)
     if not grounded:
         return Answer(NO_SUPPORT_ANSWER, grounded=False, sources=[], support="inget", broad=broad)
     return Answer(body, grounded=True, sources=hits, support=support, broad=broad)

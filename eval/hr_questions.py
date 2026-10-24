@@ -90,6 +90,10 @@ QUESTIONS = [
     ("Flera", "Skiljer sig semesterdagarna i AB från semesterlagen?", [r"\b25\b", r"31|32"], "AB25.pdf", N),
     ("Flera", "Vad gäller för uppsägningstid enligt AB jämfört med LAS?", [r"6 månader|sex månader"], "AB25.pdf", N),
     ("Flera", "Hur lång tid före föräldraledighetens början ska den anmälas, enligt AB och enligt lagen?", [r"3 månader|tre månader", r"två månader|2 månader"], "AB25.pdf", N),
+    # --- Flera ämnen i en fråga (söks del för del)
+    ("Flera ämnen", "Berätta om provanställning, uppsägningstid för en arbetstagare och semesterdagar vid 45 år", [r"6 (kalender)?månader|sex", r"3 månader|tre månader", r"\b31\b"], "AB25.pdf", N),
+    ("Flera ämnen", "Vad gäller för sjuklön, karensavdrag och läkarintyg?", [r"80 procent|80 %", r"20 procent|20 %", r"sjunde|\b7\b"], "Sjuklonelag", N),
+    ("Flera ämnen", "Hur lång är dygnsvila, veckovila och längsta tid att arbeta utan rast?", [r"elva|\b11\b", r"trettiosex|\b36\b", r"fem timmar"], "Arbetstidslag", N),
     # --- Saknar svar i dokumenten: ska nekas
     ("Saknas", "Vad är lönen för en nyexaminerad lärare?", [], "", ("nyexaminerad",)),
     ("Saknas", "Hur många dagar är man ledig när man gifter sig?", [], "", ("gifter sig", "bröllop")),
