@@ -132,7 +132,7 @@ def retrieve(
     embedding = embedder.embed_query(question)
 
     def run(content_contains: list[str] | None) -> list[Hit]:
-        if settings.hybrid_identifiers and IDENTIFIER.search(question):
+        if settings.hybrid_identifiers and (settings.hybrid_all or IDENTIFIER.search(question)):
             return db.search_hybrid(
                 pool, owner_id, embedding, question, k, document_ids, content_contains,
                 max_df=settings.hybrid_max_df, text_weight=settings.hybrid_text_weight,

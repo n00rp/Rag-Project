@@ -98,6 +98,8 @@ Modeller i RAG-jämförelsen på v1-frågorna: gemma3:12b 93 % korrekt (1,2 s), 
 - Domaren i utvärderingen är en LLM; kalibrering mot en människa (`eval/calibrate.py`) är förberedd men inte gjord.
 - Skannade PDF:er (utan textlager) stöds inte (tydligt felmeddelande); tabeller och spalter extraheras som löpande text.
 - Dokumentrubriken bygger på att protokollets första rader är organ och datum; på andra dokumenttyper kan den bli slumpmässig text.
+- **Andra dokumenttyper är sämre.** På ett HR-bibliotek (AB 25 med kommentarer, tolv lagar) svarar systemet rätt på 48 av 70 frågor (69 %, mot ca 80 % på protokollen). Korta lagar tränger inte igenom de långa kommentarerna i sökningen; se [eval/README.md](eval/README.md#hr-biblioteket-ab-25-lagar-och-77-frågor). Frågorna är inte granskade av en HR-person.
+- Layout: två kolumner som läses rad för rad ordnas om för de sidor där det upptäcks (`ai-service/app/columns.py`), men tabeller med bråk och staplade rubriker (t.ex. övertidsersättningen i AB) läses fortfarande fel.
 - Mobil prestanda i Lighthouse är 81 (tillgänglighet och bästa praxis 100); inga manuella tester med skärmläsare.
 
 ## Köra lokalt
@@ -139,6 +141,13 @@ python scripts/record_demo_session.py              # spelar in svar till den off
 
 Listan med källor finns i [scripts/demo-docs.json](scripts/demo-docs.json). Innan en publik demo bör samlingen gås igenom för personuppgifter och villkor för återanvändning.
 
+### HR-bibliotek (AB 25 och lagar)
+```bash
+python scripts/fetch_hr_docs.py --seed     # AB-bilagor och tolv lagar (riksdagen.se, skr.se) till data/hr/, laddas upp till API:et
+cd ai-service && python ../eval/hr_check.py --verify   # kontrollerar de 77 HR-frågornas facit mot källtexterna
+```
+Lagarna hämtas som HTML och skrivs ut till PDF med Chrome/Edge; AB 25 och kommentarerna hämtas från [SKR:s sida](https://skr.se/kollektivavtal/allmannabestammelserab.655.html).
+
 ### Vad riktiga protokoll lärde oss
 Syntetiska testdokument hittade inte följande, riktiga protokoll gjorde det:
 - **Sidhuvuden upprepas på varje sida** ("Protokoll nr 8 / Sammanträdesdatum / Göteborgs Stad kommunstyrelsen protokoll 3 (56)") och späder ut innehållet; de tas bort före chunkning (13–15 % av texten). Första versionen ignorerade alla siffror och tog då även bort `§ 289 Ärendenummer SLK-2025-00035`; nu maskas bara sidans *eget* nummer, och alla §-rubriker och ärendenummer i de sex dokumenten är verifierat bevarade (`ai-service/tests/test_boilerplate.py`). Mätningen visade sedan att datumet i sidhuvudet behövs, och det läggs tillbaka som en rubrik i varje chunk.
@@ -150,7 +159,7 @@ Syntetiska testdokument hittade inte följande, riktiga protokoll gjorde det:
 
 | Del | Kommando | Antal | Vad som testas |
 |---|---|---|---|
-| `ai-service` | `pytest` | 103 | Chunking, PDF-parsning, hela API-flödet mot riktig Postgres, **dataisolering mellan ägare**, **svenska tecken**, strömmen och dess fel, hybridsökning, datumfilter, nekande av okända nummer, strukturerat svar, loggning (inga frågetexter) |
+| `ai-service` | `pytest` | 112 | Chunking, PDF-parsning, hela API-flödet mot riktig Postgres, **dataisolering mellan ägare**, **svenska tecken**, strömmen och dess fel, hybridsökning, datumfilter, nekande av okända nummer, strukturerat svar, loggning (inga frågetexter) |
 | `backend` | `dotnet test` | 35 | Hela API:et via `WebApplicationFactory` mot en egen engångsdatabas: uppladdning, validering, AI-fel → rätt statuskod, chatt, **ström med avbrott och fel mitt i**, betyg, historik, spårid |
 | `frontend` | `npm test` | 54 | Strömläsning (delade rader och tecken), hooken för pågående svar (stopp, avbrott), Markdown utan rå HTML, citat-chips, källmatchning, kommandopalett, återkoppling, demosession |
 | `eval` | `python eval/run_all.py` | – | Frågeset v2, mått med intervall, domare (kör lokalt; kräver Ollama) |

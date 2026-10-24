@@ -131,25 +131,41 @@ Modellen börjar svaret med en rad `STÖD: fullt`, `STÖD: delvis` eller `STÖD:
 ## Översiktsfrågor (inte räknade i siffrorna)
 Frågor som kräver en genomgång av många ärenden ("sammanfatta…", "hur många yrkanden…", "lista alla…", "jämför…", "skillnaden mellan…") känns igen av `rag.BROAD`. De får 12 utdrag i stället för 5, modellen instrueras att bara redovisa det den ser och säga att översikten kan vara ofullständig, och gränssnittet visar märket "Översikt av de mest relevanta utdragen, kan vara ofullständig". Det gör svaren ärligare men inte fullständiga: en räkning eller lista bygger fortfarande på ett urval. Mönstret är medvetet snävt (precision före täckning): "Vilka yrkanden från SD avslogs…" och "Vilka ärenden hade samma utfall…" känns inte igen. De sju sådana frågorna i evalsetet följs bara för hand (`scored: false`).
 
-## Avtalstext: AB 25 och kommentarerna (HR-frågor)
-Andra dokumenttypen vi mätt på: Allmänna bestämmelser AB 25 (66 sidor) och SKR:s kommentarer till dem (205 sidor), för frågor som en HR-chef ställer ("hur lång är uppsägningstiden", "hur många semesterdagar"). Filerna är offentliga men checkas inte in (`data/` är git-ignorerad):
+## HR-biblioteket: AB 25, lagar och 77 frågor
+Andra dokumenttypen vi mätt på, för frågor som en HR-chef i offentlig sektor ställer ("hur lång är uppsägningstiden", "hur många semesterdagar"). Biblioteket har 21 dokument: AB 25 med kommentarer (205 sidor), redogörelsetext, fem bilagor och specialbestämmelserna för läkare, samt tolv lagar (LAS, semesterlagen, MBL, arbetstidslagen, arbetsmiljölagen, diskrimineringslagen, sjuklönelagen, föräldraledighetslagen, LOA, FML, visselblåsarlagen, studieledighetslagen). Allt är offentligt men checkas inte in (`data/` är git-ignorerad):
 ```bash
-mkdir -p data/ab && cd data/ab
-curl -L -o AB25.pdf "https://skr.se/download/18.4c5d386919996f3b21151e81/1759306535392/Allmanna-Bestammelser-AB-25-i-lydelse-2025-04-01.pdf"
-curl -L -o AB25-kommentarer.pdf "https://skr.se/download/18.7fed703e1a04203ce53c0723/1788359134126/Kommentarer-till-AB-i-lydelse-25-04-01.pdf"
+python scripts/fetch_hr_docs.py --seed      # hämtar, gör PDF av lagtexterna med Chrome och laddar upp till API:et
+# AB 25 och kommentarerna (de två första) ligger i data/ab/, se skripten för länkarna på skr.se
 ```
-Ladda upp båda och kör `python eval/ab_check.py` (via API:et) eller, från `ai-service`, `python ../eval/ab_check.py --direct --set TOP_K=8 LLM_BACKEND=ollama LLM_MODEL=gemma3:12b OLLAMA_BASE_URL=...`. De 16 frågorna har ett faktauttryck ur texten som svaret måste innehålla (ingen LLM-domare), så de är få men entydiga. **Fråga 14 och 7 är löst formulerade** (det finns flera rimliga svar i kommentarerna) och bör skrivas om innan siffran används som mått.
+Lagarna hämtas som konsoliderad HTML från riksdagen och skrivs ut till PDF (appen läser bara PDF); sidnumren i källhänvisningarna är därför utskriftens, inte en officiell PDF:s. Varje lag har sin förkortning överst ("Förkortning: LAS") så att frågor som säger "LAS" matchar dokumentrubriken. Lydelsen är den som riksdagen visade 2026-10-24 (t.ex. LAS t.o.m. SFS 2022:836, semesterlagen t.o.m. 2014:424).
 
-| Steg | Rätt fakta (av 16) |
-|---|---|
-| Som protokollen (900/150, inga rubriker) | 9 (8 med ett för snävt uttryck för bråktecknet "1 1⁄2", rättat) |
-| + avstavning ihopslagen, chunkar följer Kap./§ och märks med rubriken | 10 (10–11 vid upprepade körningar; modellen varierar) |
-| + `TOP_K=8` | 11 (inom brus, **inte infört**) |
+**Frågorna** (`hr_questions.py`) har ett faktauttryck som svaret måste innehålla, ingen LLM-domare. `python ../eval/hr_check.py --verify` kontrollerar att varje faktauttryck finns i sin källtext och att orden i de sju frågor som saknar svar inte finns i något dokument (0 problem). Var tredje fråga är `test`. De är skrivna av utvecklaren utifrån texterna, **inte granskade av en HR-person**, och ett faktauttryck som "25" kan matcha på fel ställe, så siffrorna nedan är riktning, inte ett mått med intervall.
 
-- **Avstavningar** ("uppsägnings- tidpunkten") slås ihop i `normalize_text`; ändringen påverkar inte protokollen (MRR oförändrat 0,977 dev / 0,959 test).
-- **Rubriketiketter** ("Kap. 6 Ledighetsförmåner, § 27 Semester" på varje chunk, och en chunk korsar aldrig två §) slås bara på för dokument med minst tre `Kap.`-rubriker (`has_chapters`). På protokollen sänkte de MRR från 0,977 till 0,952 (dev), så de är avstängda där enligt beslutsregeln.
-- **Det som återstår är PDF-layouten, inte sökningen:** AB har tabeller och två kolumner (kommun/region mot övriga arbetsgivare) som `pypdf` läser rad för rad. Modellen svarar då på fel kolumn (uppsägningstid, "b)" i stället för "a)") eller läser fel rad i en tabell (45 år ger 31 dagar, men ibland 32), och övertidstabellen blir "Enkel övertid 180 % ... Kvalificerad övertid 240 % 165". Nästa steg är en layoutmedveten extraktion (t.ex. pdfplumber eller PyMuPDF) och att mäta om om den.
-- Kommentarsdokumentet har 3,5 gånger fler chunkar än AB och dominerar träffarna; svaret på "hur många timmar får man spara" blev fel passage ("180 semestertimmar").
+```bash
+cd ai-service
+python ../eval/hr_check.py                           # via API:et (hela kedjan)
+python ../eval/hr_check.py --retrieval --set TOP_K=8  # utan LLM: finns faktan i de hämtade chunkarna?
+python ../eval/hr_check.py --direct --set TOP_K=8 LLM_BACKEND=ollama LLM_MODEL=gemma3:12b OLLAMA_BASE_URL=http://172.18.208.1:11434
+```
+
+| Steg (70 besvarbara + 7 som saknar svar) | Rätt svar | Nekade av 7 |
+|---|---|---|
+| Hela kedjan, `TOP_K=5` (dev 33/47, test 15/23) | **48/70** (69 %) | 7/7 |
+| Hela kedjan, `TOP_K=8` | 48/70 | 6/7 |
+
+| Bara sökningen (faktan finns i träffarna) | Alla | Dev | Test |
+|---|---|---|---|
+| `TOP_K=5` | **59/70** | 39/47 | 20/23 |
+| `TOP_K=8` | 61/70 | 41/47 | 20/23 |
+| `HYBRID_ALL=true` (nyckelord för alla frågor) | 53/70 | 37/47 | 16/23 |
+| `HYBRID_ALL=true`, `TOP_K=8` | 57/70 | 39/47 | 18/23 |
+
+- **Svarsstegets och sökningens förluster är ungefär lika stora:** 11 frågor har inte faktan i träffarna, och ungefär lika många får fel eller nekande trots träffar. Fler utdrag (`TOP_K=8`) ger +2 i sökningen men ingen förbättring av svaren, och **hybrid för alla frågor är sämre** (som i experiment 4 på protokollen), så inget av dem är infört.
+- **Per område (hela kedjan):** AB 20–21/24, LAS 8–9/10, föräldraledighetslagen 5/5, arbetstidslagen 5/6, men semesterlagen 0–1/4, MBL 0/3, diskrimineringslagen 0/2 och LOA 0/2. **Samma mönster i alla körningar: korta lagar tränger inte igenom kommentarerna.** Kommentarerna till AB (205 sidor, ca 680 chunkar) diskuterar semesterlagen och LAS i detalj och får högre likhet än själva lagtexten.
+- **Sökningen känner inte igen vilken källa frågan nämner.** "Enligt semesterlagen" och "enligt MBL" skulle ge dokumentet företräde, men e5-small väger lagens namn i dokumentrubriken lätt jämfört med innehållet.
+- **Layout:** `app/columns.py` läser tvåkolumnsblock kolumn för kolumn (AB § 33 uppsägningstid: kommun/region mot övriga arbetsgivare). Den ändrar tre sidor i hela biblioteket och inga i protokollen. Tabeller som läses rad för rad (förkortningslistan, övertidstabellen) lämnas som de är.
+- **Avstavningar** ("uppsägnings- tidpunkten") slås ihop i `normalize_text`, och dokument med kapitel- eller paragrafstruktur märks med sin rubrik ("Kap. 6 Ledighetsförmåner, § 27 Semester", "2 kap. Arbetsmiljöns beskaffenhet, 3 §"; `heading_style`). Samma märkning på protokollen sänkte sökningen (MRR 0,977 → 0,952 dev), så den används bara för avtal och lagar; protokollens siffror är oförändrade.
+- **Nästa steg som kan flytta siffran:** en omrankare (cross-encoder) över de 20–30 bästa träffarna och/eller en större embeddingmodell. Båda kräver nedladdning av en modell (1–2 GB) och, för embeddingmodellen, omindexering av allt (vektorkolumnen är 384-dimensionell).
 
 ## Granska och komplettera frågorna
 ```bash

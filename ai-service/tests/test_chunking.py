@@ -1,6 +1,6 @@
 import pytest
 
-from app.chunking import add_header, chunk_pages, document_header, has_chapters, strip_header
+from app.chunking import add_header, chunk_pages, document_header, heading_style, strip_header
 from app.pdf import PageText
 
 
@@ -84,4 +84,14 @@ def test_section_labels_can_be_switched_off():
 def test_only_documents_with_chapters_get_heading_labels():
     agreement = [PageText(1, "Kap. 1   Inledande\nText"), PageText(2, "Kap. 2   Anställningen\nText\nKap. 3   Under anställningen")]
     protocol = [PageText(1, "§ 317 Investeringar\nBeslut")]
-    assert has_chapters(agreement) and not has_chapters(protocol)
+    assert heading_style(agreement) and not heading_style(protocol)
+
+
+def test_law_paragraphs_are_labelled_with_chapter_and_section():
+    lines = [f"{n} §   Paragraf {n} har en text." for n in range(1, 12)]
+    pages = [PageText(1, "2 kap. Anställningsavtal\n" + "\n".join(lines[:6])), PageText(2, "\n".join(lines[6:]))]
+    assert heading_style(pages) == "law"
+    chunks = chunk_pages(pages, section_labels="law")
+    assert chunks[0].section == "2 kap. Anställningsavtal, 1 §"
+    assert [c.section for c in chunks if c.page == 2][-1] == "2 kap. Anställningsavtal, 11 §"
+    assert all("Paragraf 3" not in c.text for c in chunks if c.section.endswith(", 4 §"))

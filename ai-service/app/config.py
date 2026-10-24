@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     hybrid_identifiers: bool = True
     hybrid_max_df: float = 0.01  # keyword side only uses words found in at most this share of the chunks
     hybrid_text_weight: float = 2.0
+    hybrid_all: bool = False  # keyword search for every question, not only those with a number (experiment, eval/README.md)
     filter_by_date: bool = True
     # Give the model the chunks next to each hit (same page) as well; sources shown to the user stay the same.
     context_neighbors: int = 0

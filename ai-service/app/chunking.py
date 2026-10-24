@@ -68,21 +68,41 @@ def strip_header(content: str) -> str:
     return content.split(HEADER_SEP, 1)[1] if HEADER_SEP in content else content
 
 
-# "Kap. 6 Ledighetsförmåner" and "§ 27   Semester" (agreements) or "§ 317 Investeringar ..." (protocols). The title must
-# start with a capital: "§ 28 mom. 9." at the start of a line is a reference, and table-of-contents lines have dot leaders.
-_HEADING = re.compile(r"^(Kap\.\s*\d+|§\s*\d+)\s+[A-ZÅÄÖ].*$")
+# Heading styles. "agreement": "Kap. 6 Ledighetsförmåner" and "§ 27   Semester" (AB). "law": "2 kap. Arbetsmiljöns beskaffenhet"
+# and "6 §   text" (SFS). Protocols also have "§ 317 Investeringar ...", but labelling them lowered retrieval (see eval/README.md).
+# The title must start with a capital: "§ 28 mom. 9." at the start of a line is a reference, and table-of-contents lines
+# have dot leaders.
+_AGREEMENT_HEADING = re.compile(r"^(Kap\.\s*\d+|§\s*\d+)\s+[A-ZÅÄÖ].*$")
+_LAW_CHAPTER = re.compile(r"^\d+\s?[a-z]?\s+kap\.\s+[A-ZÅÄÖ].*$")
+_LAW_SECTION = re.compile(r"^(\d+\s?[a-z]?)\s§\s")
 
 
-def has_chapters(pages: list[PageText], minimum: int = 3) -> bool:
-    """Agreements (AB) are organised in chapters; protocols are not. Heading labels only help the former: on the six
-    protocols they cost retrieval accuracy (MRR 0.977 -> 0.952 on dev, see eval/README.md)."""
-    found = sum(1 for p in pages for line in p.text.splitlines() if re.match(r"Kap\.\s*\d+\s+[A-ZÅÄÖ]", line.strip()))
-    return found >= minimum
+def heading_style(pages: list[PageText]) -> str | None:
+    """"agreement" (three or more Kap. headings), "law" (ten or more "N §" paragraphs) or None. Labels only help these:
+    on the six protocols they cost retrieval accuracy (MRR 0.977 -> 0.952 on dev, see eval/README.md)."""
+    lines = [line.strip() for p in pages for line in p.text.splitlines()]
+    if sum(1 for ln in lines if re.match(r"Kap\.\s*\d+\s+[A-ZÅÄÖ]", ln)) >= 3:
+        return "agreement"
+    if sum(1 for ln in lines if _LAW_SECTION.match(ln)) >= 10:
+        return "law"
+    return None
 
 
-def _segments(text: str, chapter: str, para: str, labels: bool) -> list[tuple[str, str, str, str]]:
+def _heading(line: str, style: str) -> tuple[str, str] | None:
+    """("chapter" | "section", label) when the line starts a chapter or a section."""
+    if style == "law":
+        if _LAW_CHAPTER.match(line):
+            return "chapter", line
+        m = _LAW_SECTION.match(line)
+        return ("section", f"{m.group(1)} §") if m else None
+    if _AGREEMENT_HEADING.match(line) and "...." not in line and len(line) <= 120:
+        return ("chapter" if line.startswith("Kap") else "section"), line
+    return None
+
+
+def _segments(text: str, chapter: str, para: str, style: str | None) -> list[tuple[str, str, str, str]]:
     """Split a page at its headings into (chapter, section, label, text); chapter and section carry over from earlier pages."""
-    if not labels:
+    if not style:
         return [(chapter, para, "", text)]
     parts: list[tuple[str, str, str, str]] = []
     buf: list[str] = []
@@ -93,31 +113,35 @@ def _segments(text: str, chapter: str, para: str, labels: bool) -> list[tuple[st
             buf.clear()
 
     for line in text.splitlines():
-        stripped = " ".join(line.split())
-        if _HEADING.match(stripped) and "...." not in stripped and len(stripped) <= 120:
-            if not (len(buf) == 1 and buf[0].lstrip().startswith("Kap")):  # a chapter title alone is no chunk
+        found = _heading(" ".join(line.split()), style)
+        if found:
+            kind, label = found
+            first = _heading(" ".join(buf[0].split()), style) if len(buf) == 1 else None
+            lone_chapter = first is not None and first[0] == "chapter"
+            if not lone_chapter:  # a chapter title alone is no chunk
                 flush()
-            if stripped.startswith("Kap"):
-                chapter, para = stripped, ""
+            if kind == "chapter":
+                chapter, para = label, ""
             else:
-                para = stripped
+                para = label
         buf.append(line)
     flush()
     return parts
 
 
-def chunk_pages(pages: list[PageText], size: int = 900, overlap: int = 150, section_labels: bool = True) -> list[Chunk]:
+def chunk_pages(pages: list[PageText], size: int = 900, overlap: int = 150, section_labels: bool | str | None = True) -> list[Chunk]:
     """Chunk page by page so every chunk keeps an exact page number for citations.
 
-    With section_labels a chunk never spans two headings (Kap./§) and records the heading it sits under, also when
-    that heading is on an earlier page."""
+    With section_labels ("agreement", "law", or True for the first) a chunk never spans two headings and records the
+    heading it sits under, also when that heading is on an earlier page."""
     if overlap >= size:
         raise ValueError("overlap must be smaller than size")
+    style = "agreement" if section_labels is True else (section_labels or None)
 
     chunks: list[Chunk] = []
     chapter = para = ""
     for page in pages:
-        for chapter, para, label, text in _segments(page.text, chapter, para, section_labels):
+        for chapter, para, label, text in _segments(page.text, chapter, para, style):
             current = ""
             for unit in _split_units(text, size):
                 if current and len(current) + 1 + len(unit) > size:
