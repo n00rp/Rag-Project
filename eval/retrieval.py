@@ -31,7 +31,7 @@ from metrics import auc, best_threshold, bootstrap, fmt, fraction, mrr, recall_a
 
 from app import db, rag  # noqa: E402
 from app.boilerplate import strip_repeated_lines  # noqa: E402
-from app.chunking import add_header, chunk_pages, document_header  # noqa: E402
+from app.chunking import add_header, chunk_pages, document_header, has_chapters  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
 from app.embeddings import build_embedder  # noqa: E402
 from app.pdf import extract_pages  # noqa: E402
@@ -55,12 +55,12 @@ def section_spans(corpus) -> dict[tuple[str, int], range]:
     return spans
 
 
-def index(pool, embedder, corpus, owner, strip, size, overlap, header=False) -> dict:
+def index(pool, embedder, corpus, owner, strip, size, overlap, header=False, sections=False) -> dict:
     ids = {}
     for name, pages in corpus.items():
         ids[name] = uuid.uuid5(uuid.NAMESPACE_URL, name)
         used = strip_repeated_lines(pages) if strip else pages
-        chunks = chunk_pages(used, size, overlap)
+        chunks = chunk_pages(used, size, overlap, sections and has_chapters(used))
         if header:
             chunks = add_header(chunks, document_header(pages))
         db.replace_document_chunks(pool, owner, ids[name], chunks, embedder.embed_passages([c.text for c in chunks]))
@@ -97,7 +97,7 @@ def run_retrieval(settings, corpus, spans, questions, *, strip=True, size=None, 
     owner = f"eval-{uuid.uuid4()}"
     records = []
     try:
-        ids = index(pool, embedder, corpus, owner, strip, size, overlap, header)
+        ids = index(pool, embedder, corpus, owner, strip, size, overlap, header, settings.section_labels)
         name_of = {v: k for k, v in ids.items()}
         for q in questions:
             if not q["scored"]:

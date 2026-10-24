@@ -1,6 +1,6 @@
 import pytest
 
-from app.chunking import add_header, chunk_pages, document_header, strip_header
+from app.chunking import add_header, chunk_pages, document_header, has_chapters, strip_header
 from app.pdf import PageText
 
 
@@ -54,3 +54,34 @@ def test_header_is_added_to_every_chunk_and_can_be_stripped_again():
     assert [strip_header(c.text) for c in with_header] == ["Första.", "Andra."]
     assert add_header(chunks, "") == chunks
     assert strip_header("text utan rubrik") == "text utan rubrik"
+
+
+def test_chunks_follow_headings_across_pages_and_never_mix_two_sections():
+    pages = [
+        PageText(1, "Kap. 6   Ledighet\n§ 27   Semester\nMom. 1 Semesterförmåner utges enligt lag.\n§ 28   Sjukdom m.m.\nMom. 1 Ledigt vid sjukdom."),
+        PageText(2, "Mom. 2 Intyg krävs efter 7 dagar."),
+    ]
+    chunks = chunk_pages(pages)
+    assert [(c.page, c.section) for c in chunks] == [
+        (1, "Kap. 6 Ledighet, § 27 Semester"),
+        (1, "Kap. 6 Ledighet, § 28 Sjukdom m.m."),
+        (2, "Kap. 6 Ledighet, § 28 Sjukdom m.m."),  # the section carries over to the next page
+    ]
+    assert "Sjukdom" not in chunks[0].text
+    assert add_header(chunks, "AB 25")[1].text.startswith("AB 25 | Kap. 6")
+
+
+def test_references_and_table_of_contents_are_not_headings():
+    text = "§ 1   Inledning ........ 5\n§ 28 mom. 9.\nAnnan text om 28 §."
+    assert {c.section for c in chunk_pages([PageText(1, text)])} == {""}
+
+
+def test_section_labels_can_be_switched_off():
+    chunks = chunk_pages([PageText(1, "§ 27   Semester\nText.")], section_labels=False)
+    assert chunks[0].section == ""
+
+
+def test_only_documents_with_chapters_get_heading_labels():
+    agreement = [PageText(1, "Kap. 1   Inledande\nText"), PageText(2, "Kap. 2   Anställningen\nText\nKap. 3   Under anställningen")]
+    protocol = [PageText(1, "§ 317 Investeringar\nBeslut")]
+    assert has_chapters(agreement) and not has_chapters(protocol)

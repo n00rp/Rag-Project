@@ -237,7 +237,7 @@ def main() -> None:
     results: dict = {}
     try:
         ids = index(pool, embedder, corpus, owner, settings.strip_page_boilerplate,
-                    settings.chunk_size, settings.chunk_overlap, settings.doc_header)
+                    settings.chunk_size, settings.chunk_overlap, settings.doc_header, settings.section_labels)
         name_of = {v: k for k, v in ids.items()}
         for model in args.models:
             unload_all(base)

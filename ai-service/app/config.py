@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     strip_page_boilerplate: bool = True
     # Prefix every chunk with the document's first lines (date, body). Measured in eval/README.md.
     doc_header: bool = True
+    # Chunks split at Kap./§ headings and carry the heading (needed for agreements; measured in eval/README.md).
+    section_labels: bool = True
     # Questions with a case number or "§ N" also get a keyword search (hybrid), and a date like 2025-04-09 limits the
     # search to that meeting. Measured in eval/README.md (experiment "hybrid router").
     hybrid_identifiers: bool = True

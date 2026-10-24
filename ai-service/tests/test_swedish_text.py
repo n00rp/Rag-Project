@@ -118,3 +118,10 @@ class TestEndToEnd:
         ).json()
 
         assert "finansiering" in body["sources"][0]["snippet"]
+
+
+def test_words_hyphenated_at_a_line_break_are_joined_but_compounds_are_not():
+    from app.text import normalize_text
+
+    assert normalize_text("anställ-\nningsvillkoren och uppsägnings- \ntidpunkten") == "anställningsvillkoren och uppsägningstidpunkten"
+    assert normalize_text("e-post\nSLK-2025-00392\nA-\nlag") == "e-post\nSLK-2025-00392\nA-\nlag"

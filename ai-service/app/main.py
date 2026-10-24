@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 
 from app import db
 from app.boilerplate import strip_repeated_lines
-from app.chunking import add_header, chunk_pages, document_header, strip_header
+from app.chunking import add_header, chunk_pages, document_header, has_chapters, strip_header
 from app.config import Settings, get_settings
 from app.embeddings import build_embedder
 from app.llm import LlmUnavailableError, build_llm
@@ -116,7 +116,8 @@ def ingest(
     header = document_header(pages) if settings.doc_header else ""
     if settings.strip_page_boilerplate:
         pages = strip_repeated_lines(pages)
-    chunks = add_header(chunk_pages(pages, settings.chunk_size, settings.chunk_overlap), header)
+    chunks = add_header(chunk_pages(pages, settings.chunk_size, settings.chunk_overlap,
+                         settings.section_labels and has_chapters(pages)), header)
     embeddings = app.state.embedder.embed_passages([c.text for c in chunks])
     db.replace_document_chunks(app.state.pool, owner_id, document_id, chunks, embeddings)
     return IngestResponse(document_id=document_id, pages=page_count, chunks=len(chunks))

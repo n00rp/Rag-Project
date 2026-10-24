@@ -131,6 +131,26 @@ Modellen börjar svaret med en rad `STÖD: fullt`, `STÖD: delvis` eller `STÖD:
 ## Översiktsfrågor (inte räknade i siffrorna)
 Frågor som kräver en genomgång av många ärenden ("sammanfatta…", "hur många yrkanden…", "lista alla…", "jämför…", "skillnaden mellan…") känns igen av `rag.BROAD`. De får 12 utdrag i stället för 5, modellen instrueras att bara redovisa det den ser och säga att översikten kan vara ofullständig, och gränssnittet visar märket "Översikt av de mest relevanta utdragen, kan vara ofullständig". Det gör svaren ärligare men inte fullständiga: en räkning eller lista bygger fortfarande på ett urval. Mönstret är medvetet snävt (precision före täckning): "Vilka yrkanden från SD avslogs…" och "Vilka ärenden hade samma utfall…" känns inte igen. De sju sådana frågorna i evalsetet följs bara för hand (`scored: false`).
 
+## Avtalstext: AB 25 och kommentarerna (HR-frågor)
+Andra dokumenttypen vi mätt på: Allmänna bestämmelser AB 25 (66 sidor) och SKR:s kommentarer till dem (205 sidor), för frågor som en HR-chef ställer ("hur lång är uppsägningstiden", "hur många semesterdagar"). Filerna är offentliga men checkas inte in (`data/` är git-ignorerad):
+```bash
+mkdir -p data/ab && cd data/ab
+curl -L -o AB25.pdf "https://skr.se/download/18.4c5d386919996f3b21151e81/1759306535392/Allmanna-Bestammelser-AB-25-i-lydelse-2025-04-01.pdf"
+curl -L -o AB25-kommentarer.pdf "https://skr.se/download/18.7fed703e1a04203ce53c0723/1788359134126/Kommentarer-till-AB-i-lydelse-25-04-01.pdf"
+```
+Ladda upp båda och kör `python eval/ab_check.py` (via API:et) eller, från `ai-service`, `python ../eval/ab_check.py --direct --set TOP_K=8 LLM_BACKEND=ollama LLM_MODEL=gemma3:12b OLLAMA_BASE_URL=...`. De 16 frågorna har ett faktauttryck ur texten som svaret måste innehålla (ingen LLM-domare), så de är få men entydiga. **Fråga 14 och 7 är löst formulerade** (det finns flera rimliga svar i kommentarerna) och bör skrivas om innan siffran används som mått.
+
+| Steg | Rätt fakta (av 16) |
+|---|---|
+| Som protokollen (900/150, inga rubriker) | 9 (8 med ett för snävt uttryck för bråktecknet "1 1⁄2", rättat) |
+| + avstavning ihopslagen, chunkar följer Kap./§ och märks med rubriken | 10 (10–11 vid upprepade körningar; modellen varierar) |
+| + `TOP_K=8` | 11 (inom brus, **inte infört**) |
+
+- **Avstavningar** ("uppsägnings- tidpunkten") slås ihop i `normalize_text`; ändringen påverkar inte protokollen (MRR oförändrat 0,977 dev / 0,959 test).
+- **Rubriketiketter** ("Kap. 6 Ledighetsförmåner, § 27 Semester" på varje chunk, och en chunk korsar aldrig två §) slås bara på för dokument med minst tre `Kap.`-rubriker (`has_chapters`). På protokollen sänkte de MRR från 0,977 till 0,952 (dev), så de är avstängda där enligt beslutsregeln.
+- **Det som återstår är PDF-layouten, inte sökningen:** AB har tabeller och två kolumner (kommun/region mot övriga arbetsgivare) som `pypdf` läser rad för rad. Modellen svarar då på fel kolumn (uppsägningstid, "b)" i stället för "a)") eller läser fel rad i en tabell (45 år ger 31 dagar, men ibland 32), och övertidstabellen blir "Enkel övertid 180 % ... Kvalificerad övertid 240 % 165". Nästa steg är en layoutmedveten extraktion (t.ex. pdfplumber eller PyMuPDF) och att mäta om om den.
+- Kommentarsdokumentet har 3,5 gånger fler chunkar än AB och dominerar träffarna; svaret på "hur många timmar får man spara" blev fel passage ("180 semestertimmar").
+
 ## Granska och komplettera frågorna
 ```bash
 python ../eval/make_review.py          # skapar review/evalset-review.md (frågor, facit, rätt källa i klartext)
