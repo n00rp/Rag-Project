@@ -10,6 +10,7 @@ from app.config import Settings
 from app.db import Hit
 from app.chunking import split_header
 from app.embeddings import Embedder
+from app.rerank import rerank
 from app.llm import LlmClient
 from app.text import normalize_text
 
@@ -130,14 +131,15 @@ def retrieve(
         return Retrieval(question, [], refused=True, broad=broad)
 
     embedding = embedder.embed_query(question)
+    fetch = max(k, settings.rerank_pool) if settings.rerank_model else k
 
     def run(content_contains: list[str] | None) -> list[Hit]:
         if settings.hybrid_identifiers and (settings.hybrid_all or IDENTIFIER.search(question)):
             return db.search_hybrid(
-                pool, owner_id, embedding, question, k, document_ids, content_contains,
+                pool, owner_id, embedding, question, fetch, document_ids, content_contains,
                 max_df=settings.hybrid_max_df, text_weight=settings.hybrid_text_weight,
             )
-        return db.search(pool, owner_id, embedding, k, document_ids, content_contains)
+        return db.search(pool, owner_id, embedding, fetch, document_ids, content_contains)
 
     # "sammanträdet 2025-04-09": look in that meeting's documents first; if no chunk has the date, look everywhere.
     dates = ISO_DATE.findall(question) if settings.filter_by_date else []
@@ -147,6 +149,9 @@ def retrieve(
     # scores just below the top one (e5 scores are compressed), see eval/README.md. A chunk found by a rare word
     # (a case number) is evidence of its own and is not judged by similarity.
     weak = not hits or (hits[0].score < settings.min_score and not any(h.matched for h in hits))
+    if hits and not weak and settings.rerank_model:
+        hits = rerank(settings.rerank_model, question, hits, k)
+    hits = hits[:k]
     if hits and not weak and settings.context_neighbors:
         hits = _with_neighbours(pool, owner_id, hits, settings.context_neighbors)
     return Retrieval(question, hits, refused=weak, broad=broad)

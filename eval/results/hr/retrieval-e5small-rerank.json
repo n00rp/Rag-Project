@@ -1,0 +1,772 @@
+[
+ {
+  "i": 0,
+  "topic": "AB",
+  "split": "dev",
+  "q": "Hur lång provanställning får man ha?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 1,
+  "topic": "AB",
+  "split": "dev",
+  "q": "Vad är uppsägningstiden när arbetsgivaren säger upp en tillsvidareanställd som arbetat i över ett år?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 2,
+  "topic": "AB",
+  "split": "test",
+  "q": "Hur lång uppsägningstid har en medarbetare som själv vill sluta?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 3,
+  "topic": "AB",
+  "split": "dev",
+  "q": "Hur lång uppsägningstid gäller för en 62-åring med 12 års anställning som sägs upp på grund av arbetsbrist?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 4,
+  "topic": "AB",
+  "split": "dev",
+  "q": "Hur många semesterdagar får en medarbetare som fyller 45 år i år?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 5,
+  "topic": "AB",
+  "split": "test",
+  "q": "Hur många semesterdagar har en 35-åring?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 6,
+  "topic": "AB",
+  "split": "dev",
+  "q": "Hur många semesterdagar har man från det år man fyller 50?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 7,
+  "topic": "AB",
+  "split": "dev",
+  "q": "Vilken kompensation får en medarbetare som får sin semester förlagd utanför juni–augusti?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 8,
+  "topic": "AB",
+  "split": "test",
+  "q": "Hur många timmar i veckan är ordinarie arbetstid för en heltidsanställd?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 9,
+  "topic": "AB",
+  "split": "dev",
+  "q": "Hur lång är veckoarbetstiden för den som arbetar både vardag och helg?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 10,
+  "topic": "AB",
+  "split": "dev",
+  "q": "Hur mycket ledighet får man för en timmes enkel övertid?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 11,
+  "topic": "AB",
+  "split": "test",
+  "q": "Hur mycket ledighet får man för en timmes kvalificerad övertid?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 12,
+  "topic": "AB",
+  "split": "dev",
+  "q": "Hur många timmar övertidsledighet får man spara?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 13,
+  "topic": "AB",
+  "split": "dev",
+  "q": "Hur stort är tillägget för obekväm arbetstid på helger (O-tillägg B) per timme?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 14,
+  "topic": "AB",
+  "split": "test",
+  "q": "Hur högt är O-tillägg A per timme?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 15,
+  "topic": "AB",
+  "split": "dev",
+  "q": "Hur mycket ersätts jour per timme i procent av timlönen för de första 50 timmarna?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 16,
+  "topic": "AB",
+  "split": "dev",
+  "q": "Vilken disciplinpåföljd kan en arbetsgivare ge enligt AB?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 17,
+  "topic": "AB",
+  "split": "test",
+  "q": "Måste en medarbetare anmäla en bisyssla?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 18,
+  "topic": "AB",
+  "split": "dev",
+  "q": "När kan arbetsgivaren förbjuda en bisyssla?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 19,
+  "topic": "AB",
+  "split": "dev",
+  "q": "Hur lång uppsägningstid har ett hyresavtal för en personalbostad?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 20,
+  "topic": "AB",
+  "split": "test",
+  "q": "Hur länge och med hur mycket får man föräldrapenningtillägg?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 21,
+  "topic": "AB",
+  "split": "dev",
+  "q": "Hur många dagar kan man få föräldralön?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 22,
+  "topic": "AB",
+  "split": "dev",
+  "q": "Hur lång tid i förväg ska föräldraledighet anmälas enligt AB?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 23,
+  "topic": "AB",
+  "split": "test",
+  "q": "Från vilken dag krävs läkarintyg enligt AB?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 24,
+  "topic": "AB-kommentar",
+  "split": "dev",
+  "q": "Vad innebär provanställningen i AB jämfört med 6 § LAS enligt kommentaren?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 25,
+  "topic": "AB-kommentar",
+  "split": "dev",
+  "q": "Vad händer med ersättningen om arbetsgivaren ger besked om att provanställningen inte blir tillsvidare för sent?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 26,
+  "topic": "AB-kommentar",
+  "split": "test",
+  "q": "Vad ändrades i § 1 Inledning när AB 25 kom?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 27,
+  "topic": "LAS",
+  "split": "dev",
+  "q": "Vad krävs för att en uppsägning ska vara giltig enligt LAS?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 28,
+  "topic": "LAS",
+  "split": "dev",
+  "q": "Vilka är sakliga skäl för uppsägning?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 29,
+  "topic": "LAS",
+  "split": "test",
+  "q": "Hur många arbetstagare får arbetsgivaren undanta från turordningen?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 30,
+  "topic": "LAS",
+  "split": "dev",
+  "q": "Hur länge måste någon ha varit anställd för att få företrädesrätt till återanställning?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 31,
+  "topic": "LAS",
+  "split": "dev",
+  "q": "Vilken är den minsta uppsägningstiden enligt LAS?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 32,
+  "topic": "LAS",
+  "split": "test",
+  "q": "Hur lång uppsägningstid har en arbetstagare med minst tio års anställning enligt LAS?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 33,
+  "topic": "LAS",
+  "split": "dev",
+  "q": "Hur lång provanställning tillåter LAS?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 34,
+  "topic": "LAS",
+  "split": "dev",
+  "q": "Vad händer om ingen säger något när provanställningen löper ut?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 35,
+  "topic": "LAS",
+  "split": "test",
+  "q": "Hur långt i förväg ska besked lämnas om att en tidsbegränsad anställning inte förlängs?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 36,
+  "topic": "LAS",
+  "split": "dev",
+  "q": "I vilka fall får man ha en tidsbegränsad anställning?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 37,
+  "topic": "SemL",
+  "split": "dev",
+  "q": "Hur många semesterdagar har man rätt till enligt semesterlagen?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": false
+ },
+ {
+  "i": 38,
+  "topic": "SemL",
+  "split": "test",
+  "q": "Hur många semesterdagar har den som börjar arbeta efter 31 augusti?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": false
+ },
+ {
+  "i": 39,
+  "topic": "SemL",
+  "split": "dev",
+  "q": "Hur länge får sparade semesterdagar ligga kvar?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": false
+ },
+ {
+  "i": 40,
+  "topic": "SemL",
+  "split": "dev",
+  "q": "Hur många semesterdagar får man spara?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 41,
+  "topic": "SjLL",
+  "split": "test",
+  "q": "Hur stor är sjuklönen?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": false
+ },
+ {
+  "i": 42,
+  "topic": "SjLL",
+  "split": "dev",
+  "q": "Hur stort är karensavdraget?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 43,
+  "topic": "SjLL",
+  "split": "dev",
+  "q": "Hur lång är sjuklöneperioden?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 44,
+  "topic": "SjLL",
+  "split": "test",
+  "q": "Från vilken dag kan arbetsgivaren kräva läkarintyg för sjuklön?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 45,
+  "topic": "SjLL",
+  "split": "dev",
+  "q": "Vad ska en medarbetare lämna till arbetsgivaren för att få sjuklön?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 46,
+  "topic": "SjLL",
+  "split": "dev",
+  "q": "När ska arbetsgivaren anmäla ett sjukfall till Försäkringskassan?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 47,
+  "topic": "FörL",
+  "split": "test",
+  "q": "Hur länge har en förälder rätt att vara helt ledig för vård av barn?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 48,
+  "topic": "FörL",
+  "split": "dev",
+  "q": "Hur mycket får arbetstiden förkortas för en förälder till ett litet barn?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 49,
+  "topic": "FörL",
+  "split": "dev",
+  "q": "Hur många perioder får föräldraledigheten delas upp i per år?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 50,
+  "topic": "FörL",
+  "split": "test",
+  "q": "Hur lång tid i förväg ska föräldraledighet anmälas enligt lagen?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 51,
+  "topic": "FörL",
+  "split": "dev",
+  "q": "Får arbetsgivaren missgynna någon på grund av föräldraledighet?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 52,
+  "topic": "MBL",
+  "split": "dev",
+  "q": "När måste arbetsgivaren förhandla med facket innan beslut enligt MBL?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 53,
+  "topic": "MBL",
+  "split": "test",
+  "q": "Vad ska arbetsgivaren löpande informera facket om?",
+  "answerable": true,
+  "refused": false,
+  "evidence": false,
+  "source": false
+ },
+ {
+  "i": 54,
+  "topic": "MBL",
+  "split": "dev",
+  "q": "Vad gäller om arbetsgivaren vill anlita någon som inte är anställd, till exempel en konsult?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 55,
+  "topic": "ATL",
+  "split": "dev",
+  "q": "Hur många timmar får ordinarie arbetstid vara högst per vecka enligt arbetstidslagen?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 56,
+  "topic": "ATL",
+  "split": "test",
+  "q": "Hur lång dygnsvila ska en arbetstagare ha?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 57,
+  "topic": "ATL",
+  "split": "dev",
+  "q": "Hur lång veckovila ska en arbetstagare ha?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 58,
+  "topic": "ATL",
+  "split": "dev",
+  "q": "Hur mycket mertid får tas ut per år?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 59,
+  "topic": "ATL",
+  "split": "test",
+  "q": "Hur länge får en medarbetare arbeta i följd utan rast?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 60,
+  "topic": "ATL",
+  "split": "dev",
+  "q": "Hur mycket jourtid får tas ut under fyra veckor?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 61,
+  "topic": "AML",
+  "split": "dev",
+  "q": "Vad innebär systematiskt arbetsmiljöarbete?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 62,
+  "topic": "AML",
+  "split": "test",
+  "q": "Vad ska arbetsgivaren göra vid en arbetsskada?",
+  "answerable": true,
+  "refused": false,
+  "evidence": false,
+  "source": false
+ },
+ {
+  "i": 63,
+  "topic": "DL",
+  "split": "dev",
+  "q": "Hur ofta ska arbetsgivaren göra en lönekartläggning?",
+  "answerable": true,
+  "refused": false,
+  "evidence": false,
+  "source": false
+ },
+ {
+  "i": 64,
+  "topic": "DL",
+  "split": "dev",
+  "q": "Vilka diskrimineringsgrunder finns?",
+  "answerable": true,
+  "refused": true,
+  "evidence": false,
+  "source": false
+ },
+ {
+  "i": 65,
+  "topic": "LOA",
+  "split": "test",
+  "q": "Vad ska avgöra vid en anställning inom offentlig sektor?",
+  "answerable": true,
+  "refused": false,
+  "evidence": false,
+  "source": true
+ },
+ {
+  "i": 66,
+  "topic": "LOA",
+  "split": "dev",
+  "q": "Vad gäller enligt LOA för bisysslor som kan skada förtroendet?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": false
+ },
+ {
+  "i": 67,
+  "topic": "Flera",
+  "split": "dev",
+  "q": "Skiljer sig semesterdagarna i AB från semesterlagen?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 68,
+  "topic": "Flera",
+  "split": "test",
+  "q": "Vad gäller för uppsägningstid enligt AB jämfört med LAS?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 69,
+  "topic": "Flera",
+  "split": "dev",
+  "q": "Hur lång tid före föräldraledighetens början ska den anmälas, enligt AB och enligt lagen?",
+  "answerable": true,
+  "refused": false,
+  "evidence": true,
+  "source": true
+ },
+ {
+  "i": 70,
+  "topic": "Saknas",
+  "split": "dev",
+  "q": "Vad är lönen för en nyexaminerad lärare?",
+  "answerable": false,
+  "refused": false,
+  "evidence": false,
+  "source": false
+ },
+ {
+  "i": 71,
+  "topic": "Saknas",
+  "split": "test",
+  "q": "Hur många dagar är man ledig när man gifter sig?",
+  "answerable": false,
+  "refused": false,
+  "evidence": false,
+  "source": false
+ },
+ {
+  "i": 72,
+  "topic": "Saknas",
+  "split": "dev",
+  "q": "Hur hög är lönen för en rörmokare?",
+  "answerable": false,
+  "refused": false,
+  "evidence": false,
+  "source": false
+ },
+ {
+  "i": 73,
+  "topic": "Saknas",
+  "split": "dev",
+  "q": "Hur beskattas en förmånsbil?",
+  "answerable": false,
+  "refused": false,
+  "evidence": false,
+  "source": false
+ },
+ {
+  "i": 74,
+  "topic": "Saknas",
+  "split": "test",
+  "q": "Vilka regler gäller för arbete från ett hemmakontor?",
+  "answerable": false,
+  "refused": false,
+  "evidence": false,
+  "source": false
+ },
+ {
+  "i": 75,
+  "topic": "Saknas",
+  "split": "dev",
+  "q": "Hur hög är minimilönen för en städare?",
+  "answerable": false,
+  "refused": true,
+  "evidence": false,
+  "source": false
+ },
+ {
+  "i": 76,
+  "topic": "Saknas",
+  "split": "dev",
+  "q": "Hur ansöker man om körkortstillstånd?",
+  "answerable": false,
+  "refused": true,
+  "evidence": false,
+  "source": false
+ }
+]

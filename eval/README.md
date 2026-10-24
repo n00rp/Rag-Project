@@ -165,7 +165,22 @@ python ../eval/hr_check.py --direct --set TOP_K=8 LLM_BACKEND=ollama LLM_MODEL=g
 - **Sökningen känner inte igen vilken källa frågan nämner.** "Enligt semesterlagen" och "enligt MBL" skulle ge dokumentet företräde, men e5-small väger lagens namn i dokumentrubriken lätt jämfört med innehållet.
 - **Layout:** `app/columns.py` läser tvåkolumnsblock kolumn för kolumn (AB § 33 uppsägningstid: kommun/region mot övriga arbetsgivare). Den ändrar tre sidor i hela biblioteket och inga i protokollen. Tabeller som läses rad för rad (förkortningslistan, övertidstabellen) lämnas som de är.
 - **Avstavningar** ("uppsägnings- tidpunkten") slås ihop i `normalize_text`, och dokument med kapitel- eller paragrafstruktur märks med sin rubrik ("Kap. 6 Ledighetsförmåner, § 27 Semester", "2 kap. Arbetsmiljöns beskaffenhet, 3 §"; `heading_style`). Samma märkning på protokollen sänkte sökningen (MRR 0,977 → 0,952 dev), så den används bara för avtal och lagar; protokollens siffror är oförändrade.
-- **Nästa steg som kan flytta siffran:** en omrankare (cross-encoder) över de 20–30 bästa träffarna och/eller en större embeddingmodell. Båda kräver nedladdning av en modell (1–2 GB) och, för embeddingmodellen, omindexering av allt (vektorkolumnen är 384-dimensionell).
+### Omrankare och större embeddingmodell (mätt 2026-10-24, inte införd)
+`BAAI/bge-reranker-v2-m3` (cross-encoder, 2,2 GB) omordnar de 30 bästa träffarna (`RERANK_MODEL`, `RERANK_POOL`; `app/rerank.py`). `intfloat/multilingual-e5-base` (768 dimensioner) ersätter e5-small; biblioteket indexeras för experimentet i en egen databas med `eval/hr_index.py`, så att den skarpa (384 dimensioner) inte rörs. Tröskeln sattes till 0,82 för e5-base (besvarbara börjar på 0,824, en obesvarbar når 0,841; inställd på samma frågor, alltså optimistisk).
+
+| HR-frågor (70 besvarbara + 7 utan svar) | Faktan i träffarna | Rätt svar, hela kedjan (dev / test) | Rätt källa citerad | Nekade av 7 |
+|---|---|---|---|---|
+| e5-small (nuvarande) | 59 | 48 (33/47, 15/23) | 53 | 7 |
+| e5-small + omrankare | 65 | 57 (39/47, 18/23) | 59 | 6 |
+| e5-base | 63 | 52 (37/47, 15/23) | 58 | 7 |
+| **e5-base + omrankare** | **70** | **64** (43/47, 21/23) | **68** | 7 |
+
+**Protokollen (frågeset v2, bara sökning):** e5-base MRR 0,977 dev / 0,950 test, och e5-base + omrankare 0,977 / 0,959, alltså samma som e5-small (0,977 / 0,959). Ingen försämring.
+
+- Omrankaren gör mest för de korta lagarna som kommentarerna tidigare tryckte undan: semesterlagen 1 → 4 av 4, MBL 0 → 3 av 3, diskrimineringslagen 0 → 2 av 2, LOA 0 → 2 av 2. Modellbytet ensamt ger +4 och omrankaren ensam +9; tillsammans +16.
+- **Kostnaden är tid.** På CPU tar omrankningen av 30 träffar ca 9 sekunder per fråga (77 frågor ≈ 12 minuter), alltså långt över budgeten på 2 sekunder i beslutsregeln. torch i venv och i Docker-avbildningen är CPU-versionen. För att den ska kunna införas krävs GPU-torch (RTX 5080 behöver en cu128-build, ca 3 GB) och att ai-service körs med GPU-åtkomst, eller en mindre `RERANK_POOL`. Ingetdera är mätt.
+- e5-base kräver omindexering av allt och en schemaändring (`vector(384)` → `vector(768)`); frågornas inbäddning blir något dyrare men märks inte.
+- Frågorna är skrivna av utvecklaren och tröskeln inställd på dem, så 64 av 70 är en övre skattning. Mätt utan HR-granskning och utan intervall.
 
 ## Granska och komplettera frågorna
 ```bash
