@@ -23,11 +23,25 @@ class Hit:
     context: str | None = None
 
 
-def init_schema(database_url: str, dim: int) -> None:
-    """Idempotent. Runs on a plain connection because the vector type must exist before registering it."""
+def init_schema(database_url: str, dim: int, reset_on_dim_change: bool = False) -> None:
+    """Idempotent. Runs on a plain connection because the vector type must exist before registering it.
+
+    The vectors are derived data, but dropping them is a decision: a table with another dimension is only replaced when
+    `reset_on_dim_change` is set, and every document must then be indexed again."""
     with psycopg.connect(database_url, autocommit=True) as conn:
         conn.execute("CREATE EXTENSION IF NOT EXISTS vector")
         conn.execute("CREATE SCHEMA IF NOT EXISTS rag")
+        existing = conn.execute(
+            "SELECT a.atttypmod FROM pg_attribute a WHERE a.attrelid = to_regclass('rag.chunks') "
+            "AND a.attname = 'embedding' AND NOT a.attisdropped"
+        ).fetchone()
+        if existing and existing[0] != dim:
+            if not reset_on_dim_change:
+                raise RuntimeError(
+                    f"rag.chunks har vektorer med {existing[0]} dimensioner men modellen ger {dim}. "
+                    "Sätt RESET_VECTORS_ON_DIM_CHANGE=true för att tömma dem och indexera om alla dokument."
+                )
+            conn.execute("DROP TABLE rag.chunks")
         conn.execute(
             f"""
             CREATE TABLE IF NOT EXISTS rag.chunks (

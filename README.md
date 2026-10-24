@@ -98,7 +98,7 @@ Modeller i RAG-jämförelsen på v1-frågorna: gemma3:12b 93 % korrekt (1,2 s), 
 - Domaren i utvärderingen är en LLM; kalibrering mot en människa (`eval/calibrate.py`) är förberedd men inte gjord.
 - Skannade PDF:er (utan textlager) stöds inte (tydligt felmeddelande); tabeller och spalter extraheras som löpande text.
 - Dokumentrubriken bygger på att protokollets första rader är organ och datum; på andra dokumenttyper kan den bli slumpmässig text.
-- **Andra dokumenttyper är sämre.** På ett HR-bibliotek (AB 25 med kommentarer, tolv lagar) svarar systemet rätt på 48 av 70 frågor (69 %, mot ca 80 % på protokollen). Korta lagar tränger inte igenom de långa kommentarerna i sökningen; se [eval/README.md](eval/README.md#hr-biblioteket-ab-25-lagar-och-77-frågor). Frågorna är inte granskade av en HR-person.
+- **Andra dokumenttyper är sämre.** På ett HR-bibliotek (AB 25 med kommentarer, tolv lagar) svarar systemet rätt på 64 av 70 frågor (91 %) med e5-base och en omrankare på GPU (48 av 70 med e5-small utan omrankare; korta lagar trängdes undan av de långa kommentarerna); se [eval/README.md](eval/README.md#hr-biblioteket-ab-25-lagar-och-77-frågor). Frågorna är skrivna av utvecklaren, tröskeln är inställd på dem och de är inte granskade av en HR-person, så siffran är en övre skattning.
 - Layout: två kolumner som läses rad för rad ordnas om för de sidor där det upptäcks (`ai-service/app/columns.py`), men tabeller med bråk och staplade rubriker (t.ex. övertidsersättningen i AB) läses fortfarande fel.
 - Mobil prestanda i Lighthouse är 81 (tillgänglighet och bästa praxis 100); inga manuella tester med skärmläsare.
 

@@ -119,7 +119,7 @@ def post(api, path, body):
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--verify", action="store_true")
-    ap.add_argument("--api", default="http://localhost:8080/api/")
+    ap.add_argument("--api", default="http://127.0.0.1:8080/api/")
     ap.add_argument("--direct", action="store_true")
     ap.add_argument("--set", nargs="*", default=[], help="settings overrides for --direct, NAME=VALUE")
     ap.add_argument("--retrieval", action="store_true", help="no LLM: is the fact in the retrieved chunks? (implies --direct)")

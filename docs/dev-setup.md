@@ -100,3 +100,12 @@ Exponera aldrig Ollama mot det öppna internet.
 
 ## Gitkonfiguration
 Kontrollera att commit-identiteten är den du vill visa på GitHub (`git config user.name` / `user.email`). Radslut hanteras av `.gitattributes`.
+
+
+## ai-service på Windows med GPU (valfritt, snabbare sökning)
+Docker-avbildningen har CPU-torch. Omrankaren och e5-base kör rimligt snabbt bara på GPU, så med `AI_SERVICE_HOST=windows` i `.env` kör `scripts/start.ps1` ai-service som en vanlig Windows-process och låter API-containern nå den på Windows-adressen i WSL-nätet (samma adress som för Ollama, hittas med `ip route show default`).
+1. I `ai-service`: `python -m venv .venv`, `.venv\Scripts\pip install -r requirements-dev.txt`, sedan CUDA-torch för RTX 50-serien: `.venv\Scripts\pip install --upgrade torch --index-url https://download.pytorch.org/whl/cu128` (CPU-versionen byts ut; kontrollera med `python -c "import torch; print(torch.cuda.is_available())"`).
+2. `.env`: `AI_SERVICE_HOST=windows`, `RERANK_MODEL=BAAI/bge-reranker-v2-m3` (modellerna laddas ned från Hugging Face första gången, ca 3 GB).
+3. `.\scripts\start.ps1`. Loggar: `%TEMP%\kommunkoll-ai-service.log` och `.err`. Windows-brandväggen måste släppa in port 8000 från WSL-nätet; det gjorde den på den här datorn utan ändring.
+4. Efter byte av embeddingmodell: sätt `RESET_VECTORS_ON_DIM_CHANGE=true`, starta, kör `python scripts/reindex.py`, sätt tillbaka till `false`.
+Utan `AI_SERVICE_HOST` körs allt i Docker som förut (CPU, ingen omrankare).

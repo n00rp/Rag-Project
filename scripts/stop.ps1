@@ -20,7 +20,8 @@ $root = Split-Path -Parent $PSScriptRoot
 
 $rootInWsl = (ConvertTo-WslPath $Distro $root)
 Invoke-Wsl $Distro "cd '$rootInWsl' && docker compose down"
-Write-Host 'Containrarna är stoppade, datat finns kvar.'
+Stop-WindowsAiService
+Write-Host 'Containrarna (och ai-service på Windows) är stoppade, datat finns kvar.'
 
 if ($UnloadModel) {
   $envFile = Join-Path $root '.env'

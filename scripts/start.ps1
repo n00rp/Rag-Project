@@ -4,7 +4,8 @@
 
 .DESCRIPTION
   1. keeps WSL awake (it shuts down by itself when no terminal is open, taking the containers with it)
-  2. docker compose up -d
+  2. docker compose up -d (with AI_SERVICE_HOST=windows in .env: the database and API in Docker, ai-service as a
+     Windows process on the GPU)
   3. checks that Ollama answers on the address in .env
   4. loads the model and keeps it in memory for -KeepAlive, so the first question does not take ~30 s
   5. waits until the API reports that database and AI service are up
@@ -65,7 +66,19 @@ if (-not $alive) {
 # 2. The stack.
 Write-Host 'Startar containrarna...'
 $rootInWsl = (ConvertTo-WslPath $Distro $root)
-Invoke-Wsl $Distro "cd '$rootInWsl' && docker compose up -d"
+if ($cfg['AI_SERVICE_HOST'] -eq 'windows') {
+  # ai-service runs here on Windows (GPU); the API container reaches it on the Windows address of the WSL network.
+  $gateway = ((wsl -d $Distro -- ip route show default) -split '\s+')[2]
+  if (-not $gateway) { throw 'Hittar inte Windows-adressen från WSL (ip route show default).' }
+  Invoke-Wsl $Distro "cd '$rootInWsl' && docker compose up -d db && docker compose stop ai-service"
+  if ($LASTEXITCODE -ne 0) { throw 'docker compose up db misslyckades.' }
+  Write-Host 'Startar ai-service på Windows (GPU)...'
+  Start-WindowsAiService $root $cfg
+  Invoke-Wsl $Distro "cd '$rootInWsl' && AI_SERVICE_URL=http://${gateway}:8000/ docker compose up -d --no-deps api frontend && docker compose restart frontend"
+  # (nginx resolves the API's address once at start; a re-created API container has a new one)
+} else {
+  Invoke-Wsl $Distro "cd '$rootInWsl' && docker compose up -d"
+}
 if ($LASTEXITCODE -ne 0) { throw 'docker compose up misslyckades.' }
 
 # 3 + 4. Ollama and the model.

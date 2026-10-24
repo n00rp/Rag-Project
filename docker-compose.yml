@@ -22,7 +22,11 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       EMBEDDING_BACKEND: ${EMBEDDING_BACKEND:-sentence-transformers}
-      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-intfloat/multilingual-e5-small}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-intfloat/multilingual-e5-base}
+      EMBEDDING_DIM: ${EMBEDDING_DIM:-768}
+      MIN_SCORE: ${MIN_SCORE:-0.82}
+      RESET_VECTORS_ON_DIM_CHANGE: ${RESET_VECTORS_ON_DIM_CHANGE:-false}
+      RERANK_MODEL: ${RERANK_MODEL:-}
       LLM_BACKEND: ${LLM_BACKEND:-fake}
       LLM_MODEL: ${LLM_MODEL:-}
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://localhost:11434}
@@ -39,7 +43,7 @@ services:
     build: ./backend
     environment:
       ConnectionStrings__Default: Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
-      AiService__BaseUrl: http://ai-service:8000/
+      AiService__BaseUrl: ${AI_SERVICE_URL:-http://ai-service:8000/}
       AiService__InternalKey: ${INTERNAL_API_KEY:-}
       Database__MigrateOnStartup: "true"
       Storage__Path: /data/uploads

@@ -28,7 +28,7 @@ async def lifespan(app: FastAPI):
     settings = get_settings()
     app.state.embedder = build_embedder(settings)
     app.state.llm = build_llm(settings)
-    db.init_schema(settings.database_url, app.state.embedder.dim)
+    db.init_schema(settings.database_url, app.state.embedder.dim, settings.reset_vectors_on_dim_change)
     app.state.pool = db.create_pool(settings.database_url)
     log.info("ai-service ready (embeddings=%s, llm=%s)", settings.embedding_backend, settings.llm_backend)
     yield

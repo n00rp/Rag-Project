@@ -11,8 +11,9 @@ class Settings(BaseSettings):
     internal_api_key: str = ""
 
     embedding_backend: Literal["fake", "sentence-transformers"] = "sentence-transformers"
-    embedding_model: str = "intfloat/multilingual-e5-small"
-    embedding_dim: int = 384
+    embedding_model: str = "intfloat/multilingual-e5-base"
+    embedding_dim: int = 768  # must match the model; a change needs RESET_VECTORS_ON_DIM_CHANGE and a re-index (db.init_schema)
+    reset_vectors_on_dim_change: bool = False
 
     llm_backend: Literal["fake", "ollama"] = "fake"
     llm_model: str = ""
@@ -47,7 +48,7 @@ class Settings(BaseSettings):
     # Cosine floor for the best retrieved chunk (below it: refuse), tuned for multilingual-e5-small on the eval set (eval/README.md):
     # 0.83 refuses all unanswerable questions without costing correctness, 0.85 already loses answers.
     # The scores are model-specific; re-tune when the embedding model changes. 0 disables the refusal.
-    min_score: float = 0.83
+    min_score: float = 0.82  # e5-base; 0.83 was tuned for e5-small (eval/README.md)
     max_upload_bytes: int = 25 * 1024 * 1024
 
 
