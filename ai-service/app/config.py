@@ -34,6 +34,10 @@ class Settings(BaseSettings):
     # Cross-encoder that reorders the best `rerank_pool` hits; empty = off (experiment, eval/README.md).
     rerank_model: str = ""
     rerank_pool: int = 30
+    # Let the LLM rewrite everyday wording into the texts' terms before searching (app/rewrite.py, eval/README.md).
+    rewrite_query: bool = False
+    # A source named in the question ("enligt LAS", "semesterlagen") gets its own hits in the pool (app/sources.py).
+    name_sources: bool = False
     hybrid_all: bool = False  # keyword search for every question, not only those with a number (experiment, eval/README.md)
     filter_by_date: bool = True
     # Give the model the chunks next to each hit (same page) as well; sources shown to the user stay the same.

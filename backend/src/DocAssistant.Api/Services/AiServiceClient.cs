@@ -33,14 +33,17 @@ public class AiServiceRejectedException(HttpStatusCode status, string message) :
     public HttpStatusCode Status { get; } = status;
 }
 
+/// <summary>An earlier question and its answer in the same conversation, for follow-up questions.</summary>
+public sealed record ChatTurn(string Question, string Answer);
+
 public interface IAiServiceClient
 {
     Task<IngestResult> IngestAsync(string ownerId, Guid documentId, Stream file, string fileName, CancellationToken ct);
-    Task<QueryResult> QueryAsync(string ownerId, string question, IReadOnlyList<Guid>? documentIds, CancellationToken ct);
+    Task<QueryResult> QueryAsync(string ownerId, string question, IReadOnlyList<Guid>? documentIds, CancellationToken ct, IReadOnlyList<ChatTurn>? history = null);
 
     /// <summary>Same question, but the answer arrives as it is written. Throws <see cref="AiServiceUnavailableException"/>
     /// if the model cannot be reached, before the first event or in the middle of the stream.</summary>
-    IAsyncEnumerable<AiStreamEvent> QueryStreamAsync(string ownerId, string question, IReadOnlyList<Guid>? documentIds, CancellationToken ct);
+    IAsyncEnumerable<AiStreamEvent> QueryStreamAsync(string ownerId, string question, IReadOnlyList<Guid>? documentIds, CancellationToken ct, IReadOnlyList<ChatTurn>? history = null);
     Task DeleteAsync(string ownerId, Guid documentId, CancellationToken ct);
     Task<bool> IsHealthyAsync(CancellationToken ct);
 }
@@ -64,19 +67,19 @@ public sealed class AiServiceClient(HttpClient http) : IAiServiceClient
         return await SendAsync<IngestResult>(() => http.PostAsync("ingest", form, ct), ct);
     }
 
-    public async Task<QueryResult> QueryAsync(string ownerId, string question, IReadOnlyList<Guid>? documentIds, CancellationToken ct)
+    public async Task<QueryResult> QueryAsync(string ownerId, string question, IReadOnlyList<Guid>? documentIds, CancellationToken ct, IReadOnlyList<ChatTurn>? history = null)
     {
-        var body = new { ownerId, question, documentIds };
+        var body = new { ownerId, question, documentIds, history = history ?? [] };
         return await SendAsync<QueryResult>(() => http.PostAsJsonAsync("query", body, Json, ct), ct);
     }
 
     public async IAsyncEnumerable<AiStreamEvent> QueryStreamAsync(
         string ownerId, string question, IReadOnlyList<Guid>? documentIds,
-        [EnumeratorCancellation] CancellationToken ct)
+        [EnumeratorCancellation] CancellationToken ct, IReadOnlyList<ChatTurn>? history = null)
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, "query/stream")
         {
-            Content = JsonContent.Create(new { ownerId, question, documentIds }, options: Json),
+            Content = JsonContent.Create(new { ownerId, question, documentIds, history = history ?? [] }, options: Json),
         };
         // ResponseHeadersRead: hand over events as they arrive instead of waiting for the whole body.
         using var response = await SendRawAsync(() => http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, ct));

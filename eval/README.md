@@ -183,6 +183,22 @@ python ../eval/hr_check.py --direct --set TOP_K=8 LLM_BACKEND=ollama LLM_MODEL=g
 - **Så är det infört (lokalt):** `AI_SERVICE_HOST=windows` i `.env` gör att `scripts/start.ps1` kör ai-service som en Windows-process med `ai-service\.venv` (CUDA-torch) och låter API-containern peka dit (`AI_SERVICE_URL`); `stop.ps1` stoppar den. Standardmodellen är nu e5-base (768 dimensioner, `MIN_SCORE` 0,82), och `db.init_schema` vägrar öppna en tabell med annan dimension om inte `RESET_VECTORS_ON_DIM_CHANGE=true` är satt (test på egen databas). Efter bytet indexerades alla 28 dokument om med `scripts/reindex.py` (3 min). Docker-läget (utan `AI_SERVICE_HOST`) kör e5-base utan omrankare på CPU.
 - Frågorna är skrivna av utvecklaren och tröskeln inställd på dem, så 64 av 70 är en övre skattning. Mätt utan HR-granskning och utan intervall.
 
+### Vardagsspråk, omskrivning och följdfrågor (mätt 2026-10-24)
+`eval/hr_colloquial.py` har 52 frågor på det sätt en chef säger det ("Får jag sparka någon som varit sjuk länge?", "Min medarbetare har ett sjukt barn, vad gäller?"), med samma sorts facit som de formella (kontrollerade mot källtexterna, 0 problem; 47 besvarbara och 5 utan svar). Samma fakta, annan formulering: skillnaden i resultat är alltså formuleringens. Körs med `hr_check.py --questions=hr_colloquial`.
+
+| Konfiguration (omrankare och e5-base på) | Vardagliga (av 47) | Formella (av 73) | Summa av 120 | Nekade av 12 utan svar |
+|---|---|---|---|---|
+| Ingen omskrivning | 25 | 66 | 91 | 12 |
+| Omskrivning (LLM skriver om frågan, båda söks) | 32 | 62 | 94 | 12 |
+| + namngivna källor (`NAME_SOURCES`) | 34 | 60 | 94 | 12 |
+| Omskrivning, men "ta alltid med AB" i sökfrasen | 27 | 59 | 86 | 12 |
+
+- **Omskrivningen ger +7 på vardagsfrågor och kostar −4 på formella.** Valet är gjort för vardagsspråk (chefer skriver så), men det är en avvägning och inte gratis. Med ±2–3 i körningsbrus (modellen varierar) är skillnaden mellan de två mittenraderna inte säker.
+- **Vad som hjälpte:** (1) omskrivningen i sig, (2) att modellen får se frågan på facktermer bredvid originalet (25 → 30), (3) en instruktion att tolka vardagsord mot dokumentens termer och svara när regeln finns (→ 32). **Fler utdrag (`TOP_K=8`) hjälpte inte.** "Ta alltid med AB" försämrade båda uppsättningarna och är borttaget.
+- **Kvar efter allt:** 13–15 av 47 vardagsfrågor besvaras fortfarande fel. Typiska fel: sökningen väljer ett stycke som diskuterar ämnet (ett exempel på karensavdrag i kommentarerna) i stället för regeln, eller modellen ger ett närliggande svar med fel siffra. Omskrivningen kan också dra sökningen mot fel källa (semesterfrågan hamnade i semesterlagen i stället för AB:s åldersregel).
+- **Följdfrågor och samtalsminne.** API:et skickar de tre senaste frågorna och svaren i den pågående konversationen ("Ny konversation" rensar dem) till ai-service, som gör en uppföljning som "Och för en 45-åring?" fristående före sökningen (`rewrite.condense`). Modellen instrueras att, när svaret beror på något frågan inte säger (ålder, anställningstid, kommun eller annan arbetsgivare), redovisa fallen och avsluta med en följdfråga. Provat för hand: "Hur lång uppsägningstid har en medarbetare?" gav en uppställning av fallen och en följdfråga, och svaret "en kommun, 6 år, vill själv sluta" gav rätt (3 månader enligt AB, 1 månad enligt LAS). Uppföljningen "Och för en 45-åring?" efter en semesterfråga förstods men gav ändå fel svar, eftersom sökningen då hämtade semesterlagen i stället för AB:s tabell. **Följdfrågorna är inte mätta i någon uppsättning.**
+- **Protokollen är inte omätta med detta:** omskrivning och instruktionen ändrar vad modellen får även för protokollfrågor när `REWRITE_QUERY` är på. Sökningen på protokollen är oförändrad (`NAME_SOURCES` av), men svarssteget har inte körts om på frågeset v2.
+
 ## Granska och komplettera frågorna
 ```bash
 python ../eval/make_review.py          # skapar review/evalset-review.md (frågor, facit, rätt källa i klartext)

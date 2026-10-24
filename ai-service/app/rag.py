@@ -11,6 +11,8 @@ from app.db import Hit
 from app.chunking import split_header
 from app.embeddings import Embedder
 from app.rerank import rerank
+from app.rewrite import condense, rewrite
+from app.sources import named_documents
 from app.llm import LlmClient
 from app.text import normalize_text
 
@@ -85,11 +87,14 @@ class Retrieval:
     hits: list[Hit]
     refused: bool  # nothing similar enough was found: do not even ask the model
     broad: bool = False
+    rewritten: str = ""  # the search phrase the model wrote for this question, if any
 
 
-def build_user_prompt(question: str, hits: list[Hit]) -> str:
+def build_user_prompt(question: str, hits: list[Hit], hint: str = "") -> str:
+    """`hint` is the question in the texts' own terms (app/rewrite.py): the model sees what the everyday wording refers to."""
     context = "\n\n".join(f"[{i}] (sida {h.page})\n{h.context or h.content}" for i, h in enumerate(hits, start=1))
-    return f"Kontext:\n\n{context}\n\nFråga: {question}"
+    asked = f"{question}\n(Samma fråga med dokumentens termer: {hint})" if hint else question
+    return f"Kontext:\n\n{context}\n\nFråga: {asked}"
 
 
 # Questions that need an overview of many items ("sammanfatta", "hur många", "lista alla", "jämför"): the model only
@@ -105,8 +110,19 @@ BROAD_NOTE = (
 )
 
 
-def system_prompt(structured: bool, broad: bool) -> str:
+EVERYDAY_NOTE = (
+    "Frågan kan vara ställd med vardagliga ord. Tolka den mot dokumentens termer och svara om utdragen innehåller regeln "
+    "som gäller situationen, även när orden skiljer sig. Om svaret beror på uppgifter som frågan inte anger (till exempel "
+    "ålder, anställningstid, anställningsform eller om arbetsgivaren är kommun eller region), redovisa vad som gäller i "
+    "de olika fallen enligt utdragen och avsluta med en kort följdfråga om vilket fall det gäller. Svara att du inte "
+    "hittar stöd bara när utdragen verkligen saknar en relevant regel."
+)
+
+
+def system_prompt(structured: bool, broad: bool, everyday: bool = False) -> str:
     base = SYSTEM_PROMPT_STRUCTURED if structured else SYSTEM_PROMPT
+    if everyday:
+        base = f"{base} {EVERYDAY_NOTE}"
     return f"{base} {BROAD_NOTE}" if broad else base
 
 
@@ -132,8 +148,13 @@ def retrieve(
     document_ids: list[UUID] | None = None,
     top_k: int | None = None,
     split: bool = True,
+    llm: LlmClient | None = None,
+    history: list[tuple[str, str]] | None = None,
 ) -> Retrieval:
     question = normalize_text(question)
+    if history and llm is not None and settings.rewrite_query:
+        # "Och för en 45-åring?" means nothing alone: the question is made standalone from the last turns first.
+        question = normalize_text(condense(llm, history, question) or question)
     parts = topics(question) if split else []
     if parts:
         # The whole question (a few hits) plus each part (two hits each), merged without duplicates.
@@ -158,31 +179,53 @@ def retrieve(
     if patterns and not db.contains_any(pool, owner_id, patterns, document_ids):
         return Retrieval(question, [], refused=True, broad=broad)
 
-    embedding = embedder.embed_query(question)
+    rewritten = rewrite(llm, question) if llm is not None and settings.rewrite_query else ""
+    queries = [question, *([rewritten] if rewritten else [])]
+    embeddings = [embedder.embed_query(q) for q in queries]
     fetch = max(k, settings.rerank_pool) if settings.rerank_model else k
 
-    def run(content_contains: list[str] | None) -> list[Hit]:
-        if settings.hybrid_identifiers and (settings.hybrid_all or IDENTIFIER.search(question)):
+    def run(text: str, embedding, content_contains: list[str] | None) -> list[Hit]:
+        if settings.hybrid_identifiers and (settings.hybrid_all or IDENTIFIER.search(text)):
             return db.search_hybrid(
-                pool, owner_id, embedding, question, fetch, document_ids, content_contains,
+                pool, owner_id, embedding, text, fetch, document_ids, content_contains,
                 max_df=settings.hybrid_max_df, text_weight=settings.hybrid_text_weight,
             )
         return db.search(pool, owner_id, embedding, fetch, document_ids, content_contains)
 
+    routed = []
+    if settings.name_sources:
+        routed = named_documents(f"{question} {rewritten}", db.document_headers(pool, owner_id))
+        if document_ids is not None:
+            routed = [d for d in routed if d in document_ids]
+
+    def search(content_contains: list[str] | None) -> list[Hit]:
+        """Hits for the question and for its rewrite, one entry per chunk with its best score. A document the question
+        names also contributes its own best hits, so a long commentary on it cannot crowd it out."""
+        best: dict[tuple[UUID, int], Hit] = {}
+        for text, embedding in zip(queries, embeddings):
+            found = run(text, embedding, content_contains)
+            if routed:
+                found += db.search(pool, owner_id, embedding, 5, routed, content_contains)
+            for h in found:
+                key = (h.document_id, h.chunk_index)
+                if key not in best or h.score > best[key].score:
+                    best[key] = h
+        return sorted(best.values(), key=lambda h: h.score, reverse=True)[:fetch]
+
     # "sammanträdet 2025-04-09": look in that meeting's documents first; if no chunk has the date, look everywhere.
     dates = ISO_DATE.findall(question) if settings.filter_by_date else []
-    hits = run(dates) if dates else []
-    hits = hits or run(None)
+    hits = search(dates) if dates else []
+    hits = hits or search(None)
     # Refuse on the best hit only. Filtering every hit drops relevant context: the right chunk often
     # scores just below the top one (e5 scores are compressed), see eval/README.md. A chunk found by a rare word
     # (a case number) is evidence of its own and is not judged by similarity.
     weak = not hits or (hits[0].score < settings.min_score and not any(h.matched for h in hits))
     if hits and not weak and settings.rerank_model:
-        hits = rerank(settings.rerank_model, question, hits, k)
+        hits = rerank(settings.rerank_model, f"{question} ({rewritten})" if rewritten else question, hits, k)
     hits = hits[:k]
     if hits and not weak and settings.context_neighbors:
         hits = _with_neighbours(pool, owner_id, hits, settings.context_neighbors)
-    return Retrieval(question, hits, refused=weak, broad=broad)
+    return Retrieval(question, hits, refused=weak, broad=broad, rewritten=rewritten)
 
 
 def _with_neighbours(pool: ConnectionPool, owner_id: str, hits: list[Hit], reach: int) -> list[Hit]:
@@ -222,12 +265,12 @@ def _finish(text: str, hits: list[Hit], structured: bool = False, broad: bool = 
 
 
 def answer_question(*, llm: LlmClient, **retrieval_args) -> Answer:
-    retrieval = retrieve(**retrieval_args)
+    retrieval = retrieve(llm=llm, **retrieval_args)
     if retrieval.refused:
         return Answer(NO_SUPPORT_ANSWER, grounded=False, sources=[], support="inget", broad=retrieval.broad)
     structured = retrieval_args["settings"].structured_answer
-    prompt = system_prompt(structured, retrieval.broad)
-    text = llm.generate(prompt, build_user_prompt(retrieval.question, retrieval.hits))
+    prompt = system_prompt(structured, retrieval.broad, bool(retrieval.rewritten))
+    text = llm.generate(prompt, build_user_prompt(retrieval.question, retrieval.hits, retrieval.rewritten))
     return _finish(text, retrieval.hits, structured, retrieval.broad)
 
 
@@ -241,7 +284,7 @@ def stream_answer(llm: LlmClient, retrieval: Retrieval, structured: bool = False
         yield "done", Answer(NO_SUPPORT_ANSWER, grounded=False, sources=[], support="inget", broad=retrieval.broad)
         return
     yield "sources", retrieval.hits
-    tokens = llm.stream(system_prompt(structured, retrieval.broad), build_user_prompt(retrieval.question, retrieval.hits))
+    tokens = llm.stream(system_prompt(structured, retrieval.broad, bool(retrieval.rewritten)), build_user_prompt(retrieval.question, retrieval.hits, retrieval.rewritten))
     parts: list[str] = []
     held = ""  # structured mode: the start of the answer, held back until its first line (STÖD: ...) is complete
     decided = not structured

@@ -77,6 +77,7 @@ def create_pool(database_url: str) -> ConnectionPool:
 
 # owner -> (document frequency per stemmed word, number of chunks). Rebuilt after every ingest or delete.
 _word_stats: dict[str, tuple[dict[str, int], int]] = {}
+_headers: dict[str, dict[UUID, str]] = {}
 
 
 def replace_document_chunks(
@@ -97,6 +98,7 @@ def replace_document_chunks(
                 ],
             )
     _word_stats.pop(owner_id, None)
+    _headers.pop(owner_id, None)
 
 
 def _filters(owner_id: str, document_ids: list[UUID] | None, content_contains: list[str] | None) -> tuple[str, dict]:
@@ -142,6 +144,19 @@ def contains_any(
         return conn.execute(
             f"SELECT EXISTS (SELECT 1 FROM rag.chunks WHERE {where}AND content ~* ANY(%(patterns)s))", params
         ).fetchone()[0]
+
+
+def document_headers(pool: ConnectionPool, owner_id: str) -> dict[UUID, str]:
+    """The first line of each document's first chunk: its header (title, abbreviation), cached until the owner's chunks change."""
+    if owner_id not in _headers:
+        with pool.connection() as conn:
+            rows = conn.execute(
+                "SELECT DISTINCT ON (document_id) document_id, split_part(content, E'\n', 1) FROM rag.chunks "
+                "WHERE owner_id = %s ORDER BY document_id, chunk_index",
+                (owner_id,),
+            ).fetchall()
+        _headers[owner_id] = dict(rows)
+    return _headers[owner_id]
 
 
 def _stats(pool: ConnectionPool, owner_id: str) -> tuple[dict[str, int], int]:
@@ -235,4 +250,5 @@ def delete_document(pool: ConnectionPool, owner_id: str, document_id: UUID) -> i
         )
         deleted = cur.rowcount
     _word_stats.pop(owner_id, None)
+    _headers.pop(owner_id, None)
     return deleted

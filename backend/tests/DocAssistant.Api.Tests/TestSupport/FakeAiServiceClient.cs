@@ -18,9 +18,14 @@ public sealed class FakeAiServiceClient : IAiServiceClient
     /// <summary>The events of the next streamed query; defaults to a short grounded answer.</summary>
     public Func<string, IReadOnlyList<Guid>?, CancellationToken, IAsyncEnumerable<AiStreamEvent>>? OnStream { get; set; }
 
+    /// <summary>The earlier turns the API sent with the latest query.</summary>
+    public IReadOnlyList<ChatTurn> LastHistory { get; private set; } = [];
+
     public async IAsyncEnumerable<AiStreamEvent> QueryStreamAsync(
-        string ownerId, string question, IReadOnlyList<Guid>? documentIds, [EnumeratorCancellation] CancellationToken ct)
+        string ownerId, string question, IReadOnlyList<Guid>? documentIds, [EnumeratorCancellation] CancellationToken ct,
+        IReadOnlyList<ChatTurn>? history = null)
     {
+        LastHistory = history ?? [];
         if (Failure is not null) throw Failure;
         var events = OnStream?.Invoke(question, documentIds, ct) ?? Default();
         await foreach (var e in events.WithCancellation(ct)) yield return e;
@@ -39,8 +44,9 @@ public sealed class FakeAiServiceClient : IAiServiceClient
         return Task.FromResult(new IngestResult(documentId, Pages: 3, Chunks: 7));
     }
 
-    public Task<QueryResult> QueryAsync(string ownerId, string question, IReadOnlyList<Guid>? documentIds, CancellationToken ct)
+    public Task<QueryResult> QueryAsync(string ownerId, string question, IReadOnlyList<Guid>? documentIds, CancellationToken ct, IReadOnlyList<ChatTurn>? history = null)
     {
+        LastHistory = history ?? [];
         if (Failure is not null) throw Failure;
         var result = OnQuery?.Invoke(question, documentIds)
                      ?? new QueryResult("Inget stöd.", Grounded: false, Sources: []);

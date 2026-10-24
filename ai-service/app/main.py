@@ -65,11 +65,17 @@ class IngestResponse(BaseModel):
     chunks: int
 
 
+class Turn(BaseModel):
+    question: str = Field(max_length=2000)
+    answer: str = Field(max_length=20000)
+
+
 class QueryRequest(BaseModel):
     owner_id: str = Field(min_length=1)
     question: str = Field(min_length=1, max_length=2000)
     document_ids: list[UUID] | None = None
     top_k: int | None = Field(default=None, ge=1, le=20)
+    history: list[Turn] = Field(default_factory=list, max_length=5)  # earlier turns of this conversation, oldest first
 
 
 class SourceOut(BaseModel):
@@ -146,6 +152,7 @@ def query(req: QueryRequest, settings: Settings = Depends(get_settings)) -> Quer
             question=req.question,
             document_ids=req.document_ids,
             top_k=req.top_k,
+            history=[(t.question, t.answer) for t in req.history],
         )
     except LlmUnavailableError as exc:
         log.warning("LLM unavailable: %s", exc)
@@ -179,7 +186,8 @@ def query_stream(req: QueryRequest, settings: Settings = Depends(get_settings)) 
     started = time.perf_counter()
     retrieval = retrieve(
         pool=app.state.pool, embedder=app.state.embedder, settings=settings, owner_id=req.owner_id,
-        question=req.question, document_ids=req.document_ids, top_k=req.top_k,
+        question=req.question, document_ids=req.document_ids, top_k=req.top_k, llm=app.state.llm,
+        history=[(t.question, t.answer) for t in req.history],
     )
     retrieved_ms = round((time.perf_counter() - started) * 1000)
 

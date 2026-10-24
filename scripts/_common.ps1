@@ -42,7 +42,7 @@ function Start-WindowsAiService([string]$root, [hashtable]$cfg, [int]$timeoutSec
   if (-not (Test-Path $python)) { throw "ai-service\.venv saknas ($python). Skapa den enligt docs/dev-setup.md." }
   # The process inherits these; they are the same names as in .env, plus the database address as seen from Windows.
   foreach ($key in 'EMBEDDING_BACKEND', 'EMBEDDING_MODEL', 'EMBEDDING_DIM', 'MIN_SCORE', 'RESET_VECTORS_ON_DIM_CHANGE',
-                   'RERANK_MODEL', 'LLM_BACKEND', 'LLM_MODEL', 'OLLAMA_BASE_URL', 'INTERNAL_API_KEY') {
+                   'RERANK_MODEL', 'REWRITE_QUERY', 'NAME_SOURCES', 'LLM_BACKEND', 'LLM_MODEL', 'OLLAMA_BASE_URL', 'INTERNAL_API_KEY') {
     if ($cfg[$key]) { Set-Item -Path "Env:$key" -Value $cfg[$key] }
   }
   $env:DATABASE_URL = "postgresql://$($cfg['POSTGRES_USER']):$($cfg['POSTGRES_PASSWORD'])@127.0.0.1:5432/$($cfg['POSTGRES_DB'])"

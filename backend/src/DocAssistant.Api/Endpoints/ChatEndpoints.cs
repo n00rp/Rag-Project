@@ -62,7 +62,10 @@ public static class ChatEndpoints
     }
 
     /// <summary>A validated question and the documents it is about (with their file names).</summary>
-    private sealed record Prepared(string Question, List<Guid>? DocumentIds, Dictionary<Guid, string> Names);
+    private sealed record Prepared(string Question, List<Guid>? DocumentIds, Dictionary<Guid, string> Names, List<ChatTurn> History);
+
+    /// <summary>How many earlier turns a follow-up question can lean on.</summary>
+    private const int HistoryTurns = 3;
 
     private static async Task<(Prepared? Ready, ProblemHttpResult? Problem)> PrepareAsync(
         ChatRequest request, AppDbContext db, ICurrentUser user, CancellationToken ct)
@@ -90,7 +93,15 @@ public static class ChatEndpoints
                 .Where(d => d.OwnerId == user.OwnerId && d.Status == DocumentStatus.Ready)
                 .ToDictionaryAsync(d => d.Id, d => d.FileName, ct);
         }
-        return (new Prepared(question, documentIds, names), null);
+        // "Ny konversation" clears the saved messages, so what is saved is the conversation in progress.
+        var history = (await db.ChatMessages
+                .Where(m => m.OwnerId == user.OwnerId)
+                .OrderByDescending(m => m.CreatedAt)
+                .Take(HistoryTurns)
+                .Select(m => new { m.Question, m.Answer })
+                .ToListAsync(ct))
+            .AsEnumerable().Reverse().Select(m => new ChatTurn(m.Question, m.Answer)).ToList();
+        return (new Prepared(question, documentIds, names, history), null);
     }
 
     private static List<ChatSourceDto> ToSourceDtos(IEnumerable<AiSource> sources, Dictionary<Guid, string> names) =>
@@ -134,7 +145,7 @@ public static class ChatEndpoints
         QueryResult result;
         try
         {
-            result = await ai.QueryAsync(user.OwnerId, ready!.Question, ready.DocumentIds, ct);
+            result = await ai.QueryAsync(user.OwnerId, ready!.Question, ready.DocumentIds, ct, ready.History);
         }
         catch (AiServiceUnavailableException)
         {
@@ -197,7 +208,7 @@ public static class ChatEndpoints
             try
             {
                 AiDoneEvent? done = null;
-                await foreach (var evt in ai.QueryStreamAsync(user.OwnerId, ready!.Question, ready.DocumentIds, ct))
+                await foreach (var evt in ai.QueryStreamAsync(user.OwnerId, ready!.Question, ready.DocumentIds, ct, ready.History))
                 {
                     switch (evt)
                     {

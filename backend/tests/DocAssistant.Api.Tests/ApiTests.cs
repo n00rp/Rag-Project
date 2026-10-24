@@ -197,6 +197,24 @@ public sealed class ApiTests : IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task A_follow_up_question_is_sent_with_the_conversation_so_far_and_a_new_conversation_starts_empty()
+    {
+        await _client.DeleteAsync("/api/chat/history");
+        _factory.Ai.OnQuery = (q, _) => new QueryResult($"Svar på {q}", Grounded: true, []);
+
+        await _client.PostAsJsonAsync("/api/chat", new ChatRequest("Vad är uppsägningstiden?", null));
+        _factory.Ai.LastHistory.Should().BeEmpty();
+
+        await _client.PostAsJsonAsync("/api/chat", new ChatRequest("Och för en 45-åring?", null));
+        _factory.Ai.LastHistory.Should().ContainSingle()
+            .Which.Should().Be(new ChatTurn("Vad är uppsägningstiden?", "Svar på Vad är uppsägningstiden?"));
+
+        await _client.DeleteAsync("/api/chat/history");
+        await _client.PostAsJsonAsync("/api/chat", new ChatRequest("Ny fråga", null));
+        _factory.Ai.LastHistory.Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task Clearing_history_removes_the_chat_but_keeps_documents()
     {
         var uploaded = await UploadAsync("skolskjuts.pdf");
